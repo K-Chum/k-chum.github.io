@@ -85,40 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (nextBtn) nextBtn.addEventListener('click', nextSlide);
   if (prevBtn) prevBtn.addEventListener('click', prevSlide);
 
-  // Keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-      return; // Ignore navigation keys when typing in inputs
-    }
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-      nextSlide();
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-      prevSlide();
-    }
-  });
-
-  // Touch Swipe navigation (for mobile devices)
-  let touchStartX = 0;
-  let touchEndX = 0;
-
-  document.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, false);
-
-  document.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  }, false);
-
-  function handleSwipe() {
-    const swipeThreshold = 50;
-    if (touchStartX - touchEndX > swipeThreshold) {
-      nextSlide(); // Swipe left -> next
-    } else if (touchEndX - touchStartX > swipeThreshold) {
-      prevSlide(); // Swipe right -> prev
-    }
-  }
-
   // Initialize navigation display
   updateControls();
 

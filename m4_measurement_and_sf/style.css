@@ -33,31 +33,36 @@
   padding: 0;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: var(--font-body);
   background: var(--bg-gradient);
   color: var(--text-main);
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 /* Base Presentation Layout */
 .presentation-container {
-  flex: 1;
-  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
 
 .slides-container {
+  flex: 1;
   width: 100%;
-  height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 .slide {
@@ -72,10 +77,24 @@ body {
   transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
               transform 0.6s cubic-bezier(0.25, 1, 0.5, 1),
               visibility 0.6s;
-  padding: 3rem 4rem;
+  padding: 5rem 4rem 2rem 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.slide::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+}
+
+@media (max-height: 850px) {
+  .slide {
+    justify-content: flex-start;
+  }
 }
 
 .slide.active {
@@ -412,14 +431,15 @@ strong {
 
 /* Presentation Nav Panel */
 .nav-controls {
-  position: absolute;
-  bottom: 2rem;
-  left: 4rem;
-  right: 4rem;
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 100;
+  padding: 1.25rem 4rem;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
 }
 
 .progress-container {
@@ -1109,10 +1129,8 @@ strong {
 /* Responsiveness adjustments */
 @media (max-width: 1024px) {
   .slide {
-    padding: 6.5rem 2rem 7.5rem 2rem;
+    padding: 5rem 2rem 2rem 2rem;
     justify-content: flex-start;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
   }
   .title-slide-layout {
     margin-top: auto;
@@ -1131,9 +1149,7 @@ strong {
     right: 2rem;
   }
   .nav-controls {
-    bottom: 1.5rem;
-    left: 2rem;
-    right: 2rem;
+    padding: 1rem 2rem;
   }
   .keyboard-hint {
     display: none;
