@@ -1,319 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MultimeterLab – DC Voltage Reading Practice</title>
-  <meta name="description" content="Interactive analog multimeter simulator for DC voltage reading practice." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ฟิสิกส์ ม.4 | คลังบทเรียนเสมือนจริง (Physics Interactive Lab)</title>
+  <meta name="description" content="คลังปฏิบัติการและสื่อการสอนวิชาฟิสิกส์ ม.4 แบบปฏิสัมพันธ์ เรียนรู้ทฤษฎีควบคู่การวัดและการประมาณค่าเสมือนจริง">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- Background Grid & Shapes Decor -->
   <div class="bg-grid"></div>
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
 
-  <main class="main-content">
+  <div class="container">
+    
+    <!-- Interactive Modules Selection Grid -->
+    <main class="modules-grid">
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!--   LEFT: Meter (fills available width)      -->
-    <!-- ═══════════════════════════════════════════ -->
-    <section class="panel meter-panel" aria-label="Analog multimeter simulator">
-      <div class="panel-label">ANALOG MULTIMETER SIMULATOR</div>
-
-      <div class="meter-wrapper">
-        <!-- Probe holder removed; viewBox trimmed to 460px wide -->
-        <svg id="multimeter-svg" viewBox="0 0 460 690"
-             xmlns="http://www.w3.org/2000/svg"
-             role="img" aria-label="Sanwa-style analog multimeter">
-          <defs>
-            <clipPath id="wclip">
-              <rect x="14" y="9" width="432" height="216" rx="7"/>
-            </clipPath>
-            <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stop-color="#303030"/>
-              <stop offset="50%"  stop-color="#252525"/>
-              <stop offset="100%" stop-color="#1a1a1a"/>
-            </linearGradient>
-            <linearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stop-color="#f4f0da"/>
-              <stop offset="100%" stop-color="#ece7cc"/>
-            </linearGradient>
-            <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stop-color="white" stop-opacity="0.35"/>
-              <stop offset="100%" stop-color="white" stop-opacity="0"/>
-            </linearGradient>
-            <radialGradient id="dialGrad" cx="38%" cy="32%" r="65%">
-              <stop offset="0%"   stop-color="#454545"/>
-              <stop offset="55%"  stop-color="#2c2c2c"/>
-              <stop offset="100%" stop-color="#1a1a1a"/>
-            </radialGradient>
-            <radialGradient id="capGrad" cx="35%" cy="30%" r="65%">
-              <stop offset="0%"   stop-color="#666"/>
-              <stop offset="100%" stop-color="#2a2a2a"/>
-            </radialGradient>
-            <linearGradient id="ptrGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%"   stop-color="#555"/>
-              <stop offset="40%"  stop-color="#d0d0d0"/>
-              <stop offset="60%"  stop-color="#d0d0d0"/>
-              <stop offset="100%" stop-color="#555"/>
-            </linearGradient>
-            <radialGradient id="trmRed" cx="35%" cy="28%" r="65%">
-              <stop offset="0%"   stop-color="#f87171"/>
-              <stop offset="100%" stop-color="#991b1b"/>
-            </radialGradient>
-            <radialGradient id="trmBlk" cx="35%" cy="28%" r="65%">
-              <stop offset="0%"   stop-color="#4b5563"/>
-              <stop offset="100%" stop-color="#0f172a"/>
-            </radialGradient>
-            <radialGradient id="adjGrad" cx="35%" cy="28%" r="65%">
-              <stop offset="0%"   stop-color="#5a5a5a"/>
-              <stop offset="100%" stop-color="#2a2a2a"/>
-            </radialGradient>
-          </defs>
-
-          <!-- ── METER BODY (width now 460) ── -->
-          <rect x="0" y="0" width="460" height="690" rx="16" fill="#141414"/>
-          <rect x="2" y="2" width="456" height="686" rx="14" fill="url(#bodyGrad)"/>
-          <rect x="2" y="2" width="456" height="5"   rx="12" fill="rgba(255,255,255,0.05)"/>
-
-          <!-- Corner bolts -->
-          <circle cx="20"  cy="20"  r="8" fill="#0f0f0f" stroke="#404040" stroke-width="1"/>
-          <line x1="15" y1="20" x2="25" y2="20" stroke="#505050" stroke-width="1.2"/>
-          <line x1="20" y1="15" x2="20" y2="25" stroke="#505050" stroke-width="1.2"/>
-          <circle cx="440" cy="20"  r="8" fill="#0f0f0f" stroke="#404040" stroke-width="1"/>
-          <line x1="435" y1="20" x2="445" y2="20" stroke="#505050" stroke-width="1.2"/>
-          <line x1="440" y1="15" x2="440" y2="25" stroke="#505050" stroke-width="1.2"/>
-          <circle cx="20"  cy="670" r="8" fill="#0f0f0f" stroke="#404040" stroke-width="1"/>
-          <circle cx="440" cy="670" r="8" fill="#0f0f0f" stroke="#404040" stroke-width="1"/>
-
-          <!-- ── SCALE WINDOW ── -->
-          <rect x="10" y="5" width="440" height="228" rx="11"
-                fill="#0f0f0f" stroke="#4a4a4a" stroke-width="1.5"/>
-          <rect x="14" y="9" width="432" height="216" rx="7" fill="url(#faceGrad)"/>
-
-          <!-- ── SCALE CONTENT (clipped) ── -->
-          <g clip-path="url(#wclip)">
-            <rect x="14" y="9" width="432" height="216" rx="7"
-                  fill="none" stroke="#c8c2a8" stroke-width="2.5"/>
-            <line x1="14" y1="24" x2="446" y2="24" stroke="#ddd9be" stroke-width="0.6"/>
-            <line x1="14" y1="29" x2="446" y2="29" stroke="#ddd9be" stroke-width="0.3"/>
-
-            <text x="435" y="21" text-anchor="end"
-                  font-family="Arial" font-size="7" fill="#888" letter-spacing="0.8">MADE IN JAPAN</text>
-
-            <text x="24"  y="60" font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
-            <text x="432" y="60" text-anchor="end"
-                  font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
-
-            <text x="230" y="203" text-anchor="middle"
-                  font-family="Arial Narrow,Arial" font-size="9" font-weight="700" fill="#444" letter-spacing="1">±DCV</text>
-            <text id="scale-range-readout" x="230" y="215" text-anchor="middle"
-                  font-family="Share Tech Mono,monospace" font-size="11" font-weight="700" fill="#222">—</text>
-
-            <g id="mirror-group"></g>
-            <g id="scale-ticks-group"></g>
-            <g id="scale-labels-group"></g>
-
-            <!-- Needle -->
-            <g id="needle-group" transform="rotate(0, 230, 224)">
-              <line x1="230" y1="224" x2="230" y2="44"
-                    stroke="rgba(0,0,0,0.18)" stroke-width="3.5"
-                    stroke-linecap="round" transform="translate(1.5,1.5)"/>
-              <line x1="230" y1="224" x2="230" y2="44"
-                    stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/>
-              <polygon points="230,38 226.5,52 233.5,52" fill="#cc1111"/>
-              <rect x="228.5" y="224" width="3" height="12" rx="1.5" fill="#555"/>
-            </g>
-
-            <!-- Zero-adjust knob -->
-            <circle cx="230" cy="220" r="5.5" fill="#d0cdb5" stroke="#aaa89a" stroke-width="1"/>
-            <line x1="230" y1="215.5" x2="230" y2="219" stroke="#888" stroke-width="1"/>
-
-            <!-- Glass glare -->
-            <rect x="14" y="9" width="432" height="90" rx="7" fill="url(#glassGrad)" opacity="0.6"/>
-            <ellipse cx="130" cy="30" rx="80" ry="14" fill="white" opacity="0.04"/>
-          </g>
-
-          <!-- Window outer border -->
-          <rect x="14" y="9" width="432" height="216" rx="7"
-                fill="none" stroke="#7a7660" stroke-width="0.8"/>
-
-          <!-- ── BRAND INFO AREA ── -->
-          <rect x="10" y="237" width="218" height="82" rx="5" fill="#090909" stroke="#222" stroke-width="0.5"/>
-          <text x="24" y="268" font-family="Times New Roman,Georgia,serif"
-                font-size="32" font-weight="900" font-style="italic"
-                fill="#cc1111" letter-spacing="0.5">sanwa</text>
-          <text x="24" y="285" font-family="Arial,sans-serif" font-size="8"  fill="#666" letter-spacing="2">MULTITESTER</text>
-          <text x="24" y="300" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#bbb">YX360TRF</text>
-          <text x="24" y="313" font-family="Arial,sans-serif" font-size="7.5" fill="#444">20KΩ/V DC  ·  9KΩ/V AC</text>
-
-          <!-- Range display block -->
-          <rect x="234" y="237" width="218" height="82" rx="5" fill="#090909" stroke="#222" stroke-width="0.5"/>
-          <text x="248" y="256" font-family="Arial,sans-serif" font-size="8" fill="#555" letter-spacing="1.5">SELECTED RANGE</text>
-          <rect x="248" y="261" width="196" height="42" rx="4" fill="#0d0d0d" stroke="#2a2a2a" stroke-width="1"/>
-          <text x="256" y="276" font-family="Arial,sans-serif" font-size="9" fill="#555">DC VOLTAGE</text>
-          <text id="range-display-text" x="434" y="296" text-anchor="end"
-                font-family="Share Tech Mono,monospace" font-size="20" font-weight="700" fill="#fbbf24">10 V</text>
-          <rect x="248" y="308" width="56" height="9" rx="2" fill="#111"/>
-          <text x="276" y="315" text-anchor="middle" font-family="Arial" font-size="6.5" fill="#555">DROP PROOF</text>
-          <rect x="310" y="308" width="56" height="9" rx="2" fill="#111"/>
-          <text x="338" y="315" text-anchor="middle" font-family="Arial" font-size="6.5" fill="#555">NULL METER</text>
-          <rect x="372" y="308" width="56" height="9" rx="2" fill="#111"/>
-          <text x="400" y="315" text-anchor="middle" font-family="Arial" font-size="6.5" fill="#555">FUSE PROT.</text>
-
-          <!-- ── ROTARY SELECTOR DIAL AREA ── -->
-          <rect x="10" y="323" width="438" height="250" rx="5" fill="#131313" stroke="#222" stroke-width="0.5"/>
-
-          <text x="28" y="346" font-family="Arial,sans-serif" font-size="10"
-                font-weight="700" fill="#fbbf24" letter-spacing="2">DCV···</text>
-
-          <!-- DCV range labels — clickable -->
-          <g font-family="Arial,sans-serif" text-anchor="end" cursor="pointer">
-            <title>Click a value to select that range</title>
-            <text class="dlbl" data-rid="dcv-1000" x="96" y="372" font-size="13" font-weight="600" fill="#777">1000</text>
-            <text class="dlbl" data-rid="dcv-5"    x="88" y="400" font-size="13" font-weight="600" fill="#777">   5</text>
-            <text class="dlbl" data-rid="dcv-50"   x="84" y="428" font-size="13" font-weight="600" fill="#777">  50</text>
-            <text class="dlbl" data-rid="dcv-10"   x="80" y="456" font-size="13" font-weight="600" fill="#777">  10</text>
-          </g>
-          <line x1="100" y1="367" x2="118" y2="370" stroke="#3a3a3a" stroke-width="1"/>
-          <line x1="92"  y1="395" x2="112" y2="395" stroke="#3a3a3a" stroke-width="1"/>
-          <line x1="88"  y1="423" x2="110" y2="420" stroke="#3a3a3a" stroke-width="1"/>
-          <line x1="84"  y1="451" x2="107" y2="445" stroke="#3a3a3a" stroke-width="1"/>
-
-          <text x="215" y="560" text-anchor="middle" font-family="Arial" font-size="11" fill="#484848">OFF</text>
-
-          <!-- Rotary dial -->
-          <circle cx="215" cy="443" r="128" fill="none" stroke="#3c3c3c" stroke-width="2.5"/>
-          <circle cx="215" cy="443" r="122" fill="url(#dialGrad)"/>
-          <circle cx="215" cy="443" r="112" fill="none" stroke="#3d3d3d" stroke-width="4.5" stroke-dasharray="3.5,9" stroke-linecap="round"/>
-          <circle cx="215" cy="443" r="105" fill="none" stroke="#1e1e1e" stroke-width="2"/>
-          <circle cx="215" cy="443" r="92"  fill="#1e1e1e" stroke="#2e2e2e" stroke-width="1"/>
-          <circle cx="215" cy="443" r="90"  fill="none" stroke="#3a3a3a" stroke-width="0.8"/>
-
-          <g id="dial-ptr">
-            <rect x="212" y="330" width="6" height="58" rx="3" fill="url(#ptrGrad)"/>
-            <polygon points="215,319 209,333 221,333" fill="#c0392b"/>
-            <rect x="213.5" y="388" width="3" height="14" rx="1.5" fill="#aaa" opacity="0.4"/>
-          </g>
-
-          <circle cx="215" cy="443" r="34" fill="url(#capGrad)" stroke="#555" stroke-width="1.5"/>
-          <circle cx="215" cy="443" r="22" fill="#1a1a1a" stroke="#404040" stroke-width="1"/>
-          <line x1="207" y1="443" x2="223" y2="443" stroke="#2e2e2e" stroke-width="2"/>
-          <line x1="215" y1="435" x2="215" y2="451" stroke="#2e2e2e" stroke-width="2"/>
-          <circle cx="215" cy="443" r="4.5" fill="#242424" stroke="#505050" stroke-width="0.8"/>
-
-          <!-- 0Ω ADJ knob -->
-          <text x="393" y="334" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">0Ω ADJ</text>
-          <circle cx="393" cy="360" r="29" fill="url(#adjGrad)" stroke="#404040" stroke-width="1.5"/>
-          <circle cx="393" cy="360" r="20" fill="#181818" stroke="#404040" stroke-width="1"/>
-          <line x1="393" y1="342" x2="393" y2="353" stroke="#888" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="393" cy="360" r="25" fill="none" stroke="#3a3a3a" stroke-width="1.5" stroke-dasharray="2,11"/>
-
-          <!-- ── TERMINALS ── -->
-          <rect x="10" y="577" width="438" height="106" rx="5" fill="#0a0a0a" stroke="#222" stroke-width="0.5"/>
-          <text x="90"  y="593" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">VΩ·mA</text>
-          <text x="190" y="593" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">COM</text>
-          <text x="305" y="593" text-anchor="middle" font-family="Arial" font-size="8" fill="#555">500mA</text>
-          <text x="395" y="590" text-anchor="middle" font-family="Arial" font-size="7" fill="#8b3333">MAX DC 1000V</text>
-          <text x="395" y="601" text-anchor="middle" font-family="Arial" font-size="7" fill="#8b3333">MAX AC  750V</text>
-
-          <circle cx="90"  cy="634" r="19" fill="url(#trmRed)" stroke="#7f1d1d" stroke-width="2"/>
-          <circle cx="90"  cy="634" r="8"  fill="#991b1b"/>
-          <ellipse cx="90"  cy="634" rx="4.5" ry="5.5" fill="#0a0a0a"/>
-          <text x="90" y="638" text-anchor="middle" font-family="Arial" font-size="11" font-weight="900" fill="#e55">+</text>
-
-          <circle cx="190" cy="634" r="19" fill="url(#trmBlk)" stroke="#1f2937" stroke-width="2"/>
-          <circle cx="190" cy="634" r="8"  fill="#111827"/>
-          <ellipse cx="190" cy="634" rx="4.5" ry="5.5" fill="#0a0a0a"/>
-          <text x="190" y="638" text-anchor="middle" font-family="Arial" font-size="11" font-weight="700" fill="#9ca3af">─</text>
-
-          <circle cx="305" cy="634" r="19" fill="url(#trmRed)" stroke="#7f1d1d" stroke-width="2"/>
-          <circle cx="305" cy="634" r="8"  fill="#991b1b"/>
-          <ellipse cx="305" cy="634" rx="4.5" ry="5.5" fill="#0a0a0a"/>
-          <text x="305" y="638" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#e55">mA</text>
-
-          <text x="230" y="678" text-anchor="middle" font-family="Arial" font-size="7.5"
-                fill="#2e2e2e" letter-spacing="0.5">SANWA ELECTRIC INSTRUMENT CO., LTD.</text>
-        </svg>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════ -->
-    <!--   RIGHT: Controls                          -->
-    <!-- ═══════════════════════════════════════════ -->
-    <section class="panel controls-panel" aria-label="Measurement controls">
-
-      <!-- Range Selector -->
-      <div class="control-group">
-        <h2 class="control-title"><span class="ctrl-icon">🎚️</span> DC Voltage Range</h2>
-        <div class="range-grid" id="range-buttons" role="group" aria-label="DC voltage range selector">
-          <!-- Populated by JS -->
+      <!-- Card 1: Measurement & Significant Figures -->
+      <article class="module-card meas" onclick="window.location.href='m4_measurement_and_sgnificant_figure/index.html'" aria-label="บทเรียนการวัดและเลขนัยสำคัญ">
+        <div class="card-header">
+          <div class="badge-row">
+            <span class="badge">ทฤษฎี &amp; สไลด์</span>
+            <span class="badge">M.4</span>
+          </div>
         </div>
-      </div>
+        
+        <div class="card-info">
+          <h2 class="card-title">การวัดและเลขนัยสำคัญ</h2>
+          <p class="card-desc">เรียนรู้หลักการวัดทางวิทยาศาสตร์ วิธีอ่านค่าสเกลไม้บรรทัดอย่างละเอียด หลักเกณฑ์การนับเลขนัยสำคัญ และการคิดคำนวณความคลาดเคลื่อนสะสมในการทดลอง</p>
+        </div>
 
-      <!-- Reading the Scale (collapsible) -->
-      <div class="control-group scale-info-group">
-        <h2 class="control-title">
-          <span class="ctrl-icon">📏</span> Reading the Scale
-          <button class="toggle-btn" id="toggle-hint-btn" aria-expanded="true" title="Show / hide">
-            <svg width="12" height="12" viewBox="0 0 12 12"
-                 fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="2,4 6,8 10,4"/>
-            </svg>
+        <div class="card-footer">
+          <button class="action-btn" aria-label="เข้าสู่บทเรียนการวัดและเลขนัยสำคัญ">
+            เข้าสู่บทเรียน ➔
           </button>
-        </h2>
-        <div class="scale-hint" id="scale-hint">
-          <div class="hint-row">
-            <span class="hint-label">Full scale:</span>
-            <span class="hint-val" id="hint-full-scale">—</span>
-          </div>
-          <div class="hint-row">
-            <span class="hint-label">Major division:</span>
-            <span class="hint-val" id="hint-major-div">—</span>
-          </div>
-          <div class="hint-row">
-            <span class="hint-label">Minor division:</span>
-            <span class="hint-val" id="hint-minor-div">—</span>
-          </div>
-          <div class="hint-row hint-tip">
-            <span>💡 Count marks from 0, then estimate between marks</span>
+        </div>
+      </article>
+
+      <!-- Card 2: Analog Multimeter Simulation -->
+      <article class="module-card multi" onclick="window.location.href='m4_analog_multimeter_simulation/index.html'" aria-label="ห้องปฏิบัติการมัลติมิเตอร์แอนะล็อก">
+        <div class="card-header">
+          <div class="badge-row">
+            <span class="badge">Simulation</span>
+            <span class="badge">M.4</span>
           </div>
         </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="actions">
-        <button class="btn btn-new" id="btn-new"><span>🔀</span> New Reading</button>
-        <button class="btn btn-reveal" id="btn-reveal"><span>👁️</span> Reveal Answer</button>
-      </div>
-
-      <!-- Answer Panel -->
-      <div class="answer-panel" id="answer-panel" aria-live="polite">
-        <div class="answer-inner">
-          <div class="answer-label">✓ Correct Reading</div>
-          <div class="answer-value" id="answer-value">—</div>
-          <div class="answer-unit"  id="answer-unit-display">—</div>
-          <div class="answer-note"  id="answer-note"></div>
+        
+        <div class="card-info">
+          <h2 class="card-title">มัลติมิเตอร์แอนะล็อก</h2>
+          <p class="card-desc">ฝึกอ่านค่าเข็มชี้ของมัลติมิเตอร์แบบแอนะล็อก ทำความเข้าใจขีดวัดแบบไม่เชิงเส้น การเลือกย่านวัดที่ถูกต้อง และทดสอบประเมินผลความถูกต้อง</p>
         </div>
-      </div>
 
-      <!-- Score Bar -->
-      <div class="score-bar">
-        <span class="score-item">
-          <span class="score-dot"></span>
-          Attempts: <strong id="score-attempts">0</strong>
-        </span>
-        <button class="btn-reset" id="btn-reset" title="Reset">↺ Reset</button>
-      </div>
+        <div class="card-footer">
+          <button class="action-btn" aria-label="เข้าสู่ห้องปฏิบัติการมัลติมิเตอร์แอนะล็อก">
+            เข้าสู่ห้องแล็บ ➔
+          </button>
+        </div>
+      </article>
 
-    </section>
-  </main>
+    </main>
 
-  <footer class="site-footer">
-    <p>MultimeterLab · DC Voltage Practice Simulator · ⚡</p>
-  </footer>
+  </div>
 
-  <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MultimeterLab – Understanding Scale Ticks</title>
+  <meta name="description" content="Interactive tutorial for reading analog multimeter scale divisions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ────────────────────────────────────────────────────────
+       TUTORIAL SPECIFIC STYLES
+       ──────────────────────────────────────────────────────── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      padding: 6px 12px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      align-self: flex-start;
+      margin-bottom: 2px;
+    }
+    .back-link:hover {
+      color: var(--purple-400);
+      border-color: var(--purple-500);
+      background: rgba(109, 40, 217, 0.08);
+      transform: translateX(-2px);
+    }
+
+    .tutorial-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    .tutorial-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 6px;
+    }
+    .tutorial-title {
+      font-size: 1.15rem;
+      color: #fff;
+      font-weight: 600;
+    }
+    .tutorial-text {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
+    .tick-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .legend-item {
+      display: flex;
+      gap: 12px;
+      background: #09091a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+    .legend-item:hover {
+      border-color: rgba(255,255,255,0.1);
+    }
+    .legend-indicator {
+      width: 4px;
+      border-radius: 2px;
+      align-self: stretch;
+      flex-shrink: 0;
+    }
+    .ind-major { background: var(--accent-cyan); }
+    .ind-half  { background: var(--purple-400); }
+    .ind-minor { background: var(--text-muted); }
+
+    .legend-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .legend-title-text {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .legend-desc-text {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+
+    /* Quiz Panel Styling */
+    .quiz-card {
+      background: linear-gradient(135deg, rgba(16, 16, 37, 0.7), rgba(8, 8, 20, 0.7));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .quiz-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--accent-amber);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .quiz-question {
+      font-size: 0.84rem;
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+    .quiz-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .quiz-input {
+      background: #05050f;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      padding: 8px 12px;
+      width: 110px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .quiz-input:focus {
+      outline: none;
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    }
+    .quiz-unit {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+    .quiz-btn {
+      background: linear-gradient(135deg, #78350f, #92400e);
+      border: 1px solid #b45309;
+      color: #fef3c7;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      flex: 1;
+      text-align: center;
+    }
+    .quiz-btn:hover {
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+      color: #fff;
+    }
+    .quiz-feedback {
+      font-size: 0.82rem;
+      line-height: 1.4;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      display: none;
+    }
+    .quiz-feedback.correct {
+      display: block;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+    }
+    .quiz-feedback.incorrect {
+      display: block;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+    }
+
+    /* Hovering Scale Tooltip overlay */
+    .scale-overlay-text {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      fill: var(--accent-cyan);
+    }
+
+    .interactive-hint {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: -6px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <main class="main-content">
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--   LEFT: Interactive Scale Board            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="panel meter-panel" aria-label="Interactive scale explorer">
+      <div class="panel-label">INTERACTIVE SCALE EXPLORER</div>
+
+      <div class="meter-wrapper">
+        <svg id="multimeter-svg" viewBox="0 0 460 380"
+             xmlns="http://www.w3.org/2000/svg"
+             role="img" aria-label="Interactive scale helper">
+          <defs>
+            <clipPath id="wclip">
+              <rect x="14" y="9" width="432" height="310" rx="7"/>
+            </clipPath>
+            <linearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#f4f0da"/>
+              <stop offset="100%" stop-color="#ece7cc"/>
+            </linearGradient>
+            <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="white" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="white" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- ── METER WINDOW FRAME ── -->
+          <rect x="0" y="0" width="460" height="380" rx="16" fill="#141414"/>
+          <rect x="2" y="2" width="456" height="376" rx="14" fill="#222"/>
+
+          <!-- Window Inner Face -->
+          <rect x="10" y="10" width="440" height="328" rx="11"
+                fill="#0f0f0f" stroke="#4a4a4a" stroke-width="1.5"/>
+          <rect x="14" y="14" width="432" height="320" rx="7" fill="url(#faceGrad)"/>
+
+          <!-- Scale Content -->
+          <g clip-path="url(#wclip)">
+            <!-- Outer divider arc mirror reference -->
+            <path id="scale-mirror-arc" fill="none" stroke="#bab69e" stroke-width="5.5" opacity="0.5" />
+            <path id="scale-mirror-arc-shadow" fill="none" stroke="#666" stroke-width="0.5" opacity="0.45" />
+
+            <!-- Row dividers -->
+            <g id="row-dividers-group"></g>
+
+            <!-- Ticks group (interactive target) -->
+            <g id="scale-ticks-group"></g>
+            <!-- Labels group -->
+            <g id="scale-labels-group"></g>
+
+            <!-- Text labels -->
+            <text x="24"  y="65" font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
+            <text x="432" y="65" text-anchor="end" font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
+            <text x="230" y="295" text-anchor="middle" font-family="Arial Narrow,Arial" font-size="9" font-weight="700" fill="#444" letter-spacing="1">±DCV TICK STUDY</text>
+
+            <!-- Overlay text for hovered tick info -->
+            <rect x="110" y="306" width="240" height="20" rx="4" fill="#0d0d0d" opacity="0.85" stroke="#333" stroke-width="0.8" />
+            <text id="hover-readout" x="230" y="316" text-anchor="middle" dominant-baseline="central"
+                  font-family="Share Tech Mono,monospace" font-size="11" font-weight="700" fill="#fbbf24">HOVER OVER ANY TICK TO STUDY</text>
+
+            <!-- Quiz Arrow Pointer (visible during quiz) -->
+            <g id="quiz-pointer-group" display="none">
+              <!-- Animated / highlighted path -->
+              <path id="quiz-arrow" d="M230,120 L230,85" stroke="#d97706" stroke-width="3.5" stroke-linecap="round" fill="none" />
+              <polygon id="quiz-arrow-head" points="230,76 225,89 235,89" fill="#d97706" />
+            </g>
+
+            <!-- Glass glare -->
+            <rect x="14" y="14" width="432" height="110" rx="7" fill="url(#glassGrad)" opacity="0.6"/>
+          </g>
+
+          <rect x="14" y="14" width="432" height="320" rx="7"
+                fill="none" stroke="#7a7660" stroke-width="0.8"/>
+        </svg>
+      </div>
+
+      <div class="interactive-hint">
+        💡 Hover your cursor over the tick lines on the scale to inspect their exact values.
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--   RIGHT: Tutorial & Quiz                   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="panel controls-panel" aria-label="Scale tutorial content">
+      
+      <!-- Back Link -->
+      <a href="index.html" class="back-link">
+        <span>←</span> Back to Lessons
+      </a>
+
+      <!-- Range Selector -->
+      <div class="control-group">
+        <h2 class="control-title"><span class="ctrl-icon">🎚️</span> DC Voltage Range</h2>
+        <div class="range-grid" id="range-buttons" role="group" aria-label="DC voltage range selector">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Tutorial Content -->
+      <div class="control-group">
+        <div class="tutorial-container">
+          <div class="tutorial-header">
+            <h3 class="tutorial-title">Reading Division Marks</h3>
+          </div>
+          
+          <p class="tutorial-text">
+            On this analog scale, there are <strong>10 major intervals</strong> (marked by the long ticks and numbers 0 to 10). 
+            Between each major division, there are <strong>10 minor subdivisions</strong>.
+          </p>
+
+          <div class="tick-legend">
+            <div class="legend-item">
+              <div class="legend-indicator ind-major"></div>
+              <div class="legend-content">
+                <span class="legend-title-text">Major Tick (Numbered)</span>
+                <span class="legend-desc-text" id="leg-maj-val">Value: 1.0 V (on 10V range)</span>
+              </div>
+            </div>
+            
+            <div class="legend-item">
+              <div class="legend-indicator ind-half"></div>
+              <div class="legend-content">
+                <span class="legend-title-text">Half-Minor Tick (Bold Middle)</span>
+                <span class="legend-desc-text" id="leg-half-val">Value: 0.5 V (on 10V range)</span>
+              </div>
+            </div>
+
+            <div class="legend-item">
+              <div class="legend-indicator ind-minor"></div>
+              <div class="legend-content">
+                <span class="legend-title-text">Minor Tick (Short Lines)</span>
+                <span class="legend-desc-text" id="leg-min-val">Value: 0.1 V (on 10V range)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scale Quiz -->
+      <div class="quiz-card">
+        <h3 class="quiz-title"><span>📝</span> Self-Check Quiz</h3>
+        <p class="quiz-question" id="quiz-question-text">
+          Select a range above, then press <strong>New Question</strong> to start.
+        </p>
+        
+        <div class="quiz-input-row" id="quiz-controls" style="display:none;">
+          <input type="number" step="0.01" class="quiz-input" id="quiz-user-input" placeholder="0.00" aria-label="Enter voltage reading value" />
+          <span class="quiz-unit">V</span>
+          <button class="quiz-btn" id="quiz-submit-btn">Check</button>
+        </div>
+
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="btn btn-new" id="quiz-next-btn" style="margin-top: 4px;">🔀 New Question</button>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>MultimeterLab Academy · Interactive Theory Module · ⚡</p>
+  </footer>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // 1. CONFIG & RANGES
+    // ─────────────────────────────────────────────
+    const RANGES = [
+      { id:'dcv-5',    label:'5',    display:'5 V',    fullScale:5,    unit:'V DC', decimalPlaces:2 },
+      { id:'dcv-10',   label:'10',   display:'10 V',   fullScale:10,   unit:'V DC', decimalPlaces:2 },
+      { id:'dcv-50',   label:'50',   display:'50 V',   fullScale:50,   unit:'V DC', decimalPlaces:1 },
+      { id:'dcv-1000', label:'1000', display:'1000 V', fullScale:1000, unit:'V DC', decimalPlaces:0 }
+    ];
+
+    const SC = {
+      cx: 230, cy: 300,
+      r: 250, rMirror: 254,
+      aMin: -65, aMax: 65
+    };
+
+    const SCALE_ROWS = [
+      { rangeId:'dcv-1000', labelR:220 },
+      { rangeId:'dcv-5',    labelR:206 },
+      { rangeId:'dcv-50',   labelR:192 },
+      { rangeId:'dcv-10',   labelR:178 },
+    ];
+    const SEP_RADII = [228, 213, 199, 185, 171];
+
+    let currentRangeId = 'dcv-10';
+    let quizActive = false;
+    let quizTargetIndex = 0; // Tick index 0 to 100
+    let quizTargetValue = 0;
+
+    function curRange() {
+      return RANGES.find(r => r.id === currentRangeId);
+    }
+
+    // ─────────────────────────────────────────────
+    // 2. COORDINATE HELPERS
+    // ─────────────────────────────────────────────
+    function p2xy(angleDeg, r) {
+      const rad = angleDeg * Math.PI / 180;
+      return { x: SC.cx + r * Math.sin(rad), y: SC.cy - r * Math.cos(rad) };
+    }
+    function fToAngle(f) {
+      return SC.aMin + f * (SC.aMax - SC.aMin);
+    }
+    function fmt(val, range) {
+      return val.toFixed(range.decimalPlaces);
+    }
+    function fmtLabel(rawVal, range) {
+      if (rawVal === 0) return '0';
+      if (range.decimalPlaces === 0) return Math.round(rawVal).toString();
+      if (range.decimalPlaces === 1) {
+        const s = rawVal.toFixed(1);
+        return s.endsWith('.0') ? Math.round(rawVal).toString() : s;
+      }
+      return rawVal.toFixed(2).replace(/\.?0+$/, '');
+    }
+    function svgEl(tag) {
+      return document.createElementNS('http://www.w3.org/2000/svg', tag);
+    }
+
+    // ─────────────────────────────────────────────
+    // 3. DRAW GRAPHICS
+    // ─────────────────────────────────────────────
+    function initScaleArcs() {
+      const mirArc = document.getElementById('scale-mirror-arc');
+      const mirArcSh = document.getElementById('scale-mirror-arc-shadow');
+      
+      mirArc.setAttribute('d', buildArcPathD(SC.rMirror, SC.aMin, SC.aMax, 80));
+      mirArcSh.setAttribute('d', buildArcPathD(SC.rMirror - 4, SC.aMin, SC.aMax, 80));
+
+      const divGrp = document.getElementById('row-dividers-group');
+      divGrp.innerHTML = '';
+      SEP_RADII.forEach(r => {
+        const path = svgEl('path');
+        path.setAttribute('d', buildArcPathD(r, SC.aMin, SC.aMax, 80));
+        path.setAttribute('stroke', '#888');
+        path.setAttribute('stroke-width', '0.55');
+        path.setAttribute('opacity', '0.35');
+        path.setAttribute('fill', 'none');
+        divGrp.appendChild(path);
+      });
+    }
+
+    function buildArcPathD(r, aMin, aMax, steps) {
+      let d = '';
+      for (let i = 0; i <= steps; i++) {
+        const a = aMin + (aMax - aMin) * (i / steps);
+        const p = p2xy(a, r);
+        d += (i === 0 ? 'M' : 'L') + `${p.x.toFixed(2)},${p.y.toFixed(2)} `;
+      }
+      return d;
+    }
+
+    function drawScale() {
+      const tickGrp = document.getElementById('scale-ticks-group');
+      const lblGrp  = document.getElementById('scale-labels-group');
+      tickGrp.innerHTML = lblGrp.innerHTML = '';
+
+      const activeRange = curRange();
+
+      // Render Ticks (interactive hover zones)
+      const TOTAL = 100;
+      for (let i = 0; i <= TOTAL; i++) {
+        const f     = i / TOTAL;
+        const angle = fToAngle(f);
+        const isMaj = (i % 10 === 0);
+        const isHalf= (i % 10 === 5);
+        const rIn   = isMaj ? 228 : (isHalf ? 239 : 246);
+        
+        // Draw tick line
+        const outer = p2xy(angle, SC.r);
+        const inner = p2xy(angle, rIn);
+        const ln = svgEl('line');
+        ln.setAttribute('x1', outer.x.toFixed(2));
+        ln.setAttribute('y1', outer.y.toFixed(2));
+        ln.setAttribute('x2', inner.x.toFixed(2));
+        ln.setAttribute('y2', inner.y.toFixed(2));
+        ln.setAttribute('stroke', isMaj ? '#1c1c1c' : (isHalf ? '#1c1c1c' : '#404040'));
+        ln.setAttribute('stroke-width', isMaj ? '1.8' : (isHalf ? '1.35' : '0.75'));
+        ln.setAttribute('stroke-linecap', 'round');
+        tickGrp.appendChild(ln);
+
+        // Draw invisible wide hover receiver line to make hovering super easy for touch / mouse
+        const hoverLn = svgEl('line');
+        hoverLn.setAttribute('x1', outer.x.toFixed(2));
+        hoverLn.setAttribute('y1', outer.y.toFixed(2));
+        hoverLn.setAttribute('x2', inner.x.toFixed(2));
+        hoverLn.setAttribute('y2', inner.y.toFixed(2));
+        hoverLn.setAttribute('stroke', 'transparent');
+        hoverLn.setAttribute('stroke-width', '6');
+        hoverLn.setAttribute('cursor', 'pointer');
+        
+        // Hover interactive event listeners
+        hoverLn.addEventListener('mouseenter', () => {
+          ln.setAttribute('stroke', 'var(--purple-500)');
+          if (isMaj) ln.setAttribute('stroke-width', '2.8');
+          else if (isHalf) ln.setAttribute('stroke-width', '2.4');
+          else ln.setAttribute('stroke-width', '1.8');
+          
+          showTickInfo(i);
+        });
+
+        hoverLn.addEventListener('mouseleave', () => {
+          ln.setAttribute('stroke', isMaj ? '#1c1c1c' : (isHalf ? '#1c1c1c' : '#404040'));
+          ln.setAttribute('stroke-width', isMaj ? '1.8' : (isHalf ? '1.35' : '0.75'));
+          resetTickInfo();
+        });
+
+        tickGrp.appendChild(hoverLn);
+      }
+
+      // Draw Multi-row labels
+      SCALE_ROWS.forEach(row => {
+        const range    = RANGES.find(r => r.id === row.rangeId);
+        const isActive = row.rangeId === activeRange.id;
+        const fillCol  = isActive ? '#0d0d0d' : '#b8b099';
+        const fSize    = isActive ? '8.5' : '7';
+        const fWeight  = isActive ? '700' : '400';
+
+        for (let i = 0; i <= 10; i++) {
+          const f      = i / 10;
+          const angle  = fToAngle(f);
+          const rawVal = f * range.fullScale;
+          const pos    = p2xy(angle, row.labelR);
+          const txt    = svgEl('text');
+          txt.setAttribute('x',                 pos.x.toFixed(2));
+          txt.setAttribute('y',                 pos.y.toFixed(2));
+          txt.setAttribute('text-anchor',       'middle');
+          txt.setAttribute('dominant-baseline', 'central');
+          txt.setAttribute('font-family',       'Arial Narrow, Arial, sans-serif');
+          txt.setAttribute('font-size',         fSize);
+          txt.setAttribute('font-weight',       fWeight);
+          txt.setAttribute('fill',              fillCol);
+          txt.textContent = fmtLabel(rawVal, range);
+          lblGrp.appendChild(txt);
+        }
+
+        const rEdge   = p2xy(SC.aMax + 3.5, row.labelR);
+        const edgeLbl = svgEl('text');
+        edgeLbl.setAttribute('x',                 rEdge.x.toFixed(2));
+        edgeLbl.setAttribute('y',                 rEdge.y.toFixed(2));
+        edgeLbl.setAttribute('text-anchor',       'start');
+        edgeLbl.setAttribute('dominant-baseline', 'central');
+        edgeLbl.setAttribute('font-family',       'Arial Narrow, Arial, sans-serif');
+        edgeLbl.setAttribute('font-size',         isActive ? '6.5' : '5.5');
+        edgeLbl.setAttribute('font-weight',       isActive ? '700' : '400');
+        edgeLbl.setAttribute('fill',              isActive ? '#444' : '#ccc');
+        edgeLbl.textContent = `${range.fullScale}V`;
+        lblGrp.appendChild(edgeLbl);
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // 4. INTERACTION LOGIC
+    // ─────────────────────────────────────────────
+    function showTickInfo(index) {
+      if (quizActive) return; // ignore during quiz
+      
+      const range = curRange();
+      const val = (index / 100) * range.fullScale;
+      let tickName = "Minor Tick";
+      if (index % 10 === 0) tickName = "Major Tick";
+      else if (index % 10 === 5) tickName = "Half-Minor Tick (Midpoint)";
+
+      const readout = document.getElementById('hover-readout');
+      readout.textContent = `${tickName} #${index} = ${fmt(val, range)} V`;
+      readout.setAttribute('fill', 'var(--accent-cyan)');
+    }
+
+    function resetTickInfo() {
+      if (quizActive) return;
+      const readout = document.getElementById('hover-readout');
+      readout.textContent = "HOVER OVER ANY TICK TO STUDY";
+      readout.setAttribute('fill', '#fbbf24');
+    }
+
+    function updateLegend() {
+      const range = curRange();
+      const majVal = range.fullScale / 10;
+      const minVal = majVal / 10;
+      const halfVal = majVal / 2;
+
+      document.getElementById('leg-maj-val').textContent = `Value: ${fmt(majVal, range)} V  (each numbered tick)`;
+      document.getElementById('leg-half-val').textContent = `Value: ${fmt(halfVal, range)} V  (bold middle mark)`;
+      document.getElementById('leg-min-val').textContent = `Value: ${fmt(minVal, range)} V  (smallest division)`;
+    }
+
+    // ─────────────────────────────────────────────
+    // 5. QUIZ LOGIC
+    // ─────────────────────────────────────────────
+    function newQuizQuestion() {
+      quizActive = true;
+      
+      const range = curRange();
+      
+      // Select a random tick index (avoid 0 and 100 since they are too easy, choose between 5 and 95)
+      quizTargetIndex = Math.floor(Math.random() * 91) + 5;
+      
+      // Calculate answer
+      quizTargetValue = (quizTargetIndex / 100) * range.fullScale;
+
+      // Position the pointer arrow
+      const angle = fToAngle(quizTargetIndex / 100);
+      const ptr = document.getElementById('quiz-pointer-group');
+      ptr.setAttribute('transform', `rotate(${angle.toFixed(2)}, ${SC.cx}, ${SC.cy})`);
+      ptr.setAttribute('display', 'block');
+
+      // Update question text
+      const readout = document.getElementById('hover-readout');
+      readout.textContent = `🎯 IDENTIFY HIGH-LIGHTED TICK`;
+      readout.setAttribute('fill', 'var(--accent-amber)');
+
+      document.getElementById('quiz-question-text').innerHTML = `
+        Look at the highlighted tick pointed to by the <strong>amber arrow</strong>. 
+        What is its value if the range is set to <strong>${range.display}</strong>?
+      `;
+
+      // Reset controls
+      document.getElementById('quiz-controls').style.display = 'flex';
+      const userInput = document.getElementById('quiz-user-input');
+      userInput.value = '';
+      userInput.focus();
+      
+      // Hide feedback
+      const feedback = document.getElementById('quiz-feedback');
+      feedback.style.display = 'none';
+      feedback.className = 'quiz-feedback';
+    }
+
+    function checkQuizAnswer() {
+      if (!quizActive) return;
+
+      const range = curRange();
+      const userInput = parseFloat(document.getElementById('quiz-user-input').value);
+      const feedback = document.getElementById('quiz-feedback');
+
+      if (isNaN(userInput)) {
+        feedback.textContent = "⚠ Please enter a numeric reading value.";
+        feedback.className = "quiz-feedback incorrect";
+        feedback.style.display = "block";
+        return;
+      }
+
+      // Check with tolerance based on decimal places (or exact value matching)
+      const diff = Math.abs(userInput - quizTargetValue);
+      const tolerance = range.fullScale / 500; // tiny tolerance for floating points
+      
+      const correctValStr = fmt(quizTargetValue, range);
+
+      if (diff <= tolerance) {
+        feedback.innerHTML = `🎉 <strong>Correct!</strong> The reading is exactly <strong>${correctValStr} V</strong>.<br/>` +
+                             `Index #${quizTargetIndex} on the scale = (${quizTargetIndex}/100) × ${range.fullScale}V = ${correctValStr}V.`;
+        feedback.className = "quiz-feedback correct";
+        feedback.style.display = "block";
+        
+        // Stop quiz highlight
+        quizActive = false;
+        document.getElementById('quiz-pointer-group').setAttribute('display', 'none');
+        document.getElementById('quiz-controls').style.display = 'none';
+        resetTickInfo();
+      } else {
+        feedback.innerHTML = `❌ <strong>Incorrect.</strong> Your answer: ${userInput} V. Try again!<br/>` +
+                             `<em>Hint: Count how many minor divisions it is from the nearest major number.</em>`;
+        feedback.className = "quiz-feedback incorrect";
+        feedback.style.display = "block";
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // 6. BUILD RANGE SELECTOR
+    // ─────────────────────────────────────────────
+    function selectRange(rangeId) {
+      currentRangeId = rangeId;
+      
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        const active = btn.dataset.rid === rangeId;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', String(active));
+      });
+
+      drawScale();
+      updateLegend();
+
+      if (quizActive) {
+        // Recalculate quiz value for new range scale
+        const range = curRange();
+        quizTargetValue = (quizTargetIndex / 100) * range.fullScale;
+        newQuizQuestion(); // reset quiz for new range context
+      }
+    }
+
+    function buildRangeButtons() {
+      const container = document.getElementById('range-buttons');
+      RANGES.forEach(range => {
+        const btn = document.createElement('button');
+        btn.className   = 'range-btn' + (range.id === currentRangeId ? ' active' : '');
+        btn.dataset.rid = range.id;
+        btn.setAttribute('aria-pressed', String(range.id === currentRangeId));
+        btn.textContent = range.display;
+        btn.addEventListener('click', () => selectRange(range.id));
+        container.appendChild(btn);
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // 7. INIT
+    // ─────────────────────────────────────────────
+    function init() {
+      buildRangeButtons();
+      initScaleArcs();
+      drawScale();
+      updateLegend();
+
+      document.getElementById('quiz-next-btn').addEventListener('click', newQuizQuestion);
+      document.getElementById('quiz-submit-btn').addEventListener('click', checkQuizAnswer);
+
+      // Support enter key on quiz input
+      document.getElementById('quiz-user-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkQuizAnswer();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

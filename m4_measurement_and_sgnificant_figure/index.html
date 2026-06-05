@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ฟิสิกส์ ม.4 | การวัดและเลขนัยสำคัญ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background decorations -->
+  <div class="bg-grid"></div>
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+
+  <div class="presentation-container">
+    <div class="slides-container">
+
+      <!-- SLIDE 0: TITLE -->
+      <section class="slide active" id="slide-0">
+        <div class="slide-header">
+          <div class="topic-label">Intro to Physics</div>
+          <div class="slide-number">0 / 8</div>
+        </div>
+        <div class="title-slide-layout">
+          <div class="badge">ฟิสิกส์ ม. 4</div>
+          <h1>บทนำ <span>การวัดและเลขนัยสำคัญ</span></h1>
+          <p>วิธีการบันทึกข้อมูลผลที่ได้จากการวัดทางฟิสิกส์</p>
+          <div style="font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
+            <span>ใช้ปุ่ม <kbd class="key-badge">←</kbd> <kbd class="key-badge">→</kbd> หรือกด Spacebar บนคีย์บอร์ดเพื่อเปลี่ยนหน้าสไลด์</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 1: MEASUREMENT ON RULER -->
+      <section class="slide" id="slide-1">
+        <div class="slide-header">
+          <div class="topic-label">1. การอ่านค่าเครื่องมือวัด</div>
+          <div class="slide-number">1 / 8</div>
+        </div>
+        <h2 class="slide-title">การวัดและการประมาณบนสเกลไม้บรรทัด</h2>
+        <div class="slide-content-wrapper grid-2col">
+          <div class="content-card accent-border">
+            <h3>การอ่านค่าจากเครื่องมือวัดที่มีสเกล</h3>
+            <p class="body-text">การอ่านค่าจากเครื่องมือวัดที่มีสเกล เช่น ไม้บรรทัด เราต้องบันทึกตัวเลข 2 ส่วนรวมกันเสมอ:</p>
+            <div class="info-box success-box">
+              <strong>1. ค่าที่อ่านได้โดยตรง (Direct Reading):</strong> อ่านจากขีดสเกลที่เห็นได้ชัดเจนที่สุด<br>
+              <strong>2. ค่าที่ต้องประมาณ (Estimated Digit):</strong> ประมาณด้วยสายตาเพิ่มอีก 1 ตำแหน่ง (1/10 ของช่องสเกลย่อยที่สุด)
+            </div>
+            <p class="body-text"><strong>ค่าบันทึกจริง = ค่าที่อ่านตรง + ค่าประมาณ</strong></p>
+            
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>หลักที่อ่านตรง</th>
+                  <th>หลักที่ต้องประมาณ</th>
+                  <th>ตัวอย่างการอ่าน</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>หลักพัน</td>
+                  <td>หลักร้อย (100)</td>
+                  <td>4,5<strong>x</strong>0</td>
+                </tr>
+                <tr>
+                  <td>หลักร้อย</td>
+                  <td>หลักสิบ (10)</td>
+                  <td>45<strong>x</strong></td>
+                </tr>
+                <tr>
+                  <td>หลักสิบ</td>
+                  <td>หลักหน่วย (1)</td>
+                  <td>4<strong>x</strong></td>
+                </tr>
+                <tr>
+                  <td>หลักหน่วย</td>
+                  <td>ทศนิยมตำแหน่งที่ 1 (0.1)</td>
+                  <td>4.<strong>x</strong></td>
+                </tr>
+                <tr>
+                  <td>ทศนิยมตำแหน่งที่ 1</td>
+                  <td>ทศนิยมตำแหน่งที่ 2 (0.01)</td>
+                  <td>0.4<strong>x</strong></td>
+                </tr>
+                <tr>
+                  <td>ทศนิยมตำแหน่งที่ 2</td>
+                  <td>ทศนิยมตำแหน่งที่ 3 (0.001)</td>
+                  <td>0.04<strong>x</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="ruler-container">
+            <div class="content-card">
+              <h3>ตัวอย่างการวัด</h3>
+              <p class="body-text" style="font-size: 0.85rem;">คลิกค้างแล้วลากกล่องสีฟ้าเพื่อขยายขนาดวัตถุ จากนั้นเลือกสเกลไม้บรรทัดเพื่อดูความละเอียดในการอ่านค่าที่เปลี่ยนไป</p>
+              
+              <div class="ruler-controls">
+                <div class="control-group">
+                  <div class="btn-group">
+                    <button class="control-btn" data-scale="thousands">ขีดละ 1,000</button>
+                    <button class="control-btn" data-scale="hundreds">ขีดละ 100</button>
+                    <button class="control-btn" data-scale="tens">ขีดละ 10</button>
+                    <button class="control-btn active" data-scale="ones">ขีดละ 1 (cm)</button>
+                    <button class="control-btn" data-scale="tenths">ขีดละ 0.1 (mm)</button>
+                    <button class="control-btn" data-scale="hundredths">ขีดละ 0.01</button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="scale-description" style="font-weight: 700; color: var(--primary); font-size: 0.9rem; margin-top: 1rem; text-align: center; margin-bottom: 4rem;">
+                สเกลละเอียดที่สุด: หลักหน่วย (ขีดละ 1)
+              </div>
+
+              <div class="virtual-ruler" id="virtual-ruler">
+                <div class="ruler-ticks" id="ruler-ticks"></div>
+                <div class="draggable-object" id="draggable-object">
+                  <div class="object-label">วัตถุที่จะวัด (ลากขยายขวา →)</div>
+                  <div class="object-drag-handle"></div>
+                </div>
+              </div>
+
+              <div class="ruler-readout">
+                <div class="readout-card">
+                  <div class="lbl">อ่านตรงจากสเกล</div>
+                  <div class="val" id="ruler-direct-readout">4.0 cm</div>
+                </div>
+                <div class="readout-card accent-card">
+                  <div class="lbl">ค่าประมาณสายตา</div>
+                  <div class="val" id="ruler-estimated-readout">0.5 cm</div>
+                </div>
+                <div class="readout-card primary-card" style="grid-column: span 2;">
+                  <div class="lbl">ค่าที่อ่านได้ทั้งหมด (ค่าอ่านตรง + ค่าประมาณ)</div>
+                  <div class="val" id="ruler-final-readout">4.0 + 0.5 = 4.5 cm</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: DEFINITION OF SIGNIFICANT FIGURES -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="topic-label">2. นิยามของเลขนัยสำคัญ</div>
+          <div class="slide-number">2 / 8</div>
+        </div>
+        <h2 class="slide-title">เลขนัยสำคัญ (Significant Figures) คืออะไร?</h2>
+        <div class="slide-content-wrapper grid-equal">
+          <div class="content-card accent-border">
+            <h3>ความหมาย</h3>
+            <p class="lead"><strong>เลขนัยสำคัญ</strong> คือ ตัวเลขที่ได้จากการวัดจริง ๆ ในกระบวนการทางวิทยาศาสตร์ ซึ่งประกอบด้วย <u>ตัวเลขที่อ่านได้ตรงจากเครื่องมือ</u> และ <u>ตัวเลขที่ประมาณขึ้นมาด้วยสายตาอีก 1 ตัว</u> เท่านั้น</p>
+            <div class="info-box">
+              <p class="body-text">เลขนัยสำคัญเป็นตัวบ่งบอก <strong>"ความละเอียดของเครื่องมือวัด"</strong> ยิ่งเลขนัยสำคัญมีจำนวนหลักมาก แสดงว่าใช้เครื่องมือวัดที่มีความละเอียดสูงขึ้น</p>
+            </div>
+            <p class="body-text" style="color: var(--accent); font-weight: 600;">
+              *จำไว้เสมอ: ตัวเลขทุกตัวจากการวัดมีความหมายในทางฟิสิกส์ ไม่ใช่แค่ทศนิยมตกแต่ง!
+            </p>
+          </div>
+
+          <div class="content-card">
+            <h3>ความต่างระหว่าง คณิตศาสตร์ vs ฟิสิกส์</h3>
+            <p class="body-text">ในเชิงคณิตศาสตร์ ค่าของตัวเลขเหล่านี้เท่ากันทุกประการ แต่ในทางฟิสิกส์มีความหมายที่แตกต่างกันอย่างสิ้นเชิง:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+              <div class="info-box" style="display: grid; grid-template-columns: 120px 1fr; align-items: center; border-left: 4px solid var(--text-muted);">
+                <div style="font-family: var(--font-title); font-size: 1.5rem; font-weight: 800;">2 cm</div>
+                <div>
+                  <strong>เลขนัยสำคัญ 1 ตัว</strong> (หลักหน่วยเป็นค่าประมาณ)<br>
+                  <span style="font-size: 0.85rem; color: var(--text-muted);">วัดด้วยไม้บรรทัดหยาบมาก ไม่มีขีดทศนิยมเลย</span>
+                </div>
+              </div>
+
+              <div class="info-box" style="display: grid; grid-template-columns: 120px 1fr; align-items: center; border-left: 4px solid var(--primary);">
+                <div style="font-family: var(--font-title); font-size: 1.5rem; font-weight: 800; color: var(--primary);">2.0 cm</div>
+                <div>
+                  <strong>เลขนัยสำคัญ 2 ตัว</strong> (ทศนิยมตำแหน่งที่ 1 เป็นค่าประมาณ)<br>
+                  <span style="font-size: 0.85rem; color: var(--text-muted);">วัดด้วยไม้บรรทัดทั่วไปที่มีขีดแบ่งละเอียดทุก 1 ซม.</span>
+                </div>
+              </div>
+
+              <div class="info-box" style="display: grid; grid-template-columns: 120px 1fr; align-items: center; border-left: 4px solid var(--secondary);">
+                <div style="font-family: var(--font-title); font-size: 1.5rem; font-weight: 800; color: var(--secondary);">2.00 cm</div>
+                <div>
+                  <strong>เลขนัยสำคัญ 3 ตัว</strong> (ทศนิยมตำแหน่งที่ 2 เป็นค่าประมาณ)<br>
+                  <span style="font-size: 0.85rem; color: var(--text-muted);">วัดด้วยไม้บรรทัดละเอียดพิเศษขีดละเอียดทุก 1 มิลลิเมตร (0.1 cm)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: COUNTING RULES WITH LIVE TOOL -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="topic-label">3. หลักการนับเลขนัยสำคัญ</div>
+          <div class="slide-number">3 / 8</div>
+        </div>
+        <h2 class="slide-title">หลักการนับเลขนัยสำคัญ (Counting Rules)</h2>
+        <div class="slide-content-wrapper grid-2col">
+          <div class="content-card accent-border" style="font-size: 0.9rem; padding: 1.5rem;">
+            <h3>สรุปกฎการนับเลขนัยสำคัญ</h3>
+            <ol>
+              <li><strong>เลขทุกตัวที่ไม่ใช่ 0 ให้นับหมด</strong>
+                <ul>
+                  <li><em>ตัวอย่าง:</em> <span class="math-var">458</span> → 3 ตัว, <span class="math-var">1.234</span> → 4 ตัว</li>
+                </ul>
+              </li>
+              <li><strong>กรณีของเลข 0 มีกฎ 3 ข้อดังนี้:</strong>
+                <ul>
+                  <li><strong>2.1 เลข 0 ด้านหน้า (ซ้ายสุด) ไม่นับ!</strong> ทำหน้าที่แค่ทศนิยมบอกขนาดหลัก
+                    <br><em>ตัวอย่าง:</em> <span style="text-decoration: line-through; color: #94a3b8;">0.00</span><span class="math-var">35</span> → 2 ตัว
+                  </li>
+                  <li><strong>2.2 เลข 0 ตรงกลาง (ระหว่างตัวอื่น) ให้นับเสมอ!</strong>
+                    <br><em>ตัวอย่าง:</em> <span class="math-var">4</span>0<span class="math-var">5</span> → 3 ตัว, <span class="math-var">1.</span>00<span class="math-var">9</span> → 4 ตัว
+                  </li>
+                  <li><strong>2.3 เลข 0 ด้านหลัง (ขวาสุด):</strong>
+                    <ul>
+                      <li><strong>จำนวนเต็ม:</strong> นับหรือไม่นับก็ได้ (คลุมเครือ) ควรหลีกเลี่ยงโดยเขียนในรูป <u>สัญกรณ์วิทยาศาสตร์</u>
+                        <br><em>ตัวอย่าง:</em> <span class="math-var">4500</span> อาจเป็น 2, 3 หรือ 4 ตัว
+                        <br>(4.5 × 10<sup>3</sup> → 2 ตัว, 4.50 × 10<sup>3</sup> → 3 ตัว, 4.500 × 10<sup>3</sup> → 4 ตัว)
+                      </li>
+                      <li><strong>ทศนิยม:</strong> <u>ให้นับเสมอ</u> เพราะแสดงถึงความละเอียดตั้งใจวัด
+                        <br><em>ตัวอย่าง:</em> <span class="math-var">2.3</span>0 → 3 ตัว, <span style="text-decoration: line-through; color: #94a3b8;">0.0</span><span class="math-var">5</span>00 → 3 ตัว
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+
+          <div class="sigfig-container">
+            <div class="content-card">
+              <h3>ทดลองตรวจสอบเลขนัยสำคัญ</h3>
+              <p class="body-text" style="font-size: 0.85rem;">กรอกตัวเลขใด ๆ ด้านล่างเพื่อวิเคราะห์จำนวนและหลักเลขนัยสำคัญ:</p>
+              
+              <div class="sigfig-input-wrapper">
+                <input type="text" id="sigfig-input" value="0.04050" placeholder="พิมพ์ตัวเลข เช่น 0.04050, 4500, 1.2 x 10^3">
+              </div>
+
+              <div class="sigfig-visualizer" id="sigfig-visualizer">
+                <!-- Javascript will populate this -->
+              </div>
+
+              <div class="sigfig-results">
+                <div class="sf-count-box">
+                  <div class="sf-number" id="sf-count">4</div>
+                  <div class="sf-lbl">เลขนัยสำคัญ (ตัว)</div>
+                </div>
+                <div class="sf-explanation-box">
+                  <strong>เหตุผลหลักการนับ:</strong>
+                  <ul id="sf-rules" style="margin: 0; padding-left: 1rem; font-size: 0.85rem;">
+                    <!-- Javascript will populate this -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: ADDITION & SUBTRACTION -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="topic-label">4. การบวกและลบเลขนัยสำคัญ</div>
+          <div class="slide-number">4 / 8</div>
+        </div>
+        <h2 class="slide-title">หลักการบวกและลบเลขนัยสำคัญ</h2>
+        <div class="slide-content-wrapper grid-equal">
+          <div class="content-card accent-border">
+            <h3>กฎสำคัญ: ยึด "ตำแหน่งทศนิยม" ที่น้อยที่สุด</h3>
+            <p class="lead">ผลลัพธ์จากการบวกและลบตัวเลขที่ได้จากการวัด จะต้องมี <strong>จำนวนตำแหน่งทศนิยมเท่ากับตัวตั้งที่มีจำนวนทศนิยมน้อยที่สุด</strong></p>
+            <div class="info-box success-box">
+              <strong>สาเหตุ</strong><br>
+              คำตอบจะมีความละเอียดเกินกว่าเครื่องมือวัดที่หยาบที่สุดที่นำมาบวกลบกันไม่ได้ ข้อมูลจะมีความน่าเชื่อถือสูงสุดที่ตำแหน่งนั้นเท่านั้น
+            </div>
+            <div class="info-box accent-box">
+              <strong>วิธีคำนวณ:</strong>
+              <ol style="margin-bottom: 0; padding-left: 1.25rem; font-size: 0.9rem;">
+                <li>ตั้งหลักและจุดทศนิยมให้ตรงกัน</li>
+                <li>คำนวณหาผลลัพธ์ตามหลักคณิตศาสตร์ปกติ</li>
+                <li>ปัดเศษผลลัพธ์ให้มีตำแหน่งทศนิยมเท่ากับตัวที่มีทศนิยมน้อยที่สุด</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="content-card" style="display: flex; flex-direction: column; justify-content: center; gap: 1.5rem;">
+            <div class="calc-stack">
+              <div class="calc-row">
+                <div class="calc-num-wrapper">
+                  <span class="calc-op"></span>
+                  <span class="calc-int">12</span>
+                  <span class="calc-dot">.</span>
+                  <span class="calc-frac">11</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">(ทศนิยม 2 ตำแหน่ง)</span>
+              </div>
+              <div class="calc-row">
+                <div class="calc-num-wrapper bottom-border">
+                  <span class="calc-op">+</span>
+                  <span class="calc-int">4</span>
+                  <span class="calc-dot">.</span>
+                  <span class="calc-frac">2</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">(ทศนิยม 1 ตำแหน่ง)</span>
+              </div>
+              <div class="calc-row" style="color: var(--text-muted);">
+                <div class="calc-num-wrapper">
+                  <span class="calc-op"></span>
+                  <span class="calc-int">16</span>
+                  <span class="calc-dot">.</span>
+                  <span class="calc-frac">31</span>
+                </div>
+                <span style="font-size: 0.75rem;">(ผลคำนวณปกติ)</span>
+              </div>
+              <div class="calc-row" style="color: var(--success); font-weight: bold;">
+                <div class="calc-num-wrapper double-bottom-border">
+                  <span class="calc-op"></span>
+                  <span class="calc-int">16</span>
+                  <span class="calc-dot">.</span>
+                  <span class="calc-frac">3</span>
+                </div>
+                <span style="font-size: 0.75rem; font-weight: normal;">(คำตอบตามหลักฟิสิกส์)</span>
+              </div>
+            </div>
+
+            <div class="info-box" style="font-size: 0.9rem; margin-top: 0.5rem;">
+              <strong>วิเคราะห์:</strong>
+              <ul>
+                <li><span class="math-var">12.11</span> มีทศนิยม 2 ตำแหน่ง</li>
+                <li><span class="math-var">4.2</span> มีทศนิยม 1 ตำแหน่ง (หยาบที่สุด)</li>
+                <li>ผลลัพธ์ต้องปัดเศษเหลือทศนิยม 1 ตำแหน่ง จึงปัด <span class="math-var">16.31</span> เป็น <strong><span class="math-var">16.3</span></strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: MULTIPLICATION & DIVISION -->
+      <section class="slide" id="slide-5">
+        <div class="slide-header">
+          <div class="topic-label">5. การคูณและหารเลขนัยสำคัญ</div>
+          <div class="slide-number">5 / 8</div>
+        </div>
+        <h2 class="slide-title">หลักการคูณและหารเลขนัยสำคัญ</h2>
+        <div class="slide-content-wrapper grid-equal">
+          <div class="content-card accent-border">
+            <h3>กฎสำคัญ: ยึด "จำนวนเลขนัยสำคัญ" ที่น้อยที่สุด</h3>
+            <p class="lead">ผลลัพธ์จากการคูณและหาร จะต้องมี <strong>จำนวนเลขนัยสำคัญทั้งหมด เท่ากับตัวตั้งที่มีจำนวนเลขนัยสำคัญรวมน้อยที่สุด</strong></p>
+            <div class="info-box success-box">
+              <strong>ความแตกต่างสำคัญกับการบวก/ลบ:</strong><br>
+              การคูณ/หาร <strong>ไม่ได้ยึดตำแหน่งทศนิยม</strong> แต่ยึด <strong>จำนวนหลัก (นัยสำคัญรวม)</strong> ของตัวคูณที่น้อยที่สุด
+            </div>
+            <div class="info-box accent-box">
+              <strong>วิธีคำนวณ:</strong>
+              <ol style="margin-bottom: 0; padding-left: 1.25rem; font-size: 0.9rem;">
+                <li>คูณหรือหารตัวเลขตามปกติ</li>
+                <li>นับจำนวนเลขนัยสำคัญของตัวตั้งแต่ละตัว</li>
+                <li>ปัดเศษผลลัพธ์ให้มีหลักเลขนัยสำคัญเท่ากับจำนวนที่น้อยที่สุดนั้น</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="content-card" style="display: flex; flex-direction: column; justify-content: center; gap: 1.5rem;">
+            <h3>ตัวอย่างการคำนวณ</h3>
+
+            <div class="multiply-grid">
+              <div class="mul-term">
+                <span class="math-formula">1.523</span>
+                <span class="tag tag-primary">เลขนัยสำคัญ 4 ตัว</span>
+              </div>
+              <div class="mul-term" style="grid-column: 1;">
+                <span class="math-formula">× 3.0</span>
+                <span class="tag tag-accent">เลขนัยสำคัญ 2 ตัว (น้อยที่สุด)</span>
+              </div>
+              <div style="grid-column: span 2; border-top: 1px solid var(--border); padding-top: 1rem;">
+                <p class="body-text">ผลคูณปกติ: <span class="math-var">1.523 × 3.0 = 4.569</span></p>
+                <div class="info-box success-box" style="display: inline-block; margin-bottom: 0;">
+                  คำตอบตามหลักฟิสิกส์: <strong>4.6</strong> (มีเลขนัยสำคัญ 2 ตัว ต้องปัดเศษ .569 ขึ้น)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: WHAT IS UNCERTAINTY -->
+      <section class="slide" id="slide-6">
+        <div class="slide-header">
+          <div class="topic-label">6. ค่าคลาดเคลื่อนในการวัด</div>
+          <div class="slide-number">6 / 8</div>
+        </div>
+        <h2 class="slide-title">ความคลาดเคลื่อนของการวัด (Uncertainty)</h2>
+        <div class="slide-content-wrapper grid-equal">
+          <div class="content-card accent-border">
+            <h3>ผลจากการวัดในความเป็นจริง</h3>
+            <p class="lead">ในการทดลองทาง ไม่มีข้อมูลวัดใดที่ถูกต้องสมบูรณ์แบบ 100% ทุกค่าที่ได้จากการทดลองจะมีความคลาดเคลื่อนติดมาเสมอด้วยปัจจัยของเครื่องมือ สภาพแวดล้อม หรือขีดจำกัดของผู้ทดลอง</p>
+            <p class="body-text">ดังนั้น เราจึงต้องรายงานผลที่ได้จากการวัดโดยรวมเอาความคลาดเคลื่อนที่เกิดขึ้นในรูปของ:</p>
+            <div style="text-align: center; margin: 1rem 0;">
+              <span class="math-formula" style="font-size: 2.25rem; padding: 1rem 2rem;">A ± ΔA</span>
+            </div>
+            <p class="body-text">
+              โดยที่ <span class="math-var">A</span> คือ <strong>ค่ากลางที่วัดได้</strong> และ <span class="math-var">ΔA</span> คือ <strong>ค่าความคลาดเคลื่อน</strong>
+            </p>
+          </div>
+
+          <div class="content-card" style="display: flex; flex-direction: column; justify-content: center; gap: 1.25rem;">
+            <h3>ช่วงค่าคำตอบที่เป็นไปได้</h3>
+            <p class="body-text" style="margin-bottom: 0.5rem;">การรายงานผลเป็น <span class="math-var">A ± ΔA</span> หมายความว่า <strong>ค่าจริง ๆ จะอยู่ในช่วง [A - ΔA, A + ΔA]</strong> ทดลองปรับค่าด้านล่างเพื่อสังเกตช่วงความคลาดเคลื่อนบนสเกลเครื่องมือวัด:</p>
+            
+            <div class="thermo-controls">
+              <div class="thermo-control-group">
+                <label>ค่าที่วัดได้ (A): <span class="val" id="thermo-val-label">25.0 °C</span></label>
+                <input type="range" id="thermo-val-input" min="24.5" max="25.5" step="0.1" value="25.0">
+              </div>
+              <div class="thermo-control-group">
+                <label>ค่าความคลาดเคลื่อน (ΔA): <span class="val" id="thermo-err-label">0.2 °C</span></label>
+                <input type="range" id="thermo-err-input" min="0.0" max="0.5" step="0.1" value="0.2">
+              </div>
+            </div>
+
+            <div class="info-box accent-box" style="margin-bottom: 0.5rem; padding: 1rem;">
+              <strong>การรายงานผล:</strong> <span class="math-formula" style="font-size:1.05rem; padding: 2px 6px;" id="thermo-formula-readout">25.0 ± 0.2 °C</span><br>
+              <strong>ช่วงที่เป็นไปได้:</strong> <span id="thermo-range-text" style="font-weight: bold; color: var(--accent);">24.8 °C  ถึง  25.2 °C</span>
+            </div>
+
+            <!-- Thermometer Visualizer -->
+            <div class="thermometer-visualizer">
+              <div class="thermo-container">
+                <div class="thermo-bulb"></div>
+                <div class="thermo-stem">
+                  <div class="thermo-liquid" id="thermo-liquid"></div>
+                  <div class="thermo-range-highlight" id="thermo-range-highlight"></div>
+                  <div class="thermo-center-marker" id="thermo-center-marker"></div>
+                </div>
+              </div>
+              <div class="thermo-ticks-container" id="thermo-ticks-container">
+                 <!-- Ticks are rendered dynamically by JS -->
+              </div>
+            </div>
+            
+            <div style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: -0.5rem;">
+              แถบสีส้มและเส้นปะแสดงช่วงความคลาดเคลื่อนที่เป็นไปได้ทั้งหมดของอุณหภูมิจริง
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: ADD & SUBTRACT WITH UNCERTAINTY -->
+      <section class="slide" id="slide-7">
+        <div class="slide-header">
+          <div class="topic-label">7. การคำนวณความคลาดเคลื่อน (บวก-ลบ)</div>
+          <div class="slide-number">7 / 8</div>
+        </div>
+        <h2 class="slide-title">การบวกและลบตัวเลขที่มีค่าคลาดเคลื่อน</h2>
+        <div class="slide-content-wrapper grid-equal">
+          <div class="content-card accent-border">
+            <h3>หลักการ: ค่าคลาดเคลื่อนสะสมเพิ่มขึ้นเสมอ</h3>
+            <p class="lead">เมื่อนำปริมาณสองตัวมาบวกหรือลบกัน <strong>ค่าคลาดเคลื่อนของคำตอบจะได้จากการนำค่าคลาดเคลื่อนของตัวตั้งทุกตัวมารวมกันเสมอ</strong> (ไม่มีการนำมาลบกันเด็ดขาด!)</p>
+            
+            <div class="info-box success-box">
+              <strong>สูตร:</strong>
+              <div style="margin: 0.5rem 0; font-family: monospace; font-size: 1.15rem;">
+                ตัวตั้งบวกกัน: (A ± ΔA) + (B ± ΔB) = (A + B) ± (ΔA + ΔB)<br>
+                ตัวตั้งลบกัน: (A ± ΔA) - (B ± ΔB) = (A - B) ± (ΔA + ΔB)
+              </div>
+            </div>
+
+            <div class="info-box" style="font-size: 0.9rem;">
+              <strong>ตัวอย่าง:</strong>
+              <ul>
+                <li><strong>บวก:</strong> (5.0 ± 0.2) + (3.0 ± 0.1) = (5.0 + 3.0) ± (0.2 + 0.1) = 8.0 ± 0.3</li>
+                <li><strong>ลบ:</strong> (5.0 ± 0.2) - (3.0 ± 0.1) = (5.0 - 3.0) ± (0.2 + 0.1) = 2.0 ± 0.3</li>
+              </ul>
+              <span style="color: var(--error); font-weight: 600;">*ข้อระวัง: แม้จะลบค่าจริงกัน แต่ค่าคลาดเคลื่อนยังคงต้องนำมาบวกกัน!</span>
+            </div>
+          </div>
+
+          <div class="uncertainty-calculator">
+            <div class="content-card">
+              <h3>ตัวอย่าง</h3>
+              <p class="body-text" style="font-size: 0.85rem;">ทดลองป้อนตัวเลขปริมาณ A และ B ด้านล่างเพื่อจำลองผลการคำนวณ:</p>
+              
+              <div class="calc-inputs-grid">
+                <div class="widget-input-group">
+                  <label>ปริมาณ A (ค่าจริง ± คลาดเคลื่อน)</label>
+                  <div class="uncertainty-input-pair">
+                    <input type="number" id="add-val-a" name="val" value="5.0" step="0.1">
+                    <span>±</span>
+                    <input type="number" id="add-err-a" name="err" value="0.2" step="0.1">
+                  </div>
+                </div>
+
+                <div class="widget-input-group">
+                  <label>ปริมาณ B (ค่าจริง ± คลาดเคลื่อน)</label>
+                  <div class="uncertainty-input-pair">
+                    <input type="number" id="add-val-b" name="val" value="3.0" step="0.1">
+                    <span>±</span>
+                    <input type="number" id="add-err-b" name="err" value="0.1" step="0.1">
+                  </div>
+                </div>
+              </div>
+
+              <div class="calc-btn-row" style="margin-top: 1rem; margin-bottom: 1rem;">
+                <label style="font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; width: 100%;">
+                  เลือกการดำเนินงาน:
+                  <select id="add-op" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); font-family: var(--font-title); font-size: 0.95rem; flex: 1;">
+                    <option value="add">บวก (A + B)</option>
+                    <option value="sub">ลบ (A - B)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="calc-result-box">
+                <div class="result-formula">ผลลัพธ์ (A ± ΔA)</div>
+                <div class="result-value" id="add-result-val">8.0 ± 0.3</div>
+              </div>
+
+              <div class="calc-steps" id="add-steps" style="margin-top: 1rem;">
+                <!-- Populate dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: MULTIPLY & DIVIDE WITH UNCERTAINTY -->
+      <section class="slide" id="slide-8">
+        <div class="slide-header">
+          <div class="topic-label">8. การคำนวณความคลาดเคลื่อน (คูณ-หาร)</div>
+          <div class="slide-number">8 / 8</div>
+        </div>
+        <h2 class="slide-title">การคูณและหารตัวเลขที่มีค่าคลาดเคลื่อน</h2>
+        <div class="slide-content-wrapper grid-equal">
+          <div class="content-card accent-border">
+            <h3>หลักการ: นำเปอร์เซ็นต์ความคลาดเคลื่อนมารวมกัน</h3>
+            <p class="lead">เมื่อนำตัวเลขที่มีความคลาดเคลื่อนมาคูณหรือหารกัน <strong>เปอร์เซ็นต์ค่าคลาดเคลื่อนของคำตอบสุดท้าย จะมีค่าเท่ากับผลรวมของเปอร์เซ็นต์ค่าคลาดเคลื่อนของตัวประกอบแต่ละตัว</strong></p>
+            
+            <div class="info-box success-box">
+              <strong>ขั้นตอนคำนวณ:</strong>
+              <ol style="margin-bottom: 0; padding-left: 1.25rem; font-size: 0.85rem;">
+                <li>คำนวณหาเปอร์เซ็นต์คลาดเคลื่อนของแต่ละตัว: 
+                  <br>%ΔA = (ΔA / A) × 100%
+                </li>
+                <li>นำเปอร์เซ็นต์ความคลาดเคลื่อนมาบวกกันเสมอ:
+                  <br>%ΔY = %ΔA + %ΔB
+                </li>
+                <li>เขียนผลลัพธ์ในรูป: <strong>ค่าจริง (คลาดเคลื่อน ± %)</strong></li>
+              </ol>
+            </div>
+
+            <div class="info-box" style="font-size: 0.85rem;">
+              <strong>ตัวอย่าง:</strong>
+              <ul>
+                <li>ความกว้าง A = 5.0 ± 0.1 m → %ΔA = (0.1 / 5.0) × 100% = 2%</li>
+                <li>ความยาว B = 10.0 ± 0.2 m → %ΔB = (0.2 / 10.0) × 100% = 2%</li>
+                <li>ผลลัพธ์ A × B หรือ A ÷ B จะมีเปอร์เซ็นต์ความคลาดเคลื่อนรวม: 2% + 2% = 4%</li>
+                <li>คำตอบ: <strong>50 (คลาดเคลื่อน ± 4%)</strong></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="uncertainty-calculator">
+            <div class="content-card">
+              <h3>เครื่องคำนวณเปอร์เซ็นต์ความคลาดเคลื่อน</h3>
+              <p class="body-text" style="font-size: 0.85rem;">ทดลองป้อนตัวเลขเพื่อจำลองผลลัพธ์คูณหรือหารโดยเปอร์เซ็นต์ความคลาดเคลื่อนสะสม:</p>
+              
+              <div class="calc-inputs-grid">
+                <div class="widget-input-group">
+                  <label>ปริมาณ A (ค่าจริง ± คลาดเคลื่อน)</label>
+                  <div class="uncertainty-input-pair">
+                    <input type="number" id="mul-val-a" name="val" value="5.0" step="0.1">
+                    <span>±</span>
+                    <input type="number" id="mul-err-a" name="err" value="0.1" step="0.1">
+                  </div>
+                </div>
+
+                <div class="widget-input-group">
+                  <label>ปริมาณ B (ค่าจริง ± คลาดเคลื่อน)</label>
+                  <div class="uncertainty-input-pair">
+                    <input type="number" id="mul-val-b" name="val" value="10.0" step="0.1">
+                    <span>±</span>
+                    <input type="number" id="mul-err-b" name="err" value="0.2" step="0.1">
+                  </div>
+                </div>
+              </div>
+
+              <div class="calc-btn-row" style="margin-top: 1rem; margin-bottom: 1rem;">
+                <label style="font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; width: 100%;">
+                  เลือกการดำเนินงาน:
+                  <select id="mul-op" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); font-family: var(--font-title); font-size: 0.95rem; flex: 1;">
+                    <option value="mul">คูณ (A × B)</option>
+                    <option value="div">หาร (A ÷ B)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="calc-result-box percentage-box">
+                <div class="result-formula">ผลลัพธ์ (ค่าจริง และเปอร์เซ็นต์คลาดเคลื่อนสะสม)</div>
+                <div class="result-value" id="mul-result-val">50.0 (คลาดเคลื่อน ± 4.0%)</div>
+              </div>
+
+              <div class="calc-steps" id="mul-steps" style="margin-top: 1rem;">
+                <!-- Populate dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- PRESENTATION GLOBAL FOOTER CONTROLS -->
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn" title="หน้าก่อนหน้า (ลูกศรซ้าย)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="nav-dots" id="nav-dots">
+        <!-- Rendered by JavaScript -->
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div style="font-family: var(--font-title); font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-right: 1.5rem;">
+        สไลด์ที่ <span id="current-slide">1</span> / <span id="total-slides">8</span>
+      </div>
+
+      <button class="nav-btn" id="next-btn" title="หน้าถัดไป (ลูกศรขวา / Spacebar)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="keyboard-hint">
+      <span>กด <kbd class="key-badge">Spacebar</kbd> หรือ ปุ่มลูกศรบนคีย์บอร์ดเพื่อเปลี่ยนหน้าสไลด์</span>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
