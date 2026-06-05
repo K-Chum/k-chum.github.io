@@ -39,6 +39,7 @@ body {
   color: var(--text-main);
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -691,6 +692,7 @@ strong {
 
 .btn-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -704,7 +706,8 @@ strong {
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
-  flex: 1;
+  flex: 1 1 calc(33.333% - 0.5rem);
+  min-width: 110px;
 }
 
 .control-btn.active {
@@ -1106,13 +1109,34 @@ strong {
 /* Responsiveness adjustments */
 @media (max-width: 1024px) {
   .slide {
-    padding: 2rem;
+    padding: 6.5rem 2rem 7.5rem 2rem;
+    justify-content: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .title-slide-layout {
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 2rem 0;
   }
   .title-slide-layout h1 {
     font-size: 3rem;
   }
-  .grid-2col {
+  .grid-2col, .grid-equal {
     grid-template-columns: 1fr;
+  }
+  .slide-header {
+    top: 1.5rem;
+    left: 2rem;
+    right: 2rem;
+  }
+  .nav-controls {
+    bottom: 1.5rem;
+    left: 2rem;
+    right: 2rem;
+  }
+  .keyboard-hint {
+    display: none;
   }
 }
 
