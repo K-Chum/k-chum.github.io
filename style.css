@@ -29,6 +29,11 @@
   --multi-border: rgba(99, 102, 241, 0.2);
   --multi-glow: rgba(99, 102, 241, 0.08);
 
+  --math-primary: #8b5cf6;
+  --math-light: #ede9fe;
+  --math-border: rgba(139, 92, 246, 0.2);
+  --math-glow: rgba(139, 92, 246, 0.08);
+
   --border-default: rgba(148, 163, 184, 0.18);
   --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
@@ -169,6 +174,14 @@ body {
   transform: translateY(-4px);
 }
 
+/* Math module card details */
+.module-card.math::before { background: var(--math-primary); }
+.module-card.math:hover {
+  border-color: var(--math-primary);
+  box-shadow: var(--shadow-lg), 0 10px 30px var(--math-glow);
+  transform: translateY(-4px);
+}
+
 /* Card Top Section */
 .card-header {
   display: flex;
@@ -203,6 +216,12 @@ body {
   border-color: rgba(99, 102, 241, 0.15);
 }
 
+.module-card.math .badge {
+  background: var(--math-light);
+  color: var(--math-primary);
+  border-color: rgba(139, 92, 246, 0.15);
+}
+
 /* Card Content */
 .card-info {
   display: flex;
@@ -220,6 +239,7 @@ body {
 
 .module-card.meas:hover .card-title { color: var(--meas-primary); }
 .module-card.multi:hover .card-title { color: var(--multi-primary); }
+.module-card.math:hover .card-title { color: var(--math-primary); }
 
 .card-desc {
   font-size: 0.95rem;
@@ -272,4 +292,16 @@ body {
   background: var(--multi-primary);
   color: #ffffff;
   border-color: var(--multi-primary);
+}
+
+.module-card.math .action-btn {
+  background: var(--math-light);
+  color: var(--math-primary);
+  border-color: rgba(139, 92, 246, 0.15);
+}
+
+.module-card.math:hover .action-btn {
+  background: var(--math-primary);
+  color: #ffffff;
+  border-color: var(--math-primary);
 }
