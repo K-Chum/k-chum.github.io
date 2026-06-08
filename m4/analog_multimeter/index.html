@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ม.4 | ห้องปฏิบัติการมัลติมิเตอร์แอนะล็อก</title>
+  <!-- Link to shared template assets -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../../template/template.css">
+  <script src="../../template/template.js" defer></script>
+</head>
+<body>
+
+  <div class="presentation-container">
+    <div class="slides-container">
+
+      <!-- SLIDE 0: TITLE -->
+      <section class="slide active" id="slide-0">
+        <div class="title-slide-layout">
+          <div class="title-badge">ฟิสิกส์ ม. 4</div>
+          <h1>ห้องปฏิบัติการ <span>มัลติมิเตอร์แอนะล็อก</span></h1>
+          <p class="lead">เรียนรู้วิธีอ่านสเกลเครื่องวัดไฟฟ้าแบบเข็มชี้และการวิเคราะห์ขีดวัดอย่างแม่นยำ</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 1: INTRODUCTION TO ANALOG SCALES -->
+      <section class="slide" id="slide-1">
+        <div class="slide-header">
+          <div class="topic-label">1. การใช้งานมัลติมิเตอร์</div>
+          <div class="slide-number">สไลด์ 1 / 4</div>
+        </div>
+        <h2 class="slide-title">ทำความรู้จักหน้าปัดและสเกลของมัลติมิเตอร์แบบเข็ม</h2>
+        
+        <div class="content-card accent-border">
+          <h3>องค์ประกอบสำคัญบนหน้าปัดวัด</h3>
+          <p class="body-text">มัลติมิเตอร์แอนะล็อก (เช่น Sanwa YX360TRF) มีการจัดเรียงขีดสเกลทับซ้อนกันเพื่อแสดงค่าปริมาณไฟฟ้าหลายประเภท:</p>
+          <div class="info-box success-box" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+            <div><strong>• สเกลความต้านทาน (\(\Omega\)) - ด้านบนสุด:</strong> สเกลเริ่มจากขวาไปซ้าย (ค่าสูงสุดอยู่ซ้ายสุด) และขีดวัดมีความไม่เชิงเส้น (Non-linear) ช่วงปลายสเกลจะเบียดชิดกันมาก</div>
+            <div><strong>• สเกลแรงดันและกระแส (V·A) - แถบกลาง:</strong> สเกลเป็นเชิงเส้น (Linear) เริ่มจากซ้ายไปขวา ใช้ร่วมกันในการวัดแรงดันไฟฟ้ากระแสตรง (DCV) กระแสตรง (DCA) และแรงดันไฟฟ้ากระแสสลับ (ACV)</div>
+            <div><strong>• แถบกระจกเงา (Mirror Line):</strong> แถบสีเงินใต้เส้นสเกล ใช้เพื่อสะท้อนภาพเข็ม ป้องกันความคลาดเคลื่อนจากการอ่านเหลื่อมสายตา (Parallax Error) โดยผู้ใช้ต้องจ้องมองเข็มให้ทับซ้อนตรงกับภาพสะท้อนในกระจกพอดีจึงอ่านค่า</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: SCALE DIVISION MARKS -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="topic-label">2. การอ่านค่าขีดสเกลย่อย</div>
+          <div class="slide-number">สไลด์ 2 / 4</div>
+        </div>
+        <h2 class="slide-title">การศึกษาค่าความละเอียดของแต่ละขีดวัดสเกล</h2>
+        
+        <div class="content-card accent-border">
+          <h3>วิเคราะห์ขีดสเกลตามแต่ละย่านวัด (DCV)</h3>
+          <p class="body-text">ในการอ่านค่าแรงดันไฟฟ้า DCV เราต้องสังเกตช่วงตัวเลขบนสเกลร่วมกับตำแหน่งย่านวัดที่เลือกเพื่อประเมินผล:</p>
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>ย่านวัดที่ตั้ง (Full Scale)</th>
+                <th>เทียบดูแถวเลขบนหน้าปัด</th>
+                <th>ค่าของช่องใหญ่ (Major)</th>
+                <th>ค่าของช่องสเกลย่อยสุด (Minor)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>10 V</strong></td>
+                <td>แถวช่วงเลข 0 - 10 ตรงๆ</td>
+                <td>\( 1.0 \text{ V} \)</td>
+                <td><strong>\( 0.1 \text{ V} \)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>50 V</strong></td>
+                <td>แถวช่วงเลข 0 - 50 ตรงๆ</td>
+                <td>\( 5.0 \text{ V} \)</td>
+                <td><strong>\( 0.5 \text{ V} \)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>5 V</strong></td>
+                <td>แถวช่วงเลข 0 - 50 (หารด้วย 10)</td>
+                <td>\( 0.5 \text{ V} \)</td>
+                <td><strong>\( 0.05 \text{ V} \)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>1000 V</strong></td>
+                <td>แถวช่วงเลข 0 - 10 (คูณด้วย 100)</td>
+                <td>\( 100 \text{ V} \)</td>
+                <td><strong>\( 10 \text{ V} \)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/ticks.html" class="sim-frame" title="Scale Ticks Explorer" style="min-height: 380px;"></iframe>
+          <figcaption>รูปที่ 2.1: เครื่องมือจำลองค่าขีดสเกลแบบปฏิสัมพันธ์ ใช้เมาส์ชี้ดูความหมายแต่ละสเกลในย่านที่แตกต่างกัน</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 3: PRACTICE SIMULATOR -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="topic-label">3. ปฏิบัติการอ่านค่า</div>
+          <div class="slide-number">สไลด์ 3 / 4</div>
+        </div>
+        <h2 class="slide-title">เครื่องจำลองสำหรับฝึกอ่านค่าแรงดันไฟฟ้า</h2>
+        
+        <div class="content-card accent-border">
+          <h3>คำสั่งกิจกรรมฝึกฝน</h3>
+          <p class="body-text">กดสุ่มเข็มแรงดันไฟฟ้า จากนั้นทำการอ่านค่าตัวเลขโดยยึดตามหลักฟิสิกส์ (ค่าอ่านตรง + ค่าประมาณสายตา 1 ตำแหน่ง) แล้วคลิกเฉลยตรวจสอบความถูกต้อง</p>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/simulator.html" class="sim-frame" title="Multimeter Simulator" style="min-height: 480px;"></iframe>
+          <figcaption>รูปที่ 2.2: ระบบสุ่มเข็มวัดมัลติมิเตอร์สำหรับนักเรียนและครูใช้ร่วมกันทดลองอ่านค่าจริงในห้องเรียน</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 4: SUMMARY & BEST PRACTICES -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="topic-label">4. สรุปบทเรียน</div>
+          <div class="slide-number">สไลด์ 4 / 4</div>
+        </div>
+        <h2 class="slide-title">สรุปและข้อควรระวังในการใช้มัลติมิเตอร์แบบเข็ม</h2>
+        
+        <div class="content-card accent-border">
+          <h3>ข้อปฏิบัติเพื่อความปลอดภัยและลดความคลาดเคลื่อน</h3>
+          <ol style="padding-left: 1.25rem; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li><strong>การเลือกย่านวัดที่เหมาะสม:</strong> หากไม่ทราบขนาดปริมาณไฟฟ้าที่จะวัด ให้เริ่มปรับย่านวัดที่ **สูงสุด** ไว้ก่อนเสมอ เพื่อป้องกันขดลวดตัวนำเข็มตีแรงจนขาดหรือเสียหาย</li>
+            <li><strong>การปรับศูนย์ก่อนวัด (Zero Adjustment):</strong> 
+              <ul>
+                <li>เมื่อไม่มีกระแสไหลเข้า (วัดแรงดัน) เข็มต้องชี้ตรงที่เลข \( 0 \) ฝั่งซ้ายพอดี (หากไม่ตรง ให้ใช้ไขควงหมุนปรับตัวปรับปุ่มศูนย์)</li>
+                <li>เมื่อวัดความต้านทาน (\(\Omega\)) ทุกครั้งที่เปลี่ยนย่านวัด ต้องนำปลายเข็มวัดมาแตะชิดกันแล้วปรับปุ่มหมุน **0\(\Omega\) ADJ** ให้เข็มชี้ตรง \( 0\Omega \) ฝั่งขวาพอดีก่อนเริ่มทดสอบ</li>
+              </ul>
+            </li>
+            <li><strong>การหลีกเลี่ยง Parallax Error:</strong> ยืนตำแหน่งตรงกับหน้าปัด มองเข็มชี้ให้สะท้อนบังภาพเงาของมันในกระจกเงาสีเงินให้สนิท</li>
+          </ol>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>

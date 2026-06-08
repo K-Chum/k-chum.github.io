@@ -1,0 +1,286 @@
+/**
+ * sim-base.css — Shared base styles for all simulation iframes
+ *
+ * Include in every simulation HTML file:
+ *   <link rel="stylesheet" href="../../../template/sim-base.css">
+ *
+ * Covers:
+ *   1. Box-sizing reset
+ *   2. Body typography & layout
+ *   3. Heading / input font overrides
+ *   4. Two-column container grid (graph | panel)
+ *   5. Graph panel & canvas
+ *   6. Slider controls
+ *   7. Info-box variants (default, success, accent, error)
+ *   8. Card & accent-border
+ *   9. Button suite (btn, btn-gen, btn-steps, btn-ans)
+ *  10. Badge row
+ *  11. Result box (calculator sims)
+ *  12. Math-eq span helper
+ */
+
+/* ─── 1. Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── 2. Body ───────────────────────────────────────────────────────────── */
+body {
+  font-size: 19px;
+  font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ─── 3. Heading / Form font overrides ─────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', 'Noto Sans Thai', sans-serif;
+}
+input, select, button, textarea {
+  font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+}
+
+/* ─── 4. Two-column container ───────────────────────────────────────────── */
+.container {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+@media (max-width: 680px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Equal-width two-column variant */
+.container-equal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+@media (max-width: 680px) {
+  .container-equal {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── 5. Graph panel & canvas ───────────────────────────────────────────── */
+.graph-panel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.graph-canvas {
+  width: 100%;
+  height: 330px;
+  display: block;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+/* ─── 6. Slider controls ────────────────────────────────────────────────── */
+.interactive-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #334155;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  outline: none;
+  margin-top: 4px;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  cursor: pointer;
+}
+
+/* ─── 7. Info-box variants ──────────────────────────────────────────────── */
+.info-box {
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  border-left: 4px solid #cbd5e1;
+  background: #f1f5f9;
+  color: #475569;
+  line-height: 1.5;
+}
+.info-box ul {
+  margin-left: 1.2rem;
+  margin-top: 4px;
+}
+/* Green — correct / converging */
+.info-box.success-box {
+  background: #ecfdf5;
+  border-left-color: #10b981;
+  color: #065f46;
+}
+/* Purple — accent / derivative */
+.info-box.accent-box {
+  background: #f5f3ff;
+  border-left-color: #8b5cf6;
+  color: #5b21b6;
+}
+/* Red — error / diverging */
+.info-box.error-box {
+  background: #fef2f2;
+  border-left-color: #ef4444;
+  color: #991b1b;
+}
+/* Blue — info highlight */
+.info-box.info-blue {
+  background: #eff6ff;
+  border-left-color: #3b82f6;
+  color: #1e40af;
+}
+
+/* ─── 8. Card ───────────────────────────────────────────────────────────── */
+.card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card.accent-border {
+  border-left: 4px solid #8b5cf6;
+}
+.card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* ─── 9. Buttons ────────────────────────────────────────────────────────── */
+.btn {
+  flex: 1;
+  min-height: 48px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.btn-row {
+  display: flex;
+  gap: 6px;
+}
+/* Primary / generate */
+.btn-gen {
+  background: #8b5cf6;
+  color: #ffffff;
+}
+.btn-gen:hover { background: #7c3aed; }
+/* Show steps */
+.btn-steps {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+.btn-steps:hover { background: #e2e8f0; }
+/* Show answer */
+.btn-ans {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+.btn-ans:hover { background: #a7f3d0; }
+/* Generic teal action */
+.btn-action {
+  background: #0d9488;
+  color: #ffffff;
+}
+.btn-action:hover { background: #0f766e; }
+
+/* ─── 10. Badge row ─────────────────────────────────────────────────────── */
+.badge-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.badge {
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.badge-primary  { background: #ede9fe; color: #8b5cf6; }
+.badge-secondary{ background: #fdf2f8; color: #db2777; }
+.badge-success  { background: #dcfce7; color: #16a34a; }
+.badge-info     { background: #dbeafe; color: #1d4ed8; }
+
+/* ─── 11. Result box (calculator sims) ─────────────────────────────────── */
+.calc-result-box {
+  background: #f0fdfa;
+  border: 1.5px solid #a3f7e6;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+.result-formula {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f766e;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.result-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0d9488;
+}
+.calc-steps {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ─── 12. Math-eq inline span ───────────────────────────────────────────── */
+.math-eq {
+  font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+  font-weight: bold;
+  color: #0d9488;
+}
+
+/* ─── 13. KaTeX size overrides ──────────────────────────────────────────── */
+/* Override in simulation's own <style> if needed */
+.problem-text .katex { font-size: 1.5rem; }
+.solution-step-item .katex { font-size: 1rem; }

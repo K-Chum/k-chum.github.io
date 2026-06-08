@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indeterminate Form Hole Graph</title>
+  <style>
+    .badge-error { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+    .info-box {
+      background: #f8fafc;
+      border-left: 4px solid #8b5cf6;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .info-box ul {
+      padding-left: 16px;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- LEFT: Graph Visualizer -->
+    <div class="graph-panel">
+      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 2px;">กราฟแสดง "จุดโหว่" (Hole Discontinuity) ที่จุด \( x = 2 \)</h4>
+      <canvas class="graph-canvas" id="hole-func-canvas"></canvas>
+      <div class="interactive-controls">
+        <div class="control-row">
+          <label>ลากแถบปรับค่า x: <span id="hole-x-val" style="color:#8b5cf6;">1.50</span></label>
+          <input type="range" class="slider" id="hole-slider" min="1.0" max="3.0" step="0.01" value="1.5">
+        </div>
+        <div class="badge-row">
+          <span class="badge" id="hole-y-val">f(x) = 3.50</span>
+          <span class="badge badge-success">ลิมิตจริง = 4.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Explanations -->
+    <div class="info-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+      <p style="font-weight: 700; color: #1e293b;">วิเคราะห์ฟังก์ชัน \( f(x) = \dfrac{x^2 - 4}{x - 2} \)</p>
+      <ul>
+        <li>เมื่อทดลองแทนค่าตรง \( x = 2 \) จะได้ผลลัพธ์เป็น \( \frac{0}{0} \) ซึ่ง <strong>ไม่มีนิยามในทางคณิตศาสตร์</strong> (เกิดจุดโหว่ขึ้นบนกราฟ)</li>
+        <li>อย่างไรก็ตาม เมื่อหาค่าลิมิตเมื่อ \( x \) ลู่เข้าใกล้ 2 จะได้คำตอบเท่ากับ <strong>4</strong> โดยการแยกตัวประกอบแล้วตัดทอนพจน์ศูนย์:
+          <div style="font-family: 'Inter', 'Noto Sans Thai', sans-serif; font-size: 0.95rem; margin-top: 6px; font-weight: bold; text-align: center;">
+            \( \lim_{x \to 2} \frac{(x-2)(x+2)}{x-2} = \lim_{x \to 2} (x+2) = 4 \)
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+    const holeSlider = document.getElementById('hole-slider');
+    const holeXLabel = document.getElementById('hole-x-val');
+    const holeYLabel = document.getElementById('hole-y-val');
+    
+    if (holeSlider) {
+      holeSlider.addEventListener('input', (e) => {
+        const x = parseFloat(e.target.value);
+        holeXLabel.textContent = x.toFixed(2);
+        
+        if (Math.abs(x - 2.0) < 0.02) {
+          holeYLabel.innerHTML = 'ค่าจริง f(2) = ไม่มีนิยาม (0/0)';
+          holeYLabel.className = 'badge badge-error';
+        } else {
+          const y = x + 2.0;
+          holeYLabel.innerHTML = `ค่าจริง f(x) = ${y.toFixed(2)}`;
+          holeYLabel.className = 'badge badge-primary';
+        }
+        
+        drawHoleFuncGraph();
+      });
+    }
+
+    function drawHoleFuncGraph() {
+      const canvas = document.getElementById('hole-func-canvas');
+      if (!canvas) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      const originX = width * 0.15;
+      const originY = height * 0.85;
+      const scaleX = (width * 0.75) / 4;
+      const scaleY = (height * 0.75) / 5;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      // Grid
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      
+      // Vertical grid lines
+      const minK = Math.ceil(-originX / scaleX);
+      const maxK = Math.floor((width - originX) / scaleX);
+      for (let k = minK; k <= maxK; k++) {
+        const xPos = originX + k * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(xPos, 0);
+        ctx.lineTo(xPos, height);
+        ctx.stroke();
+      }
+      
+      // Horizontal grid lines
+      const minM = Math.ceil((originY - height) / scaleY);
+      const maxM = Math.floor(originY / scaleY);
+      for (let m = minM; m <= maxM; m++) {
+        const yPos = originY - m * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(0, yPos);
+        ctx.lineTo(width, yPos);
+        ctx.stroke();
+      }
+      
+      // Axes
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(width, originY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, height); ctx.stroke();
+      
+      // Axis labels
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      for (let x = 1; x <= 4; x++) {
+        ctx.fillText(x.toString(), originX + x * scaleX, originY + 14);
+      }
+      ctx.textAlign = 'right';
+      for (let y = 1; y <= 5; y++) {
+        ctx.fillText(y.toString(), originX - 6, originY - y * scaleY + 4);
+      }
+      ctx.fillText('0', originX - 6, originY + 10);
+      
+      // Draw line y = x + 2
+      ctx.strokeStyle = '#8b5cf6';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(originX, originY - 2 * scaleY);
+      ctx.lineTo(originX + 3.8 * scaleX, originY - (2 + 3.8) * scaleY);
+      ctx.stroke();
+      
+      // Target hole projections at (2, 4)
+      const targetX = 2;
+      const targetY = 4;
+      const targetScreenX = originX + targetX * scaleX;
+      const targetScreenY = originY - targetY * scaleY;
+      
+      ctx.strokeStyle = 'rgba(219, 39, 119, 0.4)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(targetScreenX, originY); ctx.lineTo(targetScreenX, targetScreenY); ctx.lineTo(originX, targetScreenY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Draw hollow point hole at (2, 4)
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#db2777';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(targetScreenX, targetScreenY, 6, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      
+      // Current slider point dot
+      const currentX = parseFloat(holeSlider.value);
+      const isAtDiscontinuity = Math.abs(currentX - 2.0) < 0.02;
+      
+      if (!isAtDiscontinuity) {
+        const currentY = currentX + 2.0;
+        const currentScreenX = originX + currentX * scaleX;
+        const currentScreenY = originY - currentY * scaleY;
+        
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(currentScreenX, originY); ctx.lineTo(currentScreenX, currentScreenY); ctx.lineTo(originX, currentScreenY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#8b5cf6';
+        ctx.beginPath(); ctx.arc(currentScreenX, currentScreenY, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      
+      // Texts
+      ctx.fillStyle = '#db2777';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('จุดโหว่ที่ห้ามแทนค่าตรง (x = 2)', targetScreenX + 10, targetScreenY - 8);
+    }
+
+    window.addEventListener('resize', drawHoleFuncGraph);
+    
+    // Init on load
+    setTimeout(() => {
+      drawHoleFuncGraph();
+    }, 100);
+  </script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruler Measurement Simulation</title>
+  <style>
+    /* Controls styling */
+    .ruler-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .control-btn {
+      flex: 1;
+      min-width: 100px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #334155;
+      transition: all 0.2s ease;
+    }
+    .control-btn:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+    .control-btn.active {
+      background: #0d9488;
+      border-color: #0d9488;
+      color: #ffffff;
+    }
+    #scale-description {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0d9488;
+      text-align: center;
+      margin: 8px 0;
+    }
+    /* Virtual ruler and draggable object */
+    .virtual-ruler {
+      position: relative;
+      height: 185px;
+      background: #fef08a; /* Yellow wooden style ruler */
+      border: 2px solid #eab308;
+      border-radius: 6px;
+      margin-top: 10px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      user-select: none;
+    }
+    .ruler-ticks {
+      position: absolute;
+      inset: 0;
+    }
+    .tick {
+      position: absolute;
+      width: 2px;
+      background: #1e293b;
+      top: 0;
+    }
+    .tick.major {
+      height: 60px;
+      background: #0f172a;
+      width: 2.5px;
+    }
+    .tick.minor {
+      height: 24px;
+      background: #475569;
+    }
+    .tick.half-minor {
+      height: 38px;
+      background: #334155;
+    }
+    .tick-label {
+      position: absolute;
+      top: 66px;
+      transform: translateX(-50%);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    /* Draggable blue block to measure */
+    .draggable-object {
+      position: absolute;
+      left: 20px; /* Aligns with 0 mark on ruler */
+      top: -48px;
+      height: 48px;
+      background: rgba(14, 165, 233, 0.3); /* Translucent blue block */
+      border: 2px solid #0284c7;
+      border-radius: 4px 4px 0 0;
+      cursor: ew-resize;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 4px;
+      z-index: 10;
+    }
+    .object-label {
+      position: absolute;
+      left: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0369a1;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .object-drag-handle {
+      width: 20px;
+      height: 20px;
+      background: #0284c7;
+      border-radius: 50%;
+      cursor: ew-resize;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+    /* Readout display panels */
+    .ruler-readout {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .readout-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .readout-card.accent-card {
+      border-left: 4px solid #0284c7;
+    }
+    .readout-card.primary-card {
+      grid-column: span 2;
+      border-left: 4px solid #0d9488;
+      background: #f0fdfa;
+    }
+    .readout-card .lbl {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .readout-card .val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .readout-card.primary-card .val {
+      font-size: 1.45rem;
+      color: #0f766e;
+    }
+    .readout-card .val strong {
+      color: #0d9488;
+      font-size: 1.6rem;
+    }
+    .readout-card .val .direct-val {
+      color: #0f172a;
+    }
+    .readout-card .val .estimated {
+      color: #0284c7;
+      text-decoration: underline;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="ruler-controls">
+    <div class="btn-group">
+      <button class="control-btn" data-scale="thousands">ขีดละ 1,000</button>
+      <button class="control-btn" data-scale="hundreds">ขีดละ 100</button>
+      <button class="control-btn" data-scale="tens">ขีดละ 10</button>
+      <button class="control-btn active" data-scale="ones">ขีดละ 1 (cm)</button>
+      <button class="control-btn" data-scale="tenths">ขีดละ 0.1 (mm)</button>
+      <button class="control-btn" data-scale="hundredths">ขีดละ 0.01</button>
+    </div>
+    <div id="scale-description">สเกลละเอียดที่สุด: หลักหน่วย (ขีดละ 1)</div>
+  </div>
+
+  <div class="virtual-ruler" id="virtual-ruler">
+    <div class="ruler-ticks" id="ruler-ticks"></div>
+    <div class="draggable-object" id="draggable-object" style="width: 180px;">
+      <div class="object-label">วัตถุที่จะวัด (ลากขยายขวา →)</div>
+      <div class="object-drag-handle"></div>
+    </div>
+  </div>
+
+  <div class="ruler-readout">
+    <div class="readout-card">
+      <div class="lbl">อ่านตรงจากสเกล</div>
+      <div class="val" id="ruler-direct-readout">4.0 cm</div>
+    </div>
+    <div class="readout-card accent-card">
+      <div class="lbl">ค่าประมาณสายตา</div>
+      <div class="val" id="ruler-estimated-readout">0.5 cm</div>
+    </div>
+    <div class="readout-card primary-card">
+      <div class="lbl">ค่าที่อ่านได้ทั้งหมด (ค่าอ่านตรง + ค่าประมาณ)</div>
+      <div class="val" id="ruler-final-readout">4.0 + 0.5 = 4.5 cm</div>
+    </div>
+  </div>
+
+  <script>
+    const draggableObj = document.getElementById('draggable-object');
+    const rulerTicks = document.getElementById('ruler-ticks');
+    const virtualRuler = document.getElementById('virtual-ruler');
+    
+    const directReadout = document.getElementById('ruler-direct-readout');
+    const estimatedReadout = document.getElementById('ruler-estimated-readout');
+    const finalReadout = document.getElementById('ruler-final-readout');
+    const scaleText = document.getElementById('scale-description');
+
+    let currentScale = 'ones';
+    let objectWidthPx = 180;
+    let isDragging = false;
+    let startDragX = 0;
+    let startWidth = 0;
+
+    const scales = {
+      thousands: { tickValue: 1000, max: 10000, directDecimals: -3, estDecimals: -2, unit: 'm', rangeText: 'หลักพัน (ขีดละ 1,000 m)', directLabel: 'หลักพัน', estLabel: 'หลักร้อย' },
+      hundreds: { tickValue: 100, max: 1000, directDecimals: -2, estDecimals: -1, unit: 'm', rangeText: 'หลักร้อย (ขีดละ 100 m)', directLabel: 'หลักร้อย', estLabel: 'หลักสิบ' },
+      tens: { tickValue: 10, max: 100, directDecimals: -1, estDecimals: 0, unit: 'cm', rangeText: 'หลักสิบ (ขีดละ 10 cm)', directLabel: 'หลักสิบ', estLabel: 'หลักหน่วย' },
+      ones: { tickValue: 1, max: 10, directDecimals: 0, estDecimals: 1, unit: 'cm', rangeText: 'หลักหน่วย (ขีดละ 1 cm)', directLabel: 'หลักหน่วย', estLabel: 'ทศนิยมตำแหน่งที่ 1' },
+      tenths: { tickValue: 0.1, max: 1, directDecimals: 1, estDecimals: 2, unit: 'cm', rangeText: 'ทศนิยมตำแหน่งที่ 1 (ขีดละ 0.1 cm)', directLabel: 'ทศนิยมตำแหน่งที่ 1', estLabel: 'ทศนิยมตำแหน่งที่ 2' },
+      hundredths: { tickValue: 0.01, max: 0.1, directDecimals: 2, estDecimals: 3, unit: 'cm', rangeText: 'ทศนิยมตำแหน่งที่ 2 (ขีดละ 0.01 cm)', directLabel: 'ทศนิยมตำแหน่งที่ 2', estLabel: 'ทศนิยมตำแหน่งที่ 3' }
+    };
+
+    document.querySelectorAll('[data-scale]').forEach(button => {
+      button.addEventListener('click', (e) => {
+        document.querySelectorAll('[data-scale]').forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        currentScale = button.getAttribute('data-scale');
+        renderRuler();
+      });
+    });
+
+    if (draggableObj) {
+      draggableObj.addEventListener('mousedown', startDrag);
+      draggableObj.addEventListener('touchstart', startDrag, { passive: true });
+    }
+
+    function startDrag(e) {
+      isDragging = true;
+      startDragX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+      startWidth = objectWidthPx;
+
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', stopDrag);
+      document.addEventListener('touchmove', drag, { passive: false });
+      document.addEventListener('touchend', stopDrag);
+    }
+
+    function drag(e) {
+      if (!isDragging) return;
+      if (e.type === 'touchmove') {
+        e.preventDefault();
+      }
+      const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+      const deltaX = currentX - startDragX;
+      
+      const rulerRect = virtualRuler.getBoundingClientRect();
+      const minWidth = 10;
+      const maxWidth = rulerRect.width - 40;
+
+      objectWidthPx = Math.max(minWidth, Math.min(maxWidth, startWidth + deltaX));
+      draggableObj.style.width = `${objectWidthPx}px`;
+
+      calculateMeasurement();
+    }
+
+    function stopDrag() {
+      isDragging = false;
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', stopDrag);
+      document.removeEventListener('touchmove', drag);
+      document.removeEventListener('touchend', stopDrag);
+    }
+
+    function renderRuler() {
+      if (!virtualRuler || !rulerTicks) return;
+      rulerTicks.innerHTML = '';
+      const rulerWidth = virtualRuler.getBoundingClientRect().width;
+      const padding = 20;
+      const usableWidth = rulerWidth - (padding * 2);
+
+      const scale = scales[currentScale];
+      scaleText.textContent = `สเกลละเอียดที่สุด: ${scale.rangeText}`;
+
+      const intervals = 10;
+      const majorStepPx = usableWidth / intervals;
+
+      const formatLabel = (val) => {
+        if (currentScale === 'tenths') return val.toFixed(1);
+        if (currentScale === 'hundredths') return val.toFixed(2);
+        return Math.round(val).toLocaleString();
+      };
+
+      for (let i = 0; i <= intervals; i++) {
+        const leftPx = padding + (i * majorStepPx);
+        const val = (i / intervals) * scale.max;
+
+        const majorTick = document.createElement('div');
+        majorTick.className = 'tick major';
+        majorTick.style.left = `${leftPx}px`;
+        
+        const label = document.createElement('div');
+        label.className = 'tick-label';
+        label.style.left = `${leftPx}px`;
+        label.textContent = formatLabel(val);
+
+        rulerTicks.appendChild(majorTick);
+        rulerTicks.appendChild(label);
+      }
+
+      calculateMeasurement();
+    }
+
+    function calculateMeasurement() {
+      if (!virtualRuler) return;
+      const rulerWidth = virtualRuler.getBoundingClientRect().width;
+      const padding = 20;
+      const usableWidth = rulerWidth - (padding * 2);
+      const scale = scales[currentScale];
+
+      const objectVal = ((objectWidthPx - padding) / usableWidth) * scale.max;
+      let value = Math.max(0, Math.min(scale.max, objectVal));
+
+      const smallestDiv = scale.tickValue;
+      let directVal = Math.floor(value / smallestDiv) * smallestDiv;
+      if (directVal < 0) directVal = 0;
+
+      let remainder = value - directVal;
+      let estimatedPart = Math.round((remainder / smallestDiv) * 10) / 10 * smallestDiv;
+      let finalVal = directVal + estimatedPart;
+
+      const formatValue = (num, decimals) => {
+        if (decimals < 0) {
+          const factor = Math.pow(10, -decimals);
+          return (Math.round(num / factor) * factor).toLocaleString();
+        }
+        return num.toFixed(decimals);
+      };
+
+      let directDecs = Math.max(0, scale.directDecimals);
+      let estDecs = Math.max(0, scale.estDecimals);
+
+      let directStr = formatValue(directVal, directDecs);
+      let estStr = formatValue(estimatedPart, estDecs);
+      let finalStr = formatValue(finalVal, estDecs);
+      let unit = scale.unit;
+
+      if (directReadout) directReadout.textContent = `${directStr} ${unit}`;
+      if (estimatedReadout) estimatedReadout.textContent = `${estStr} ${unit}`;
+      if (finalReadout) {
+        finalReadout.innerHTML = `<span class="direct-val">${directStr}</span> + <span class="estimated">${estStr}</span> = <strong>${finalStr} ${unit}</strong>`;
+      }
+    }
+
+    window.addEventListener('resize', renderRuler);
+    
+    // Init on load
+    setTimeout(renderRuler, 100);
+  </script>
+</body>
+</html>

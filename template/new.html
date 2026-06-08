@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 
+    [คำอธิบาย] ส่วนหัว (Title) ของหน้าสไลด์บทเรียน
+  -->
+  <title>เทมเพลตบทเรียนใหม่ | เลย์เอาต์ 1 คอลัมน์มาตรฐาน</title>
+
+  <!-- 
+    [คำอธิบาย] เชื่อมโยงสไตล์ชีตส่วนกลาง (Shared CSS)
+    หมายเหตุ: หากบทเรียนใหม่อยู่ลึกกว่าหรือตื้นกว่า 2 ระดับ ให้ปรับจำนวน "../" ให้ตรงตามความจริง
+    เช่น หากอยู่ที่โฟลเดอร์หลักให้ใช้ "./template/template.css"
+  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../../template/template.css">
+
+  <!-- 
+    [คำอธิบาย] เชื่อมโยงสคริปต์สไลด์ส่วนกลาง (Shared JS) ซึ่งทำหน้าที่:
+    1. จัดการการนำเสนอสไลด์ (การสไลด์ด้วยปุ่ม หรือลูกศรซ้าย-ขวาบนคีย์บอร์ด)
+    2. โหลดเครื่องมือประมวลผลวิชาคณิตศาสตร์ (KaTeX) โดยอัตโนมัติ
+    3. สร้างและใส่ปุ่มย้อนกลับและสไลด์ควบคุมท้ายสไลด์ (Footer) ให้อัตโนมัติ
+  -->
+  <script src="../../template/template.js" defer></script>
+</head>
+<!-- 
+  [คำอธิบาย] attribute "data-back-link" ใช้กำหนดลิงก์เมื่อกดปุ่ม "กลับหน้าหลัก"
+  หากไม่มี attribute นี้ จะมีค่าเริ่มต้นไปที่ "../../index.html"
+-->
+<body data-back-link="../../index.html">
+
+  <div class="presentation-container">
+    <div class="slides-container">
+
+      <!-- ==========================================
+           สไลด์ที่ 0: หน้าปกบทเรียน (TITLE SLIDE)
+           ========================================== -->
+      <section class="slide active" id="slide-0">
+        <div class="title-slide-layout">
+          <!-- ป้ายหมวดหมู่/ระดับชั้น (Badge) -->
+          <div class="title-badge">ระดับชั้น / วิชา</div>
+          <!-- หัวข้อหลักและหัวข้อย่อย -->
+          <h1>หัวข้อหลักบทเรียน <span>คำเน้นข้อความหัวข้อ</span></h1>
+          <p class="lead">คำอธิบายภาพรวมหรือคำโปรยสำหรับบทเรียนใหม่ในบรรทัดเดียว</p>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           สไลด์ที่ 1: สไลด์เนื้อหาทั่วไป (CONTENT SLIDE)
+           ========================================== -->
+      <section class="slide" id="slide-1">
+        <div class="slide-header">
+          <div class="topic-label">1. หัวข้อย่อยบทเรียน</div>
+          <!-- หมายเลขสไลด์จะถูกนับและแสดงผลใน footer อัตโนมัติ -->
+        </div>
+        <h2 class="slide-title">หัวข้อสไลด์เนื้อหาหลัก</h2>
+        
+        <div class="content-card accent-border">
+          <h3>หัวข้อในบัตรเนื้อหา (Content Card)</h3>
+          <p class="lead">
+            ตรงนี้เหมาะสำหรับย่อหน้าเกริ่นนำหรือใจความสำคัญหลักที่มีขนาดตัวอักษรเด่นชัดขึ้น
+          </p>
+          <p class="body-text">
+            นี่คือย่อหน้าเนื้อหาปกติสำหรับการนำเสนอในห้องเรียน ใช้ฟอนต์อ่านง่าย 
+            และมีขนาดใหญ่พอที่จะมองเห็นได้ชัดเจนจากหลังห้องเรียน
+          </p>
+          <!-- ตัวอย่างรายการหัวข้อย่อย -->
+          <ul class="body-text" style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <li><strong>หัวข้อเน้นย้ำ:</strong> รายละเอียดข้อมูลเนื้อหาของรายการที่หนึ่ง</li>
+            <li><strong>หัวข้อเน้นย้ำ:</strong> รายละเอียดข้อมูลเนื้อหาของรายการที่สอง</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           สไลด์ที่ 2: สไลด์แสดงคำเตือนและข้อควรระวัง (INFO BOXES)
+           ========================================== -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="topic-label">2. กล่องเน้นข้อความ</div>
+        </div>
+        <h2 class="slide-title">ตัวอย่างกล่องแจ้งเตือนและการเน้นย้ำ (Info Boxes)</h2>
+
+        <div class="content-card">
+          <h3>รูปแบบการเน้นใจความในหน้าเรียน</h3>
+          <p class="body-text">
+            เทมเพลตมีรูปแบบกล่องเน้นข้อความที่ต่างกัน 3 สีตามความสำคัญเพื่อความเด่นชัดบนโปรเจกเตอร์:
+          </p>
+
+          <!-- 1. กล่องข้อความทั่วไป/สีน้ำเงินอมเทา -->
+          <div class="info-box">
+            <strong>ข้อมูลทั่วไป (Default Box):</strong> 
+            เหมาะสำหรับการจดบันทึกประวัติ หรือข้อมูลเสริมเพิ่มเติมภายนอกตำราเรียน
+          </div>
+
+          <!-- 2. กล่องความรู้น่ารู้/สีม่วง -->
+          <div class="info-box accent-box">
+            <strong>ความรู้เสริม (Accent Box):</strong> 
+            เหมาะสำหรับเกร็ดความรู้ทางฟิสิกส์/คณิตศาสตร์ที่สำคัญสำหรับการเตรียมสอบหรือสูตรลัด
+          </div>
+
+          <!-- 3. กล่องจุดที่มักผิดพลาด/สีแดง -->
+          <div class="info-box error-box">
+            <strong>ข้อควรระวัง (Caution Box):</strong> 
+            ใช้เน้นจุดที่นักเรียนมักจะสับสนหรือคำนวณพลาดบ่อย ๆ เช่น ความคลาดเคลื่อนหรือทศนิยม
+          </div>
+
+          <!-- 4. กล่องสรุปผล/สีเขียว -->
+          <div class="info-box success-box">
+            <strong>ข้อสรุป (Success Box):</strong> 
+            เหมาะสำหรับการสรุปนิยาม สูตร หรือกฎที่ได้รับการพิสูจน์เรียบร้อยแล้ว
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           สไลด์ที่ 3: สไลด์คณิตศาสตร์สูตร LaTeX (MATH FORMULAS)
+           ========================================== -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="topic-label">3. คณิตศาสตร์และสูตรฟิสิกส์</div>
+        </div>
+        <h2 class="slide-title">การแสดงผลคณิตศาสตร์ด้วย LaTeX (KaTeX)</h2>
+
+        <div class="content-card accent-border">
+          <h3>เขียนสูตรให้คมชัดและถูกหลักสากล</h3>
+          <p class="body-text">
+            หน้านี้จะทำการโหลดไลบรารี KaTeX จาก CDN โดยอัตโนมัติ เพื่อนำมาแปลงโค้ด LaTeX ให้เป็นสูตรคณิตศาสตร์สวยงาม:
+          </p>
+
+          <!-- 
+            [คำอธิบายตัวอย่างเขียนสูตร]
+            1. เขียนสูตรต่อท้ายเนื้อหาในบรรทัดเดียวกัน (Inline Math) ให้ใช้สัญกรณ์  \\(  และ  \\) 
+            2. เขียนสูตรบรรทัดใหม่กึ่งกลางเดี่ยว ๆ (Block Math) ให้ใช้สัญกรณ์  $$  และ  $$  หรือ  \\[  และ  \\]
+          -->
+          <div style="background: var(--bg-main); padding: 1rem; border-radius: var(--radius-sm); border: 1px dashed var(--border);">
+            <p class="body-text" style="margin-bottom: 0.8rem;">
+              <strong>1. แบบในบรรทัด (Inline):</strong> เขียนแทรกไปกับคำพูด เช่น หากต้องการเขียนปริมาณความคลาดเคลื่อน 
+              \( A \pm \Delta A \) หรือลิมิตซ้ายขวา \( \lim_{x \to a^-} f(x) = L \) ในแถวเดียว
+            </p>
+            <p class="body-text">
+              <strong>2. แบบกึ่งกลางย่อหน้าใหม่ (Display Block):</strong> สูตรคำนวณขนาดใหญ่ที่เป็นใจความหลักของหัวข้อ:
+            </p>
+            $$ \lim_{h \to 0} \frac{f(x+h) - f(x)}{h} = f'(x) $$
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           สไลด์ที่ 4: สไลด์การทดลองและอนิเมชัน (SIMULATION FRAME)
+           ========================================== -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="topic-label">4. สื่อแล็บจำลองการทดลอง</div>
+        </div>
+        <h2 class="slide-title">การจำลองเสมือนจริงแบบอินเตอร์แอกทีฟ</h2>
+
+        <p class="body-text">
+          นำไฟล์ HTML สื่อการทดลองแบบปฏิสัมพันธ์ (มี CSS และ JS ในตัวเอง) มาฝังแสดงผลแบบกึ่งกลางหน้าจอผ่าน `iframe`
+        </p>
+
+        <!-- 
+          [คำอธิบาย] โครงสร้าง iframe สื่อจำลอง 
+          - คลาส "sim-frame" ควบคุมความกว้างและการตกแต่งกรอบสไตล์พรีเมียม
+          - สามารถกำหนด "data-reload='true'" หากต้องการบังคับให้รีเซ็ตหน้าจอแล็บนี้ใหม่ทุกครั้งที่ครูกดเปิดสไลด์นี้
+          - หากไม่ใส่ระบบจะโหลดแล็บเพียงครั้งแรก (Smart Load) เพื่อป้องกันความก้าวหน้าแล็บสูญหายเมื่อครูกดเปลี่ยนสไลด์ไปมา
+        -->
+        <figure class="interactive-figure">
+          <iframe src="simulations/new_sim.html" class="sim-frame" title="สื่อจำลองการทดลองเทมเพลต" data-reload="false"></iframe>
+          <figcaption>รูปที่ 1.1: คำอธิบายใต้กรอบภาพสื่อการสอนหรือกิจกรรมจำลอง</figcaption>
+        </figure>
+      </section>
+
+      <!-- ==========================================
+           สไลด์ที่ 5: สไลด์ตารางข้อมูล (DATA TABLES)
+           ========================================== -->
+      <section class="slide" id="slide-5">
+        <div class="slide-header">
+          <div class="topic-label">5. ตารางสรุปข้อมูล</div>
+        </div>
+        <h2 class="slide-title">ตารางนำเสนอข้อมูลวิชาการความคมชัดสูง</h2>
+
+        <div class="content-card">
+          <h3>ตารางสรุปผลทดลองหรือตัวแปรหลัก</h3>
+          
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>ตัวแปร (Variable)</th>
+                <th>สัญลักษณ์ (Symbol)</th>
+                <th>หน่วยวัดสากล (SI Unit)</th>
+                <th>ตัวอย่างการวัดจริง</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold">ความยาววัตถุ</td>
+                <td>\( L \)</td>
+                <td>เมตร (\( \text{m} \))</td>
+                <td>\( 1.520 \pm 0.001 \text{ m} \)</td>
+              </tr>
+              <tr>
+                <td class="bold">เวลาคาบ</td>
+                <td>\( T \)</td>
+                <td>วินาที (\( \text{s} \))</td>
+                <td>\( 2.45 \pm 0.1 \text{ s} \)</td>
+              </tr>
+              <tr>
+                <td class="bold">การอนุพันธ์เทียบตัวแปร</td>
+                <td>\( \frac{dy}{dx} \)</td>
+                <td>- (อัตราส่วนหน่วย)</td>
+                <td>\( 3x^2 + 5 \)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>

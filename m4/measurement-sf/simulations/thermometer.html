@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thermometer Uncertainty Simulator</title>
+  <style>
+    .thermo-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .thermo-control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .thermo-control-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+    }
+    .thermo-control-group label .val {
+      color: #0d9488;
+    }
+    /* Info Box */
+    .info-box {
+      background: #f0fdfa;
+      border-left: 4px solid #0d9488;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #0f766e;
+      line-height: 1.5;
+    }
+    .math-formula {
+      font-weight: 700;
+      color: #0d9488;
+      font-size: 1.1rem;
+    }
+    /* Thermometer SVG & Scale Visualizer */
+    .thermometer-visualizer {
+      position: relative;
+      height: 130px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin-top: 10px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .thermo-container {
+      position: relative;
+      height: 28px;
+      background: #cbd5e1;
+      border-radius: 14px;
+      width: 100%;
+      border: 1.5px solid #94a3b8;
+    }
+    .thermo-liquid {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: #ef4444; /* Red liquid column */
+      border-radius: 12px 0 0 12px;
+      width: 50%;
+      transition: width 0.1s ease;
+    }
+    /* Uncertainty range highlight overlay */
+    .thermo-range-highlight {
+      position: absolute;
+      top: -10px;
+      bottom: -10px;
+      background: rgba(245, 158, 11, 0.35); /* Translucent orange error range */
+      border: 1.5px dashed #d97706;
+      border-radius: 6px;
+      z-index: 2;
+      transition: left 0.1s ease, width 0.1s ease;
+    }
+    .thermo-center-marker {
+      position: absolute;
+      top: -18px;
+      bottom: -18px;
+      width: 3px;
+      background: #000000;
+      z-index: 3;
+      transition: left 0.1s ease;
+    }
+    .thermo-ticks-container {
+      position: relative;
+      height: 40px;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .thermo-tick {
+      position: absolute;
+      width: 1px;
+      height: 12px;
+      background: #94a3b8;
+      top: 0;
+    }
+    .thermo-tick.major {
+      height: 20px;
+      background: #475569;
+      width: 2px;
+    }
+    .thermo-tick-label {
+      position: absolute;
+      top: 24px;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #475569;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="thermo-controls">
+    <div class="thermo-control-group">
+      <label>ค่ากลางที่วัดได้ (A): <span class="val" id="thermo-val-label">25.0 °C</span></label>
+      <input type="range" class="slider" id="thermo-val-input" min="24.5" max="25.5" step="0.05" value="25.0">
+    </div>
+    
+    <div class="thermo-control-group">
+      <label>ค่าความคลาดเคลื่อน (ΔA): <span class="val" id="thermo-err-label">0.2 °C</span></label>
+      <input type="range" class="slider" id="thermo-err-input" min="0.0" max="0.5" step="0.05" value="0.2">
+    </div>
+  </div>
+
+  <div class="info-box">
+    รายงานผลการวัด: <span class="math-formula" id="thermo-formula-readout">25.0 ± 0.2 °C</span><br>
+    ช่วงคำตอบที่เป็นไปได้: <span id="thermo-range-text" style="font-weight: bold; color: #b45309;">24.8 °C  ถึง  25.2 °C</span>
+  </div>
+
+  <div class="thermometer-visualizer">
+    <div class="thermo-container">
+      <div class="thermo-liquid" id="thermo-liquid"></div>
+      <div class="thermo-range-highlight" id="thermo-range-highlight"></div>
+      <div class="thermo-center-marker" id="thermo-center-marker"></div>
+    </div>
+    <div class="thermo-ticks-container" id="thermo-ticks-container">
+       <!-- Ticks are rendered dynamically by JS -->
+    </div>
+  </div>
+
+  <script>
+    const thermoValInput = document.getElementById('thermo-val-input');
+    const thermoErrInput = document.getElementById('thermo-err-input');
+    const thermoValLabel = document.getElementById('thermo-val-label');
+    const thermoErrLabel = document.getElementById('thermo-err-label');
+    const thermoFormulaReadout = document.getElementById('thermo-formula-readout');
+    const thermoRangeText = document.getElementById('thermo-range-text');
+    const thermoLiquid = document.getElementById('thermo-liquid');
+    const thermoRangeHighlight = document.getElementById('thermo-range-highlight');
+    const thermoCenterMarker = document.getElementById('thermo-center-marker');
+    const thermoTicksContainer = document.getElementById('thermo-ticks-container');
+
+    const minTemp = 24.0;
+    const maxTemp = 26.0;
+
+    function renderThermoTicks() {
+      if (!thermoTicksContainer) return;
+      thermoTicksContainer.innerHTML = '';
+      
+      const steps = 20; // (26.0 - 24.0) / 0.1
+      for (let i = 0; i <= steps; i++) {
+        const temp = minTemp + (i * 0.1);
+        const leftPercent = (i / steps) * 100;
+        
+        const tick = document.createElement('div');
+        const isMajor = (i % 5 === 0);
+        
+        tick.className = `thermo-tick ${isMajor ? 'major' : ''}`;
+        tick.style.left = `${leftPercent}%`;
+        
+        if (isMajor) {
+          const label = document.createElement('div');
+          label.className = 'thermo-tick-label';
+          label.textContent = `${temp.toFixed(1)}°C`;
+          label.style.left = `${leftPercent}%`;
+          thermoTicksContainer.appendChild(label);
+        }
+        
+        thermoTicksContainer.appendChild(tick);
+      }
+    }
+
+    function updateThermometer() {
+      if (!thermoValInput || !thermoErrInput) return;
+      
+      const A = parseFloat(thermoValInput.value);
+      const dA = parseFloat(thermoErrInput.value);
+      
+      // Update labels
+      if (thermoValLabel) thermoValLabel.textContent = `${A.toFixed(2)} °C`;
+      if (thermoErrLabel) thermoErrLabel.textContent = `${dA.toFixed(2)} °C`;
+      
+      // Update formula readout
+      if (thermoFormulaReadout) thermoFormulaReadout.textContent = `${A.toFixed(2)} ± ${dA.toFixed(2)} °C`;
+      
+      // Calculate range
+      const lower = A - dA;
+      const upper = A + dA;
+      if (thermoRangeText) {
+        thermoRangeText.textContent = `${lower.toFixed(2)} °C  ถึง  ${upper.toFixed(2)} °C`;
+      }
+      
+      // Update fluid column position
+      const aPercent = ((A - minTemp) / (maxTemp - minTemp)) * 100;
+      if (thermoLiquid) thermoLiquid.style.width = `${aPercent}%`;
+      if (thermoCenterMarker) thermoCenterMarker.style.left = `${aPercent}%`;
+      
+      // Update uncertainty range highlight
+      const lowerPercent = ((lower - minTemp) / (maxTemp - minTemp)) * 100;
+      const upperPercent = ((upper - minTemp) / (maxTemp - minTemp)) * 100;
+      const rangeWidth = upperPercent - lowerPercent;
+      
+      if (thermoRangeHighlight) {
+        thermoRangeHighlight.style.left = `${lowerPercent}%`;
+        thermoRangeHighlight.style.width = `${rangeWidth}%`;
+      }
+    }
+
+    if (thermoValInput) thermoValInput.addEventListener('input', updateThermometer);
+    if (thermoErrInput) thermoErrInput.addEventListener('input', updateThermometer);
+
+    renderThermoTicks();
+    updateThermometer();
+  </script>
+</body>
+</html>

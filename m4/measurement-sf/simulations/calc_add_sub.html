@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uncertainty Addition/Subtraction Calculator</title>
+  <style>
+    .calc-inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .widget-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .widget-input-group label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #475569;
+    }
+    .uncertainty-input-pair {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .uncertainty-input-pair input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      text-align: center;
+      outline: none;
+      background: #f8fafc;
+    }
+    .uncertainty-input-pair input:focus {
+      border-color: #0d9488;
+      background: #ffffff;
+    }
+    .uncertainty-input-pair span {
+      font-weight: 700;
+      color: #64748b;
+      font-size: 1.1rem;
+    }
+    .calc-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .calc-btn-row label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    #add-op {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      font-size: 1.05rem;
+      font-weight: 600;
+      outline: none;
+      background: #ffffff;
+      color: #0f172a;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="calc-inputs-grid">
+    <div class="widget-input-group">
+      <label>ปริมาณ A (ค่าจริง ± คลาดเคลื่อน)</label>
+      <div class="uncertainty-input-pair">
+        <input type="number" id="add-val-a" value="5.0" step="0.1">
+        <span>±</span>
+        <input type="number" id="add-err-a" value="0.2" step="0.1">
+      </div>
+    </div>
+
+    <div class="widget-input-group">
+      <label>ปริมาณ B (ค่าจริง ± คลาดเคลื่อน)</label>
+      <div class="uncertainty-input-pair">
+        <input type="number" id="add-val-b" value="3.0" step="0.1">
+        <span>±</span>
+        <input type="number" id="add-err-b" value="0.1" step="0.1">
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-btn-row">
+    <label>
+      เลือกการดำเนินการ:
+      <select id="add-op">
+        <option value="add">บวก (A + B)</option>
+        <option value="sub">ลบ (A - B)</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="calc-result-box">
+    <div class="result-formula">ผลลัพธ์การคำนวณ (Y ± ΔY)</div>
+    <div class="result-value" id="add-result-val">8.0 ± 0.3</div>
+  </div>
+
+  <div class="calc-steps" id="add-steps">
+    <!-- Steps populated dynamically -->
+  </div>
+
+  <script>
+    const addValA = document.getElementById('add-val-a');
+    const addErrA = document.getElementById('add-err-a');
+    const addValB = document.getElementById('add-val-b');
+    const addErrB = document.getElementById('add-err-b');
+    const addOpSelect = document.getElementById('add-op');
+    
+    const addResultVal = document.getElementById('add-result-val');
+    const addSteps = document.getElementById('add-steps');
+
+    [addValA, addErrA, addValB, addErrB, addOpSelect].forEach(element => {
+      if (element) {
+        element.addEventListener('input', calculateAddSubUncertainty);
+      }
+    });
+
+    function calculateAddSubUncertainty() {
+      if (!addValA || !addErrA || !addValB || !addErrB || !addResultVal || !addSteps) return;
+
+      const A = parseFloat(addValA.value);
+      const dA = parseFloat(addErrA.value);
+      const B = parseFloat(addValB.value);
+      const dB = parseFloat(addErrB.value);
+      const op = addOpSelect.value;
+
+      if (isNaN(A) || isNaN(dA) || isNaN(B) || isNaN(dB)) {
+        addResultVal.textContent = 'กรอกข้อมูลไม่ครบถ้วน';
+        addSteps.textContent = 'รอการคำนวณ...';
+        return;
+      }
+
+      const getDecimalPlaces = (num) => {
+        const str = num.toString();
+        if (!str.includes('.')) return 0;
+        return str.split('.')[1].length;
+      };
+
+      const decA = getDecimalPlaces(A);
+      const decB = getDecimalPlaces(B);
+      const decVal = Math.min(decA, decB);
+
+      const decErrA = getDecimalPlaces(dA);
+      const decErrB = getDecimalPlaces(dB);
+      const decErr = Math.max(decErrA, decErrB);
+
+      const valResult = op === 'add' ? (A + B) : (A - B);
+      const errResult = dA + dB; // Uncertainty always adds!
+
+      const roundedVal = valResult.toFixed(decVal);
+      const roundedErr = errResult.toFixed(decErr);
+
+      addResultVal.textContent = `${roundedVal} ± ${roundedErr}`;
+
+      const opSign = op === 'add' ? '+' : '-';
+      addSteps.innerHTML = `
+        <div>1. คำนวณค่ากลางจริง: ${A} ${opSign} ${B} = ${valResult.toFixed(Math.max(decA, decB))} → ปรับทศนิยมเท่ากับตัวตั้งที่ทศนิยมน้อยที่สุด (${decVal} ตำแหน่ง) → <strong>${roundedVal}</strong></div>
+        <div>2. คำนวณค่าคลาดเคลื่อนสะสม: ${dA} + ${dB} = <strong>${roundedErr}</strong> (คลาดเคลื่อนบวกกันเสมอ ไม่ว่าจะบวกหรือลบตัวเลข)</div>
+        <div>3. ผลลัพธ์สุดท้าย: <strong>${roundedVal} ± ${roundedErr}</strong></div>
+      `;
+    }
+
+    calculateAddSubUncertainty();
+  </script>
+</body>
+</html>

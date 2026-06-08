@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สเปกตรัมจำลองเสมือนจริง | EM Spectrum Explorer</title>
+
+  <!-- Google Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+  </style>
+
+  <!-- ① Shared base styles -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+
+  <!-- ② KaTeX 0.17.0 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css"
+        integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB"
+        crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"
+          integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs"
+          crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"
+          integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz"
+          crossorigin="anonymous"
+          onload="autoRenderMath()"></script>
+
+  <style>
+    body {
+      background: #ffffff;
+      padding: 10px;
+      gap: 10px;
+      overflow-x: hidden;
+    }
+    
+    .spectrum-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    /* Spectrum Navigation Bar */
+    .spec-nav-bar {
+      display: flex;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 4px;
+      overflow-x: auto;
+      gap: 4px;
+    }
+    .spec-tab {
+      flex: 1;
+      min-width: 100px;
+      padding: 8px 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: #64748b;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .spec-tab.active {
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    
+    .spec-tab-radio.active { background: #3b82f6; }
+    .spec-tab-microwave.active { background: #06b6d4; }
+    .spec-tab-uv.active { background: #8b5cf6; }
+    .spec-tab-xray.active { background: #a855f7; }
+
+    .spec-tab:hover:not(.active) {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .sim-display-panel {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .sim-canvas {
+      width: 100%;
+      height: 250px;
+      background: #0f172a;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      display: block;
+    }
+
+    .btn-action-sm {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #0d9488;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+      text-align: center;
+    }
+    .btn-action-sm:hover {
+      background: #0f766e;
+    }
+  </style>
+</head>
+<body>
+
+<div class="spectrum-container">
+  
+  <!-- Top: Navigation tabs (hidden when loaded with parameter) -->
+  <div class="spec-nav-bar" id="spec-tabs">
+    <button class="spec-tab spec-tab-radio active" onclick="switchBand('radio')">
+      <span>คลื่นวิทยุ</span>
+      <span style="font-size:0.6rem; font-weight:normal;">10³ m</span>
+    </button>
+    <button class="spec-tab spec-tab-microwave" onclick="switchBand('microwave')">
+      <span>ไมโครเวฟ</span>
+      <span style="font-size:0.6rem; font-weight:normal;">10⁻² m</span>
+    </button>
+    <button class="spec-tab spec-tab-uv" onclick="switchBand('UV')">
+      <span>อัลตราไวโอเลต</span>
+      <span style="font-size:0.6rem; font-weight:normal;">10⁻⁸ m</span>
+    </button>
+    <button class="spec-tab spec-tab-xray" onclick="switchBand('xray')">
+      <span>รังสีเอกซ์</span>
+      <span style="font-size:0.6rem; font-weight:normal;">10⁻¹⁰ m</span>
+    </button>
+  </div>
+
+  <!-- Main Grid Layout -->
+  <div class="container" style="grid-template-columns: 1.15fr 0.85fr; gap:12px;">
+    
+    <!-- Left: Canvas visual area -->
+    <div class="sim-display-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span id="sim-title" style="font-size:0.95rem; font-weight:700; color:#475569;">แบบจำลองการสื่อสาร/การทำงาน</span>
+        <div id="sim-controls-header"></div>
+      </div>
+      
+      <canvas class="sim-canvas" id="spec-canvas"></canvas>
+      
+      <!-- Parameter adjustments and mode controls -->
+      <div id="dynamic-controls" style="min-height:50px;"></div>
+    </div>
+
+    <!-- Right: Explanatory and math panel -->
+    <div class="spec-desc-panel" style="display:flex; flex-direction:column; gap:10px;">
+      <div class="card accent-border" id="properties-card" style="padding: 10px 12px;">
+        <h3 id="band-name">ชื่อย่านความถี่</h3>
+        <p class="body-text" style="font-size: 0.85rem;" id="band-properties">
+          ช่วงสเปกตรัม:
+        </p>
+      </div>
+
+      <div class="info-box success-box" id="band-usage-box" style="font-size: 0.82rem;">
+        ข้อมูลการใช้งาน...
+      </div>
+
+      <div class="info-box info-blue" id="band-extra-box" style="font-size: 0.82rem;">
+        ข้อมูลสรุปฟิสิกส์...
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  let canvas = document.getElementById('spec-canvas');
+  let ctx = canvas.getContext('2d');
+  
+  let currentBand = 'radio';
+  let isPlaying = true;
+  let time = 0;
+  let animId = null;
+
+  // Modulators states
+  let radioMode = 'AM';
+  let radioPropType = 'ground';
+  let microwaveMode = 'radar';
+  let radarPulseTime = 0;
+  let radarDetected = false;
+  let uvSunscreen = false;
+  let xrayPower = 0;
+
+  function resizeCanvas() {
+    let rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  }
+  window.addEventListener('resize', resizeCanvas);
+
+  function switchBand(band) {
+    currentBand = band;
+    
+    // update tabs styling
+    let tabs = document.querySelectorAll('.spec-tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    let activeTab = document.querySelector(`.spec-tab-${band.toLowerCase()}`);
+    if (activeTab) activeTab.classList.add('active');
+
+    // update properties texts
+    updateDetails(band);
+    setupControls(band);
+
+    // reset states
+    time = 0;
+    radarPulseTime = 0;
+    radarDetected = false;
+    xrayPower = 0;
+  }
+
+  function updateDetails(band) {
+    let title = document.getElementById('band-name');
+    let properties = document.getElementById('band-properties');
+    let usageBox = document.getElementById('band-usage-box');
+    let extraBox = document.getElementById('band-extra-box');
+    let simTitle = document.getElementById('sim-title');
+
+    if (band === 'radio') {
+      simTitle.textContent = "จำลองการส่งคลื่นวิทยุ A.M. / F.M. และประเภทคลื่น";
+      title.textContent = "คลื่นวิทยุ (Radio Waves)";
+      properties.innerHTML = `ความยาวคลื่น (\\(\\lambda\\)): ~ \\( 1 \\text{ m} - 10 \\text{ km} \\)<br>ความถี่ (\\(f\\)): ~ \\( 10^3 - 10^8 \\text{ Hz} \\)`;
+      usageBox.innerHTML = `
+        <strong>ระบบส่งสัญญาณคลื่นวิทยุ:</strong><br>
+        • <strong>A.M. (Amplitude Modulation):</strong> ความสูงคลื่น (ขนาด) เปลี่ยนแปลงตามเสียง ส่งด้วย <strong>คลื่นฟ้า (Sky wave)</strong> สะท้อนชั้นบรรยากาศได้ดี จึงอ้อมขอบโลกได้ไกลข้ามทวีป<br>
+        • <strong>F.M. (Frequency Modulation):</strong> ความถี่คลื่นขยับถี่ห่างตามเสียง ไม่สะท้อนบรรยากาศ ต้องส่งวิถีตรงและใช้เสาทวนสัญญาณเป็นช่วง ๆ แต่คุณภาพเสียงชัดเจน ไม่มีคลื่นแทรก
+      `;
+      extraBox.innerHTML = `
+        <strong>หัวใจสำคัญ:</strong> คลื่นวิทยุมีพลังงานต่ำมาก จึงไม่เป็นอันตรายต่อสิ่งมีชีวิต ใช้ในงานโทรคมนาคมและการจัดรายการกระจายเสียงทั่วไป
+      `;
+    } 
+    else if (band === 'microwave') {
+      simTitle.textContent = "จำลองระบบเรดาร์หาเป้าหมายคงที่ (Microwave Radar)";
+      title.textContent = "คลื่นไมโครเวฟ (Microwaves)";
+      properties.innerHTML = `ความยาวคลื่น (\\(\\lambda\\)): ~ \\( 1 \\text{ mm} - 1 \\text{ m} \\)<br>ความถี่ (\\(f\\)): ~ \\( 10^8 - 10^{11} \\text{ Hz} \\)`;
+      usageBox.innerHTML = `
+        <strong>การใช้งานไมโครเวฟ:</strong><br>
+        • <strong>สะท้อนผิวโลหะได้ดีมาก:</strong> ใช้ทำ <strong>เรดาร์ (Radar)</strong> โดยส่งสัญญาณออกไปและรอรับสัญญาณสะท้อนกลับ เพื่อใช้วัดระยะห่างของเป้าหมายนิ่งหรือเคลื่อนที่<br>
+        • <strong>ไม่สะท้อนชั้นบรรยากาศ:</strong> ใช้สื่อสารดาวเทียมในอวกาศ เพราะคลื่นพุ่งตรงทะลุอากาศออกไปด้านนอกได้โดยไม่หักสะท้อนสะสมอยู่ด้านใน
+      `;
+      extraBox.innerHTML = `
+        <strong>เกร็ดความรู้:</strong> ไมโครเวฟย่านความถี่จำเพาะยังทำปฏิกิริยากับโมเลกุลของน้ำในอาหารให้เกิดการสั่นอย่างรวดเร็วและกลายเป็นความร้อน
+      `;
+    }
+    else if (band === 'UV') {
+      simTitle.textContent = "จำลองผลกระทบของ UV ต่อเซลล์ผิวหนัง";
+      title.textContent = "รังสีอัลตราไวโอเลต (Ultraviolet)";
+      properties.innerHTML = `ความยาวคลื่น (\\(\\lambda\\)): ~ \\( 10 - 400 \\text{ nm} \\)<br>ความถี่ (\\(f\\)): ~ \\( 7.5 \\times 10^{14} - 3 \\times 10^{16} \\text{ Hz} \\)`;
+      usageBox.innerHTML = `
+        <strong>ประโยชน์และอันตรายต่อผิวหนัง:</strong><br>
+        • <strong>ประโยชน์:</strong> กระตุ้นผิวหนังผลิตวิตามิน D ช่วยกระดูกแข็งแรง และฆ่าเชื้อแบคทีเรียในเครื่องมือแพทย์<br>
+        • <strong>โทษภัย:</strong> ทะลุเข้าเซลล์ผิวหนังชั้นนอก ทำลายสายดีเอ็นเอ (DNA) ทำให้ผิวไหม้แดด (Sunburn) ก่อริ้วรอยเหี่ยวย่น และเพิ่มโอกาสเป็นโรคมะเร็งผิวหนังอย่างมีนัยสำคัญ
+      `;
+      extraBox.innerHTML = `
+        <strong>วิธีป้องกัน:</strong> ควรทาครีมกันแดดที่มีสารสะท้อนหรือดูดซับรังสี UV (SPF Shield) เพื่อไม่ให้รังสีพุ่งผ่านเข้าไปทำอันตรายต่อเนื้อเยื่อด้านใน
+      `;
+    }
+    else if (band === 'xray') {
+      simTitle.textContent = "จำลองการถ่ายฟิล์มเอกซเรย์สแกนกระดูก";
+      title.textContent = "รังสีเอกซ์ (X-rays)";
+      properties.innerHTML = `ความยาวคลื่น (\\(\\lambda\\)): ~ \\( 0.01 - 10 \\text{ nm} \\)<br>ความถี่ (\\(f\\)): ~ \\( 3 \\times 10^{16} - 3 \\times 10^{19} \\text{ Hz} \\)`;
+      usageBox.innerHTML = `
+        <strong>ประโยชน์และการทะลุทะลวง:</strong><br>
+        • <strong>ตรวจวินิจฉัยโรค:</strong> รังสีเอกซ์มีพลังงานทะลุทะลวงสูง ผ่านเนื้อเยื่ออ่อนและกล้ามเนื้อได้ง่าย แต่จะถูกบล็อกโดยกระดูกและสารหนาแน่นสูง จึงฉายแสงให้เห็นกระดูกหัก/รอยโรคได้ชัดเจนบนฟิล์มขาวสว่าง
+      `;
+      extraBox.innerHTML = `
+        <strong>ข้อควรระวัง:</strong> รังสีเอกซ์จัดเป็นรังสีชนิดก่อไอออน (Ionizing Radiation) ซึ่งสะสมและทำให้เกิดความเสียหายต่อพันธุกรรมได้ ผู้ใช้เครื่องจึงต้องสวมชุดเกราะตะกั่วบล็อกรังสี
+      `;
+    }
+
+    if (typeof renderMathInElement !== 'undefined') {
+      renderMathInElement(document.getElementById('properties-card'), {
+        delimiters: [{ left: '\\(', right: '\\)', display: false }],
+        throwOnError: false
+      });
+    }
+  }
+
+  function setupControls(band) {
+    let container = document.getElementById('dynamic-controls');
+    container.innerHTML = '';
+
+    if (band === 'radio') {
+      container.innerHTML = `
+        <div class="control-row">
+          <label>เลือกฟังก์ชันการสื่อสารของคลื่นวิทยุ:</label>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <button class="btn-action-sm" style="flex:1;" onclick="setRadioMode('AM')">สัญญาณแบบ A.M. (Amplitude)</button>
+          <button class="btn-action-sm" style="flex:1;" onclick="setRadioMode('FM')">สัญญาณแบบ F.M. (Frequency)</button>
+          <button class="btn-action-sm" style="flex:1;" onclick="setRadioMode('propagation')">การแผ่คลื่นดิน / คลื่นฟ้า</button>
+        </div>
+        <div id="radio-prop-controls" style="display:none; margin-top:6px;">
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span style="font-size:0.8rem; font-weight:700; color:#334155;">ประเภทการส่ง:</span>
+            <button class="btn-action-sm" style="background:#475569; font-size:0.75rem;" id="btn-prop-ground" onclick="setRadioProp('ground')">คลื่นดิน (Ground Wave)</button>
+            <button class="btn-action-sm" style="background:#475569; font-size:0.75rem;" id="btn-prop-sky" onclick="setRadioProp('sky')">คลื่นฟ้า (Sky Wave)</button>
+          </div>
+        </div>
+      `;
+      setRadioMode(radioMode);
+    } 
+    else if (band === 'microwave') {
+      container.innerHTML = `
+        <div class="control-row">
+          <label>ฟังก์ชันสื่อสารและระบุเป้าหมาย:</label>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <button class="btn-action-sm" style="flex:1;" id="btn-micro-radar" onclick="setMicrowaveMode('radar')">เรดาร์ (Radar - วัตถุอยู่นิ่ง)</button>
+          <button class="btn-action-sm" style="flex:1;" id="btn-micro-sat" onclick="setMicrowaveMode('satellite')">การยิงขึ้นบรรยากาศดาวเทียม</button>
+        </div>
+        <div style="margin-top:6px; text-align:center;">
+          <button class="btn-action-sm" style="background:#8b5cf6;" onclick="triggerRadarPulse()">🎯 ส่งสัญญาณไมโครเวฟตรวจหาวัตถุ</button>
+        </div>
+      `;
+      setMicrowaveMode(microwaveMode);
+    }
+    else if (band === 'UV') {
+      container.innerHTML = `
+        <div class="control-row" style="justify-content:center;">
+          <label class="checkbox-container">
+            <input type="checkbox" id="check-sunscreen" onchange="toggleSunscreen()">
+            <span style="font-size:0.95rem; font-weight:bold; color:#8b5cf6;">ทาครีมกันแดดป้องกันผิวหนัง (SPF Sunscreen)</span>
+          </label>
+        </div>
+      `;
+      toggleSunscreen();
+    }
+    else if (band === 'xray') {
+      container.innerHTML = `
+        <div class="control-row">
+          <label>ระดับความแรงของการยิงรังสีเอกซ์: <span id="xray-val" style="color:#a855f7;">0</span>%</label>
+          <input type="range" class="slider" id="slider-xray" min="0" max="100" step="5" value="0" oninput="updateXrayPower()">
+        </div>
+      `;
+      updateXrayPower();
+    }
+  }
+
+  // Radio controllers
+  function setRadioMode(mode) {
+    radioMode = mode;
+    let propControls = document.getElementById('radio-prop-controls');
+    if (propControls) {
+      propControls.style.display = mode === 'propagation' ? 'block' : 'none';
+      if (mode === 'propagation') setRadioProp(radioPropType);
+    }
+  }
+  function setRadioProp(prop) {
+    radioPropType = prop;
+    document.getElementById('btn-prop-ground').style.background = prop === 'ground' ? '#3b82f6' : '#475569';
+    document.getElementById('btn-prop-sky').style.background = prop === 'sky' ? '#3b82f6' : '#475569';
+  }
+
+  // Microwave controllers
+  function setMicrowaveMode(mode) {
+    microwaveMode = mode;
+    document.getElementById('btn-micro-radar').style.background = mode === 'radar' ? '#06b6d4' : '#475569';
+    document.getElementById('btn-micro-sat').style.background = mode === 'satellite' ? '#06b6d4' : '#475569';
+    radarPulseTime = 0;
+    radarDetected = false;
+  }
+  function triggerRadarPulse() {
+    radarPulseTime = 1;
+    radarDetected = false;
+  }
+
+  // UV controllers
+  function toggleSunscreen() {
+    uvSunscreen = document.getElementById('check-sunscreen').checked;
+  }
+
+  // Xray controllers
+  function updateXrayPower() {
+    xrayPower = parseInt(document.getElementById('slider-xray').value);
+    document.getElementById('xray-val').textContent = xrayPower;
+  }
+
+  // Draw loop dispatcher
+  function draw() {
+    if (!canvas) return;
+    let w = canvas.width;
+    let h = canvas.height;
+    
+    // dark background
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, w, h);
+
+    if (currentBand === 'radio') {
+      drawRadioSim(w, h);
+    } 
+    else if (currentBand === 'microwave') {
+      drawMicrowaveSim(w, h);
+    }
+    else if (currentBand === 'UV') {
+      drawUVSim(w, h);
+    }
+    else if (currentBand === 'xray') {
+      drawXraySim(w, h);
+    }
+  }
+
+  // 1. Radio Wave Sim drawing
+  function drawRadioSim(w, h) {
+    let centerY = h / 2;
+    ctx.lineWidth = 2;
+
+    if (radioMode === 'AM') {
+      // Draw AM wave
+      ctx.strokeStyle = '#3b82f6';
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        let audio = 1 + 0.45 * Math.sin(x * 0.01 + time * 2);
+        let RF = Math.sin(x * 0.16 - time * 20);
+        let y = centerY + RF * audio * 50;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Envelope
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        let envelope = 1 + 0.45 * Math.sin(x * 0.01 + time * 2);
+        ctx.lineTo(x, centerY - envelope * 50);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '12px sans-serif';
+      ctx.fillText("สัญญาณเสียงห่อหุ้มคลื่นพาหะ (Amplitude Modulation)", 10, 20);
+    } 
+    else if (radioMode === 'FM') {
+      // Draw FM wave
+      ctx.strokeStyle = '#06b6d4';
+      ctx.beginPath();
+      let phase = 0;
+      for (let x = 0; x < w; x++) {
+        let audioMod = Math.sin(x * 0.015 + time * 3.5);
+        phase += 0.2 + 0.12 * audioMod;
+        let y = centerY + Math.sin(phase) * 55;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '12px sans-serif';
+      ctx.fillText("ความถี่คลื่นถี่/ห่าง เปลี่ยนตามความเข้มเสียง (Frequency Modulation)", 10, 20);
+    } 
+    else if (radioMode === 'propagation') {
+      // Propagation
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.arc(w / 2, h + 300, 360, Math.PI, 2 * Math.PI);
+      ctx.fill();
+
+      let txX = w * 0.15;
+      let txY = h - 60;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(txX, h - 30); ctx.lineTo(txX, txY);
+      ctx.lineTo(txX - 10, h - 30); ctx.moveTo(txX, txY); ctx.lineTo(txX + 10, h - 30);
+      ctx.stroke();
+      
+      let rxX = w * 0.85;
+      let rxY = h - 50;
+      ctx.beginPath(); ctx.moveTo(rxX, h - 30); ctx.lineTo(rxX, rxY); ctx.stroke();
+
+      if (radioPropType === 'ground') {
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= 50; i++) {
+          let tVal = i / 50;
+          let x = txX + tVal * (rxX - txX);
+          let earthY = h - 30 - 10 * Math.sin(tVal * Math.PI);
+          let wave = 10 * Math.sin(tVal * 40 - time * 10);
+          ctx.lineTo(x, earthY + wave);
+        }
+        ctx.stroke();
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText("คลื่นดิน (Ground Wave) วิ่งเลียบผิวโลกสะท้อนลดการกั้น", 20, 30);
+      } else {
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+        ctx.fillRect(0, 0, w, 40);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText("บรรยากาศชั้นไอโอโนสเฟียร์ (Ionosphere)", w / 2 - 100, 25);
+
+        let midX = (txX + rxX) / 2;
+        let ionY = 40;
+
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= 80; i++) {
+          let tVal = i / 80;
+          let x = txX + tVal * (rxX - txX);
+          let baseLineY = tVal <= 0.5 ? txY + (tVal / 0.5) * (ionY - txY) : ionY + ((tVal - 0.5) / 0.5) * (rxY - ionY);
+          let wave = 8 * Math.sin(tVal * 60 - time * 15);
+          ctx.lineTo(x, baseLineY + wave);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText("คลื่นฟ้า (Sky Wave) สะท้อนบรรยากาศไอโอโนสเฟียร์เดินทางไปได้ไกล", 20, 60);
+      }
+    }
+  }
+
+  // 2. Microwave Radar drawing (Stationary Target & reflection)
+  function drawMicrowaveSim(w, h) {
+    let dishX = w * 0.15;
+    let dishY = h - 60;
+    
+    // Draw radar dish
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(dishX, dishY, 20, Math.PI * 1.7, Math.PI * 0.7, true);
+    ctx.stroke();
+    // base
+    ctx.beginPath(); ctx.moveTo(dishX, dishY); ctx.lineTo(dishX - 10, h - 30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(dishX, dishY); ctx.lineTo(dishX + 10, h - 30); ctx.stroke();
+
+    if (microwaveMode === 'radar') {
+      // Target remains STATIONARY (อยู่นิ่ง ๆ)
+      let planeX = w * 0.75;
+      let planeY = 80;
+      
+      // Draw airplane (still target)
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.moveTo(planeX, planeY);
+      ctx.lineTo(planeX - 25, planeY - 10);
+      ctx.lineTo(planeX - 20, planeY);
+      ctx.lineTo(planeX - 25, planeY + 10);
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath(); ctx.arc(planeX - 5, planeY - 2, 4, 0, 2*Math.PI); ctx.fill();
+
+      // Draw transmitted and reflected wave clearly
+      if (radarPulseTime > 0) {
+        radarPulseTime += 0.015; // advance time
+        
+        let distance = Math.sqrt((planeX - dishX)**2 + (planeY - dishY)**2);
+        let currentDist = radarPulseTime * (w * 0.8);
+        
+        if (currentDist < distance) {
+          // Outgoing wave (Cyan)
+          ctx.strokeStyle = '#06b6d4';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          // draw 3 arcs of outgoing wave fronts
+          for (let o = 0; o < 3; o++) {
+            let r = currentDist - o * 30;
+            if (r > 0) {
+              ctx.arc(dishX, dishY, r, -0.3, 0.3);
+            }
+          }
+          ctx.stroke();
+          
+          ctx.fillStyle = '#06b6d4';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText("กำลังยิงคลื่นส่งออกไป (Transmitted Pulse)", dishX + 40, dishY - 20);
+        } 
+        else if (currentDist >= distance && currentDist < 2 * distance) {
+          // Target hit and return wave (Magenta)
+          radarDetected = true;
+          let returnDist = 2 * distance - currentDist;
+          
+          ctx.strokeStyle = '#ec4899';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          // draw 3 arcs of reflected wave fronts
+          for (let o = 0; o < 3; o++) {
+            let r = (distance - returnDist) - o * 30;
+            if (r > 0) {
+              ctx.arc(planeX, planeY, r, Math.PI - 0.4, Math.PI + 0.4);
+            }
+          }
+          ctx.stroke();
+          
+          // target alert flash
+          ctx.fillStyle = 'rgba(236, 72, 153, 0.2)';
+          ctx.beginPath(); ctx.arc(planeX, planeY, 30, 0, 2*Math.PI); ctx.fill();
+
+          ctx.fillStyle = '#ec4899';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText("คลื่นสะท้อนเดินทางกลับ (Reflected Pulse)", dishX + 40, dishY - 20);
+        } else {
+          radarPulseTime = 0; // stop
+        }
+      }
+
+      if (radarDetected) {
+        ctx.fillStyle = '#06b6d4';
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText("TARGET LOCATED (STATIONARY)", dishX + 40, dishY - 60);
+        ctx.fillText("DISTANCE: 420 km", dishX + 40, dishY - 40);
+      } else {
+        ctx.fillStyle = '#64748b';
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText("RADAR SEARCHING target...", dishX + 40, dishY - 40);
+      }
+    } 
+    else {
+      // SATELLITE
+      let satX = w * 0.8;
+      let satY = 60;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.fillStyle = '#475569';
+      ctx.beginPath(); ctx.arc(satX, satY, 15, 0, 2*Math.PI); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#1e3a8a';
+      ctx.fillRect(satX - 40, satY - 5, 25, 10);
+      ctx.fillRect(satX + 15, satY - 5, 25, 10);
+
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+      ctx.fillRect(0, 110, w, 60);
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
+      ctx.font = '11px sans-serif';
+      ctx.fillText("ชั้นบรรยากาศทะลุผ่าน (ไมโครเวฟไม่สะท้อนกลับ)", 20, 145);
+
+      // wave signal animation
+      let totalDist = Math.sqrt((satX - dishX)**2 + (satY - dishY)**2);
+      let stepVal = (time * 1.5) % 1.0;
+      let waveD = stepVal * totalDist;
+      
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let offset = 0; offset < 3; offset++) {
+        let rd = (waveD + offset * 50) % totalDist;
+        let tx = dishX + (satX - dishX) * (rd / totalDist);
+        let ty = dishY + (satY - dishY) * (rd / totalDist);
+        ctx.arc(tx, ty, 8, -Math.PI/3, Math.PI/3);
+      }
+      ctx.stroke();
+    }
+  }
+
+  // 3. UV Ray drawing
+  function drawUVSim(w, h) {
+    let skinY = h - 85;
+    ctx.fillStyle = '#fda4af'; ctx.fillRect(50, skinY, w - 100, 50);
+    ctx.fillStyle = '#f87171'; ctx.fillRect(50, skinY + 25, w - 100, 25);
+    ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(50, skinY); ctx.lineTo(w - 50, skinY); ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("ชั้นเซลล์ผิวหนังมนุษย์", w/2, skinY + 18);
+
+    let sunX = w / 2; let sunY = 50;
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath(); ctx.arc(sunX, sunY, 18, 0, 2*Math.PI); ctx.fill();
+
+    let numRays = 8;
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < numRays; i++) {
+      let angle = Math.PI * 0.2 + (i / (numRays - 1)) * Math.PI * 0.6;
+      let rx = sunX + Math.cos(angle) * 30;
+      let ry = sunY + Math.sin(angle) * 30;
+      
+      let targetX = 80 + i * ((w - 160) / (numRays - 1));
+      
+      if (uvSunscreen) {
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.7)';
+        ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(targetX, skinY - 6); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(targetX, skinY - 6); ctx.lineTo(targetX + (targetX - sunX) * 0.2, skinY - 20); ctx.stroke();
+      } else {
+        ctx.strokeStyle = 'rgba(236, 72, 153, 0.8)';
+        ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(targetX, skinY + 12); ctx.stroke();
+        if (Math.floor(time * 4) % 2 === 0) {
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath(); ctx.arc(targetX, skinY + 12, 3.5, 0, 2*Math.PI); ctx.fill();
+        }
+      }
+    }
+
+    if (uvSunscreen) {
+      ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(50, skinY - 6); ctx.lineTo(w - 50, skinY - 6); ctx.stroke();
+      ctx.fillStyle = '#a855f7';
+      ctx.fillText("ครีมสกัดกั้นรังสี UV (SPF Shield)", w/2, skinY - 14);
+    } else {
+      ctx.fillStyle = '#f43f5e';
+      ctx.fillText("คำเตือน: รังสี UV เจาะทำลายดีเอ็นเอของเซลล์ผิวหนังโดยตรง", w/2, skinY - 14);
+    }
+  }
+
+  // 4. X-ray drawing
+  function drawXraySim(w, h) {
+    let centerX = w / 2;
+    let centerY = h / 2 + 10;
+    
+    ctx.fillStyle = 'rgba(253, 164, 175, 0.45)';
+    ctx.beginPath();
+    ctx.roundRect(centerX - 40, centerY - 60, 80, 90, 15);
+    ctx.roundRect(centerX - 35, centerY - 100, 12, 50, 6);
+    ctx.roundRect(centerX - 17, centerY - 110, 12, 60, 6);
+    ctx.roundRect(centerX + 2, centerY - 105, 12, 55, 6);
+    ctx.roundRect(centerX + 22, centerY - 95, 12, 45, 6);
+    ctx.fill();
+
+    if (xrayPower > 10) {
+      let alpha = xrayPower / 100;
+      ctx.fillStyle = `rgba(168, 85, 247, ${alpha * 0.15})`;
+      ctx.fillRect(centerX - 60, centerY - 120, 120, 160);
+
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY - 20, 25, 30, 0, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillRect(centerX - 31, centerY - 85, 4, 35);
+      ctx.fillRect(centerX - 13, centerY - 95, 4, 45);
+      ctx.fillRect(centerX + 6, centerY - 90, 4, 40);
+      ctx.fillRect(centerX + 26, centerY - 80, 4, 30);
+      ctx.fillRect(centerX - 15, centerY + 25, 8, 40);
+      ctx.fillRect(centerX + 5, centerY + 25, 8, 40);
+    }
+  }
+
+  // Parse query parameter to auto-configure simulation
+  const urlParams = new URLSearchParams(window.location.search);
+  const bandParam = urlParams.get('band');
+  if (bandParam) {
+    // Hide top navigation bar
+    let tabMenu = document.getElementById('spec-tabs');
+    if (tabMenu) {
+      tabMenu.style.display = 'none';
+    }
+    
+    // Auto switch to parameter band
+    window.addEventListener('load', () => {
+      switchBand(bandParam);
+    });
+  }
+
+  function animationLoop(timestamp) {
+    if (!isPlaying) return;
+    time += 0.015;
+    draw();
+    animId = requestAnimationFrame(animationLoop);
+  }
+
+  window.addEventListener('load', () => {
+    resizeCanvas();
+    if (!bandParam) {
+      switchBand('radio');
+    }
+    isPlaying = true;
+    animationLoop();
+  });
+</script>
+
+</body>
+</html>

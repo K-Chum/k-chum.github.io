@@ -1,0 +1,500 @@
+/* =========================================================================
+   Classroom Learning Lab — Global Lesson Template (Light Theme)
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Default Color Palette (Light Theme) */
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --border: #e2e8f0;
+  --border-focus: #94a3b8;
+  
+  --text-main: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  
+  /* Accent States */
+  --primary: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --primary-light: #f5f3ff;
+  
+  --secondary: #0d9488;
+  --secondary-hover: #0f766e;
+  --secondary-light: #f0fdf4;
+  
+  --accent: #ec4899;
+  --accent-light: #fdf2f8;
+  
+  --error: #ef4444;
+  --error-light: #fef2f2;
+  
+  --success: #10b981;
+  --success-light: #ecfdf5;
+
+  /* Font Families */
+  --font-title: 'Outfit', 'Noto Sans Thai', sans-serif;
+  --font-body: 'Inter', 'Noto Sans Thai', sans-serif;
+  --font-math: 'Times New Roman', Times, serif;
+
+  /* Spacings & Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.03);
+}
+
+/* Classroom-Front Size Scaling */
+html {
+  font-size: 20px; /* Base size. 1rem = 20px. Easily readable from distance. */
+  background-color: var(--bg-main);
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 16px; /* Responsive sizing for smaller viewports */
+  }
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background-color: var(--bg-main);
+  min-height: 100vh;
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Grid decoration */
+.bg-grid {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-shapes {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.15;
+}
+
+.shape-1 {
+  background: var(--primary);
+  width: 500px;
+  height: 500px;
+  top: -200px;
+  right: -100px;
+}
+
+.shape-2 {
+  background: var(--secondary);
+  width: 500px;
+  height: 500px;
+  bottom: -250px;
+  left: -150px;
+}
+
+/* Back to Hub Navigation */
+.back-home {
+  position: fixed;
+  top: 1.25rem;
+  left: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.back-home:hover {
+  color: var(--primary-hover);
+  border-color: var(--primary);
+  transform: translateX(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 1-Column Slide Presentation Container */
+.presentation-container {
+  max-width: 90vw;
+  width: 90vw;
+  margin: 0 auto;
+  padding: 4.5rem 1.25rem 2.5rem 1.25rem; /* top padding leaves room for back button */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+}
+
+.slides-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Slide Base Styling */
+.slide {
+  display: none;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.slide.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Slide Header info */
+.slide-header {
+  display: none; /* Hidden as per request to remove redundant top header and slide numbers */
+}
+
+.topic-label {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.slide-number {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Slide Titles */
+.slide-title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+/* Title Slide Specific Layout */
+.title-slide-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 350px;
+  margin: auto 0;
+  gap: 1.5rem;
+}
+
+.title-slide-layout h1 {
+  font-family: var(--font-title);
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.title-slide-layout h1 span {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.title-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  padding: 0.3rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Slide Content Containers (Cards) */
+.content-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.content-card.accent-border {
+  border-left: 5px solid var(--primary);
+}
+
+.content-card h3 {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+/* Standard Typography inside slides */
+p.lead {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+p.body-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+/* Highlight Box Widgets */
+.info-box {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--border-focus);
+  background: #f1f5f9;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.info-box.success-box {
+  background: var(--success-light);
+  border-left-color: var(--success);
+  color: #065f46;
+}
+
+.info-box.error-box {
+  background: var(--error-light);
+  border-left-color: var(--error);
+  color: #991b1b;
+}
+
+.info-box.accent-box {
+  background: var(--primary-light);
+  border-left-color: var(--primary);
+  color: #5b21b6;
+}
+
+/* Interactive Figures & Simulation Embeds */
+.interactive-figure {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0.5rem 0;
+  gap: 0.6rem;
+}
+
+.sim-frame {
+  width: 100%;
+  height: 100vh !important;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  background: #ffffff;
+  display: block;
+}
+
+.interactive-figure figcaption {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Premium High-Contrast Tables */
+.premium-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.premium-table th {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.premium-table td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.premium-table tbody tr:hover {
+  background-color: var(--bg-main);
+}
+
+/* Math variables styling for fallback inline text formulas */
+.math-var {
+  font-family: var(--font-math);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+.math-formula {
+  font-family: var(--font-math);
+  font-weight: 700;
+  font-size: 1.15rem;
+  background: var(--bg-main);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* Slide Footer & Navigation Controls Section */
+.slide-footer {
+  margin-top: 4.5rem; /* Extra space below content for classroom teaching */
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  position: relative;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+/* Big accessible buttons for front classroom clicks */
+.nav-btn {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.4rem;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  min-height: 48px;
+}
+
+.nav-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Visual Progress Elements */
+.progress-container {
+  flex: 1;
+  height: 6px;
+  background-color: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 200px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.nav-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--border);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.nav-dot:hover {
+  background-color: var(--border-focus);
+  transform: scale(1.25);
+}
+
+.nav-dot.active {
+  background-color: var(--primary);
+  width: 20px;
+  border-radius: 4px;
+}
+
+.slide-indicator {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}

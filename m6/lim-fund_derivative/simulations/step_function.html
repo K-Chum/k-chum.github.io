@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step Function Left & Right Limits</title>
+  <style>
+    /* Info Boxes */
+    .info-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .info-box {
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      border-left: 4px solid #cbd5e1;
+      background: #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.25s ease;
+      color: #334155;
+    }
+    .info-box.active-left {
+      background: #ecfdf5;
+      border-left-color: #10b981;
+      color: #065f46;
+    }
+    .info-box.active-right {
+      background: #fdf2f8;
+      border-left-color: #db2777;
+      color: #991b1b;
+    }
+    .info-box.error-box {
+      background: #fef2f2;
+      border-left-color: #ef4444;
+      color: #991b1b;
+      display: block;
+      text-align: center;
+      font-weight: 700;
+      padding: 12px;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- LEFT: Graph Visualizer -->
+    <div class="graph-panel">
+      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 2px;">กราฟ Step Function ที่จุดขาดต่อเนื่อง \( x = 2 \)</h4>
+      <canvas class="graph-canvas" id="step-func-canvas"></canvas>
+      <div class="interactive-controls">
+        <div class="control-row">
+          <label>เลื่อนตำแหน่ง x: <span id="step-x-val" style="color:#8b5cf6;">1.50</span></label>
+          <input type="range" class="slider" id="step-slider" min="1.0" max="3.0" step="0.01" value="1.5">
+        </div>
+        <div style="text-align: center; font-size: 0.95rem; font-weight: 700; color: #475569;">
+          ค่าจริงฟังก์ชัน f(x) = <span id="step-y-val" style="color:#8b5cf6;">2.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Readouts -->
+    <div class="info-panel">
+      <div class="info-box" id="box-left">
+        <span>ลิมิตฝั่งซ้าย:</span>
+        <span class="math-eq" id="step-left-readout">$ \lim_{x \to 2^-} f(x) = 2.00 $</span>
+      </div>
+      
+      <div class="info-box" id="box-right">
+        <span>ลิมิตฝั่งขวา:</span>
+        <span class="math-eq" id="step-right-readout">$ \lim_{x \to 2^+} f(x) = 4.00 $</span>
+      </div>
+
+      <div class="info-box error-box">
+        $ \lim_{x \to 2} f(x) $ ไม่มีค่า (หาไม่ได้)<br>
+        <span style="font-weight: normal; font-size: 0.75rem;">(เนื่องจากลิมิตซ้ายไม่เท่ากับลิมิตขวา $ 2 \neq 4 $)</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const stepSlider = document.getElementById('step-slider');
+    const stepXLabel = document.getElementById('step-x-val');
+    const stepYLabel = document.getElementById('step-y-val');
+    
+    const boxLeft = document.getElementById('box-left');
+    const boxRight = document.getElementById('box-right');
+
+    if (stepSlider) {
+      stepSlider.addEventListener('input', (e) => {
+        const x = parseFloat(e.target.value);
+        stepXLabel.textContent = x.toFixed(2);
+        
+        const y = x < 2 ? 2.0 : 4.0;
+        stepYLabel.textContent = y.toFixed(2);
+        
+        updateStepLimitText(x);
+        drawStepFuncGraph();
+      });
+    }
+
+    function updateStepLimitText(x) {
+      boxLeft.className = 'info-box';
+      boxRight.className = 'info-box';
+      
+      if (x < 2) {
+        boxLeft.classList.add('active-left');
+        boxRight.style.opacity = '0.5';
+        boxLeft.style.opacity = '1';
+      } else if (x > 2) {
+        boxRight.classList.add('active-right');
+        boxLeft.style.opacity = '0.5';
+        boxRight.style.opacity = '1';
+      } else {
+        boxLeft.style.opacity = '1';
+        boxRight.style.opacity = '1';
+      }
+    }
+
+    function drawStepFuncGraph() {
+      const canvas = document.getElementById('step-func-canvas');
+      if (!canvas) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      const originX = width * 0.15;
+      const originY = height * 0.85;
+      const scaleX = (width * 0.75) / 4;
+      const scaleY = (height * 0.75) / 5;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      // Grid
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      
+      // Vertical grid lines
+      const minK = Math.ceil(-originX / scaleX);
+      const maxK = Math.floor((width - originX) / scaleX);
+      for (let k = minK; k <= maxK; k++) {
+        const xPos = originX + k * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(xPos, 0);
+        ctx.lineTo(xPos, height);
+        ctx.stroke();
+      }
+      
+      // Horizontal grid lines
+      const minM = Math.ceil((originY - height) / scaleY);
+      const maxM = Math.floor(originY / scaleY);
+      for (let m = minM; m <= maxM; m++) {
+        const yPos = originY - m * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(0, yPos);
+        ctx.lineTo(width, yPos);
+        ctx.stroke();
+      }
+      
+      // Axes
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(width, originY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, height); ctx.stroke();
+      
+      // Axis labels
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      for (let x = 1; x <= 4; x++) {
+        ctx.fillText(x.toString(), originX + x * scaleX, originY + 14);
+      }
+      ctx.textAlign = 'right';
+      for (let y = 1; y <= 5; y++) {
+        ctx.fillText(y.toString(), originX - 6, originY - y * scaleY + 4);
+      }
+      ctx.fillText('0', originX - 6, originY + 10);
+      
+      // Piecewise lines
+      // Line 1: y = 2 for x < 2
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(originX, originY - 2 * scaleY);
+      ctx.lineTo(originX + 2 * scaleX, originY - 2 * scaleY);
+      ctx.stroke();
+      
+      // Line 2: y = 4 for x >= 2
+      ctx.strokeStyle = '#db2777';
+      ctx.beginPath();
+      ctx.moveTo(originX + 2 * scaleX, originY - 4 * scaleY);
+      ctx.lineTo(originX + 4 * scaleX, originY - 4 * scaleY);
+      ctx.stroke();
+      
+      // Hollow point at (2, 2)
+      const circleScreenX = originX + 2 * scaleX;
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(circleScreenX, originY - 2 * scaleY, 5, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      
+      // Solid point at (2, 4)
+      ctx.fillStyle = '#db2777';
+      ctx.beginPath();
+      ctx.arc(circleScreenX, originY - 4 * scaleY, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Current slider point
+      const currentX = parseFloat(stepSlider.value);
+      const currentY = currentX < 2 ? 2.0 : 4.0;
+      const currentScreenX = originX + currentX * scaleX;
+      const currentScreenY = originY - currentY * scaleY;
+      
+      ctx.strokeStyle = currentX < 2 ? '#10b981' : '#db2777';
+      ctx.setLineDash([3, 3]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(currentScreenX, originY); ctx.lineTo(currentScreenX, currentScreenY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Current dot
+      ctx.fillStyle = currentX < 2 ? '#10b981' : '#db2777';
+      ctx.beginPath(); ctx.arc(currentScreenX, currentScreenY, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+      
+      // Point labels
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('x = 2 (จุดตัดกลางสเกล)', circleScreenX + 8, originY + 4);
+    }
+
+    window.addEventListener('resize', drawStepFuncGraph);
+    
+    // Init on load
+    setTimeout(() => {
+      updateStepLimitText(1.5);
+      drawStepFuncGraph();
+    }, 100);
+  </script>
+</body>
+</html>

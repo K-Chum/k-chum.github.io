@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Derivative Introduction Secant to Tangent</title>
+  <style>
+    .readouts-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .info-box {
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      border-left: 4px solid #cbd5e1;
+      background: #f1f5f9;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .info-box.success-box {
+      background: #ecfdf5;
+      border-left-color: #10b981;
+      color: #065f46;
+    }
+    .info-box.accent-box {
+      background: #f5f3ff;
+      border-left-color: #8b5cf6;
+      color: #5b21b6;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- LEFT: Graph Visualizer -->
+    <div class="graph-panel">
+      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 2px;">เส้นตัดโค้ง (Secant Line) ลู่เข้าสู่ เส้นสัมผัส (Tangent Line)</h4>
+      <canvas class="graph-canvas" id="deriv-intro-canvas"></canvas>
+      <div class="interactive-controls">
+        <div class="control-row">
+          <label>ปรับช่วงระยะห่าง h: <span id="deriv-h-val" style="color:#8b5cf6;">2.00</span></label>
+          <input type="range" class="slider" id="deriv-h-slider" min="0.05" max="2.0" step="0.01" value="2.0">
+        </div>
+        <div style="text-align: center; font-size: 0.95rem; font-weight: 700; color: #475569;">
+          จุด P = (2.00, 2.00) | จุด Q = (<span id="deriv-q-coords">4.00, 5.00</span>)
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Readouts -->
+    <div class="readouts-panel">
+      <div class="info-box success-box">
+        <div style="font-weight: 700; text-transform: uppercase; font-size: 1.05rem; margin-bottom: 4px;">อัตราการเปลี่ยนแปลงเฉลี่ย (Secant Slope)</div>
+        • ความชันเส้นตัด Secant: <span class="math-eq" id="deriv-secant-slope">1.50</span><br>
+        <span style="font-size: 1.05rem; color: #0f766e;">(คำนวณจากสูตร: \(\frac{f(x+h) - f(x)}{h}\))</span>
+      </div>
+
+      <div class="info-box accent-box">
+        <div style="font-weight: 700; text-transform: uppercase; font-size: 1.05rem; margin-bottom: 4px;">อัตราการเปลี่ยนแปลงขณะใดๆ (Tangent Slope)</div>
+        • ความชันเส้นสัมผัส Tangent (เมื่อ \( h \to 0 \)): <span class="math-eq" style="color:#7c3aed;">1.00</span><br>
+        <span style="font-size: 1.05rem; color: #6d28d9;">(สอดคล้องกับอนุพันธ์ \( f'(2) = 1.00 \))</span>
+      </div>
+      
+      <div class="info-box" style="font-size: 0.75rem;">
+        สังเกตว่าเมื่อเลื่อนแถบให้ \( h \) มีขนาดเล็กลงจนเข้าใกล้ 0 เส้นตัดสีฟ้าจะขยับเข้าทับซ้อนตรงกับเส้นสัมผัสโค้งสีม่วงพอดี
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const hSlider = document.getElementById('deriv-h-slider');
+    const hLabel = document.getElementById('deriv-h-val');
+    const qCoordsLabel = document.getElementById('deriv-q-coords');
+    const secantSlopeLabel = document.getElementById('deriv-secant-slope');
+
+    if (hSlider) {
+      hSlider.addEventListener('input', (e) => {
+        const h = parseFloat(e.target.value);
+        hLabel.textContent = h.toFixed(2);
+        
+        const qX = 2 + h;
+        const qY = 0.25 * qX * qX + 1;
+        qCoordsLabel.textContent = `${qX.toFixed(2)}, ${qY.toFixed(2)}`;
+        
+        const slope = (qY - 2.0) / h;
+        secantSlopeLabel.textContent = slope.toFixed(2);
+        
+        drawDerivGraph();
+      });
+    }
+
+    function drawDerivGraph() {
+      const canvas = document.getElementById('deriv-intro-canvas');
+      if (!canvas) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // grid bounds
+      const originX = width * 0.15;
+      const originY = height * 0.85;
+      const scaleX = (width * 0.75) / 5;
+      const scaleY = (height * 0.75) / 6;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      // Grid
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      
+      // Vertical grid lines
+      const minK = Math.ceil(-originX / scaleX);
+      const maxK = Math.floor((width - originX) / scaleX);
+      for (let k = minK; k <= maxK; k++) {
+        const xPos = originX + k * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(xPos, 0);
+        ctx.lineTo(xPos, height);
+        ctx.stroke();
+      }
+      
+      // Horizontal grid lines
+      const minM = Math.ceil((originY - height) / scaleY);
+      const maxM = Math.floor(originY / scaleY);
+      for (let m = minM; m <= maxM; m++) {
+        const yPos = originY - m * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(0, yPos);
+        ctx.lineTo(width, yPos);
+        ctx.stroke();
+      }
+      
+      // Axes
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(width, originY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, height); ctx.stroke();
+      
+      // Axis labels
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      for (let x = 1; x <= 5; x++) {
+        ctx.fillText(x.toString(), originX + x * scaleX, originY + 14);
+      }
+      ctx.textAlign = 'right';
+      for (let y = 1; y <= 6; y++) {
+        ctx.fillText(y.toString(), originX - 6, originY - y * scaleY + 4);
+      }
+      ctx.fillText('0', originX - 6, originY + 10);
+      
+      // Draw Curve f(x) = 0.25x^2 + 1
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      let isFirst = true;
+      for (let screenX = originX; screenX < width; screenX++) {
+        const x = (screenX - originX) / scaleX;
+        if (x > 4.8) break;
+        const y = 0.25 * x * x + 1;
+        const screenY = originY - y * scaleY;
+        if (isFirst) { ctx.moveTo(screenX, screenY); isFirst = false; }
+        else { ctx.lineTo(screenX, screenY); }
+      }
+      ctx.stroke();
+      
+      // Points P(2, 2)
+      const pX = 2;
+      const pY = 2;
+      const pScreenX = originX + pX * scaleX;
+      const pScreenY = originY - pY * scaleY;
+      
+      // Point Q
+      const h = parseFloat(hSlider.value);
+      const qX = 2 + h;
+      const qY = 0.25 * qX * qX + 1;
+      const qScreenX = originX + qX * scaleX;
+      const qScreenY = originY - qY * scaleY;
+      
+      // Draw tangent line at P (slope = 1, equation: y = x)
+      ctx.strokeStyle = '#c084fc'; // light purple
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(pScreenX - 1.5 * scaleX, pScreenY + 1.5 * scaleY);
+      ctx.lineTo(pScreenX + 2.5 * scaleX, pScreenY - 2.5 * scaleY);
+      ctx.stroke();
+      
+      // Draw secant line PQ (slope = (qY - 2) / h)
+      const slope = (qY - 2) / h;
+      ctx.strokeStyle = '#0284c7'; // blue
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      // Line extending slightly past P and Q
+      ctx.moveTo(pScreenX - 0.8 * scaleX, pScreenY + 0.8 * slope * scaleY);
+      ctx.lineTo(qScreenX + 0.8 * scaleX, qScreenY - 0.8 * slope * scaleY);
+      ctx.stroke();
+      
+      // Draw slope triangle (rise and run) in red/rose
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      
+      // Horizontal leg: P(x) to (Q_x, P_y)
+      ctx.beginPath();
+      ctx.moveTo(pScreenX, pScreenY);
+      ctx.lineTo(qScreenX, pScreenY);
+      ctx.stroke();
+      
+      // Vertical leg: (Q_x, P_y) to Q(x+h)
+      ctx.beginPath();
+      ctx.moveTo(qScreenX, pScreenY);
+      ctx.lineTo(qScreenX, qScreenY);
+      ctx.stroke();
+      
+      ctx.setLineDash([]);
+      
+      // Draw right angle box
+      const size = 10;
+      if (qScreenX - pScreenX > size && pScreenY - qScreenY > size) {
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(qScreenX - size, pScreenY);
+        ctx.lineTo(qScreenX - size, pScreenY - size);
+        ctx.lineTo(qScreenX, pScreenY - size);
+        ctx.stroke();
+      }
+      
+      // Draw Dot P
+      ctx.fillStyle = '#7c3aed';
+      ctx.beginPath(); ctx.arc(pScreenX, pScreenY, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+      
+      // Draw Dot Q
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath(); ctx.arc(qScreenX, qScreenY, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+      
+      // Draw labels
+      ctx.fillStyle = '#7c3aed';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('P (2, 2)', pScreenX - 8, pScreenY - 2);
+      
+      ctx.fillStyle = '#0284c7';
+      ctx.textAlign = 'left';
+      ctx.fillText(`Q (${qX.toFixed(1)}, ${qY.toFixed(1)})`, qScreenX + 8, qScreenY + 4);
+    }
+
+    window.addEventListener('resize', drawDerivGraph);
+    
+    // Init on load
+    setTimeout(drawDerivGraph, 100);
+  </script>
+</body>
+</html>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multimeter Reading Simulator</title>
+  <style>
+    .panel-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 680px) {
+      .panel-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Compact Multimeter scale SVG wrapper */
+    .meter-wrapper {
+      width: 100%;
+      max-width: 550px;
+      margin: 0 auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      background: #f8fafc;
+      padding: 8px;
+    }
+    #multimeter-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Controls panels styling */
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .control-group {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .control-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* Range Grid */
+    .range-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .range-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 10px 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #334155;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .range-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .range-btn.active {
+      background: #8b5cf6;
+      border-color: #8b5cf6;
+      color: #ffffff;
+    }
+    /* Helper metrics details */
+    .scale-hint {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.95rem;
+    }
+    .hint-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .hint-label {
+      color: #64748b;
+      font-weight: 500;
+    }
+    .hint-val {
+      font-weight: 700;
+      color: #1e293b;
+    }
+    /* Buttons block */
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-new {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+    .btn-new:hover {
+      background: #e2e8f0;
+    }
+    .btn-reveal {
+      background: #8b5cf6;
+      color: #ffffff;
+    }
+    .btn-reveal:hover {
+      background: #7c3aed;
+    }
+    /* Reveal Answer Panel box */
+    .answer-panel {
+      background: #f0fdf4;
+      border: 1.5px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      display: none;
+    }
+    .answer-panel.visible {
+      display: block;
+    }
+    .answer-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #065f46;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .answer-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #059669;
+      display: inline-block;
+    }
+    .answer-unit {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #059669;
+      display: inline-block;
+      margin-left: 4px;
+    }
+    .answer-note {
+      font-size: 0.75rem;
+      color: #047857;
+      margin-top: 4px;
+      font-style: italic;
+    }
+    /* Stats bar */
+    .score-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+    .btn-reset {
+      background: transparent;
+      border: none;
+      color: #dc2626;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .btn-reset:hover {
+      text-decoration: underline;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="panel-container">
+    
+    <!-- LEFT COLUMN: Simplified Meter Scale ONLY -->
+    <div class="meter-wrapper">
+      <svg id="multimeter-svg" viewBox="0 0 460 250" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="wclip">
+            <rect x="14" y="9" width="432" height="230" rx="7"/>
+          </clipPath>
+          <linearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#f4f0da"/>
+            <stop offset="100%" stop-color="#ece7cc"/>
+          </linearGradient>
+          <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="white" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="white" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Compact Frame Box -->
+        <rect x="0" y="0" width="460" height="250" rx="12" fill="#222222"/>
+        <rect x="10" y="10" width="440" height="230" rx="10" fill="#0f0f0f" stroke="#4a4a4a" stroke-width="1.5"/>
+        <rect x="14" y="14" width="432" height="222" rx="7" fill="url(#faceGrad)"/>
+
+        <!-- Scale contents (clipped) -->
+        <g clip-path="url(#wclip)">
+          <!-- Mirror reference arcs -->
+          <g id="mirror-group"></g>
+          <!-- Ticks -->
+          <g id="scale-ticks-group"></g>
+          <!-- Labels -->
+          <g id="scale-labels-group"></g>
+
+          <text x="24"  y="60" font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
+          <text x="432" y="60" text-anchor="end" font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
+          <text id="scale-range-readout" x="230" y="200" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#333">—</text>
+
+          <!-- Needle -->
+          <g id="needle-group" transform="rotate(0, 230, 220)">
+            <line x1="230" y1="220" x2="230" y2="40" stroke="rgba(0,0,0,0.18)" stroke-width="3.5" stroke-linecap="round" transform="translate(1.5,1.5)"/>
+            <line x1="230" y1="220" x2="230" y2="40" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/>
+            <polygon points="230,34 226.5,48 233.5,48" fill="#cc1111"/>
+            <circle cx="230" cy="220" r="4" fill="#555"/>
+          </g>
+
+          <!-- Zero-adjust knob -->
+          <circle cx="230" cy="216" r="5.5" fill="#d0cdb5" stroke="#aaa89a" stroke-width="1"/>
+          <line x1="230" y1="211.5" x2="230" y2="215" stroke="#888" stroke-width="1"/>
+
+          <!-- Glass glare -->
+          <rect x="14" y="14" width="432" height="90" rx="7" fill="url(#glassGrad)" opacity="0.6"/>
+        </g>
+        <rect x="14" y="14" width="432" height="222" rx="7" fill="none" stroke="#7a7660" stroke-width="0.8"/>
+      </svg>
+    </div>
+
+    <!-- RIGHT COLUMN: Interactive Practice Controls -->
+    <div class="controls-panel">
+      
+      <!-- Range selector buttons -->
+      <div class="control-group">
+        <div class="control-title">ย่านวัด (DCV Range)</div>
+        <div class="range-grid" id="range-buttons"></div>
+      </div>
+
+      <!-- Scale reading details -->
+      <div class="control-group">
+        <div class="control-title">ค่าสเกลของย่านวัด</div>
+        <div class="scale-hint">
+          <div class="hint-row">
+            <span class="hint-label">สเกลวัดเต็ม (Full Scale):</span>
+            <span class="hint-val" id="hint-full-scale">—</span>
+          </div>
+          <div class="hint-row">
+            <span class="hint-label">ค่าขีดหลัก (Major Division):</span>
+            <span class="hint-val" id="hint-major-div">—</span>
+          </div>
+          <div class="hint-row">
+            <span class="hint-label">ค่าขีดสเกลย่อยสุด (Minor Division):</span>
+            <span class="hint-val" id="hint-minor-div">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions buttons -->
+      <div class="actions">
+        <button class="btn btn-new" id="btn-new">🔀 สุ่มแรงดันไฟฟ้า</button>
+        <button class="btn btn-reveal" id="btn-reveal">👁️ เฉลยคำตอบ</button>
+      </div>
+
+      <!-- Reveal Answer Box -->
+      <div class="answer-panel" id="answer-panel">
+        <div class="answer-label">✓ ค่าแรงดันไฟฟ้าจริง</div>
+        <div class="answer-value" id="answer-value">—</div>
+        <div class="answer-unit" id="answer-unit-display">—</div>
+        <div class="answer-note" id="answer-note"></div>
+      </div>
+
+      <!-- Score attempts tracker -->
+      <div class="score-bar">
+        <span>ครั้งที่สุ่มฝึกอ่านสะสม: <strong id="score-attempts">0</strong></span>
+        <button class="btn-reset" id="btn-reset">↺ รีเซ็ตสถิติ</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const RANGES = [
+      { id:'dcv-5',    label:'5',    display:'5 V',    fullScale:5,    unit:'V DC', decimalPlaces:2 },
+      { id:'dcv-10',   label:'10',   display:'10 V',   fullScale:10,   unit:'V DC', decimalPlaces:2 },
+      { id:'dcv-50',   label:'50',   display:'50 V',   fullScale:50,   unit:'V DC', decimalPlaces:1 },
+      { id:'dcv-1000', label:'1000', display:'1000 V', fullScale:1000, unit:'V DC', decimalPlaces:0 }
+    ];
+
+    const SC = {
+      cx: 230, cy: 220,
+      r: 185, rMirror: 189,
+      aMin: -65, aMax: 65
+    };
+
+    const SCALE_ROWS = [
+      { rangeId:'dcv-1000', labelR:155 },
+      { rangeId:'dcv-5',    labelR:141 },
+      { rangeId:'dcv-50',   labelR:127 },
+      { rangeId:'dcv-10',   labelR:113 },
+    ];
+    const SEP_RADII = [163, 148, 134, 120, 106];
+
+    const state = {
+      rangeId:'dcv-10', fraction:0.5, answerValue:0,
+      revealed:false, attempts:0,
+      needleAngle:0, targetAngle:0, animId:null
+    };
+
+    function curRange() {
+      return RANGES.find(r => r.id === state.rangeId);
+    }
+
+    function p2xy(angleDeg, r) {
+      const rad = angleDeg * Math.PI / 180;
+      return { x: SC.cx + r * Math.sin(rad), y: SC.cy - r * Math.cos(rad) };
+    }
+    
+    function fToAngle(f) {
+      return SC.aMin + f * (SC.aMax - SC.aMin);
+    }
+
+    function fmt(val, range) {
+      return val.toFixed(range.decimalPlaces);
+    }
+
+    function fmtLabel(rawVal, range) {
+      if (rawVal === 0) return '0';
+      if (range.decimalPlaces === 0) return Math.round(rawVal).toString();
+      if (range.decimalPlaces === 1) {
+        const s = rawVal.toFixed(1);
+        return s.endsWith('.0') ? Math.round(rawVal).toString() : s;
+      }
+      return rawVal.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    function svgEl(tag) {
+      return document.createElementNS('http://www.w3.org/2000/svg', tag);
+    }
+
+    function drawScale(activeRange) {
+      const tickGrp = document.getElementById('scale-ticks-group');
+      const lblGrp  = document.getElementById('scale-labels-group');
+      const mirGrp  = document.getElementById('mirror-group');
+      tickGrp.innerHTML = lblGrp.innerHTML = mirGrp.innerHTML = '';
+
+      addArc(mirGrp, SC.rMirror,     '#bab69e', 5, 0.45);
+      addArc(mirGrp, SC.rMirror - 4, '#666',    0.5, 0.4);
+      SEP_RADII.forEach(r => addArc(mirGrp, r, '#888', 0.5, 0.35));
+
+      const TOTAL = 100;
+      for (let i = 0; i <= TOTAL; i++) {
+        const f = i / TOTAL;
+        const angle = fToAngle(f);
+        const isMaj = (i % 10 === 0);
+        const isHalf= (i % 10 === 5);
+        const rIn = isMaj ? 163 : (isHalf ? 174 : 181);
+        addTick(tickGrp, angle, SC.r, rIn,
+                isMaj ? '#1c1c1c' : (isHalf ? '#1c1c1c' : '#555555'),
+                isMaj ? 1.8 : (isHalf ? 1.3 : 0.7));
+      }
+
+      SCALE_ROWS.forEach(row => {
+        const range = RANGES.find(r => r.id === row.rangeId);
+        const isActive = row.rangeId === activeRange.id;
+        const fillCol = isActive ? '#0f172a' : '#94a3b8';
+        const fSize = isActive ? '8.5' : '7';
+        const fWeight = isActive ? '700' : '400';
+
+        for (let i = 0; i <= 10; i++) {
+          const f = i / 10;
+          const angle = fToAngle(f);
+          const rawVal = f * range.fullScale;
+          const pos = p2xy(angle, row.labelR);
+          const txt = svgEl('text');
+          txt.setAttribute('x', pos.x.toFixed(2));
+          txt.setAttribute('y', pos.y.toFixed(2));
+          txt.setAttribute('text-anchor', 'middle');
+          txt.setAttribute('dominant-baseline', 'central');
+          txt.setAttribute('font-family', 'sans-serif');
+          txt.setAttribute('font-size', fSize);
+          txt.setAttribute('font-weight', fWeight);
+          txt.setAttribute('fill', fillCol);
+          txt.textContent = fmtLabel(rawVal, range);
+          lblGrp.appendChild(txt);
+        }
+
+        const rEdge = p2xy(SC.aMax + 3.5, row.labelR);
+        const edgeLbl = svgEl('text');
+        edgeLbl.setAttribute('x', rEdge.x.toFixed(2));
+        edgeLbl.setAttribute('y', rEdge.y.toFixed(2));
+        edgeLbl.setAttribute('text-anchor', 'start');
+        edgeLbl.setAttribute('dominant-baseline', 'central');
+        edgeLbl.setAttribute('font-family', 'sans-serif');
+        edgeLbl.setAttribute('font-size', isActive ? '6.5' : '5.5');
+        edgeLbl.setAttribute('font-weight', isActive ? '700' : '400');
+        edgeLbl.setAttribute('fill', isActive ? '#475569' : '#cbd5e1');
+        edgeLbl.textContent = `${range.fullScale}V`;
+        lblGrp.appendChild(edgeLbl);
+      });
+
+      const readout = document.getElementById('scale-range-readout');
+      if (readout) readout.textContent = `0 – ${activeRange.fullScale} V`;
+    }
+
+    function addArc(group, r, stroke, width, opacity) {
+      const path = buildArcPath(r, SC.aMin, SC.aMax, 80);
+      path.setAttribute('stroke', stroke);
+      path.setAttribute('stroke-width', width.toString());
+      path.setAttribute('opacity', opacity.toString());
+      group.appendChild(path);
+    }
+    
+    function addTick(group, angleDeg, rOut, rIn, stroke, width) {
+      const outer = p2xy(angleDeg, rOut);
+      const inner = p2xy(angleDeg, rIn);
+      const ln = svgEl('line');
+      ln.setAttribute('x1', outer.x.toFixed(2)); ln.setAttribute('y1', outer.y.toFixed(2));
+      ln.setAttribute('x2', inner.x.toFixed(2)); ln.setAttribute('y2', inner.y.toFixed(2));
+      ln.setAttribute('stroke', stroke); ln.setAttribute('stroke-width', width.toString());
+      ln.setAttribute('stroke-linecap', 'round');
+      group.appendChild(ln);
+    }
+
+    function buildArcPath(r, aMin, aMax, steps) {
+      let d = '';
+      for (let i = 0; i <= steps; i++) {
+        const a = aMin + (aMax - aMin) * (i / steps);
+        const p = p2xy(a, r);
+        d += (i === 0 ? 'M' : 'L') + `${p.x.toFixed(2)},${p.y.toFixed(2)} `;
+      }
+      const path = svgEl('path');
+      path.setAttribute('d', d); path.setAttribute('fill', 'none');
+      path.setAttribute('stroke-linecap', 'round');
+      return path;
+    }
+
+    function animateNeedle() {
+      const diff = state.targetAngle - state.needleAngle;
+      if (Math.abs(diff) < 0.08) {
+        state.needleAngle = state.targetAngle;
+        applyNeedle(state.needleAngle);
+        state.animId = null; return;
+      }
+      state.needleAngle += diff * 0.11;
+      applyNeedle(state.needleAngle);
+      state.animId = requestAnimationFrame(animateNeedle);
+    }
+    
+    function applyNeedle(angle) {
+      document.getElementById('needle-group')
+        .setAttribute('transform', `rotate(${angle.toFixed(3)}, ${SC.cx}, ${SC.cy})`);
+    }
+    
+    function setNeedle(fraction) {
+      state.fraction = Math.max(0, Math.min(1, fraction));
+      state.targetAngle = fToAngle(state.fraction);
+      if (state.animId) cancelAnimationFrame(state.animId);
+      state.animId = requestAnimationFrame(animateNeedle);
+    }
+
+    function generateReading(range) {
+      const TOTAL = 100; const minF = 0.05; const maxF = 0.95;
+      let f;
+      // 30% chance to land exactly on a tick, 70% chance to land in between
+      if (Math.random() < 0.30) {
+        const idx = Math.round(minF*TOTAL) + Math.floor(Math.random()*Math.round((maxF-minF)*TOTAL));
+        f = idx / TOTAL;
+      } else {
+        const idx = Math.round(minF*TOTAL) + Math.floor(Math.random()*Math.round((maxF-minF)*TOTAL));
+        f = (idx + 0.15 + Math.random()*0.70) / TOTAL;
+      }
+      return { f: Math.max(minF, Math.min(maxF, f)), answer: f * range.fullScale };
+    }
+
+    function updateHints(range) {
+      const maj = range.fullScale / 10;
+      const min = maj / 10;
+      document.getElementById('hint-full-scale').textContent = `0 – ${range.fullScale} ${range.unit}`;
+      document.getElementById('hint-major-div').textContent  = `${fmt(maj, range)} V (ขีดหลักตัวเลข)`;
+      document.getElementById('hint-minor-div').textContent  = `${fmt(min, range)} V (ขีดแบ่งย่อยสุด)`;
+    }
+
+    function hideAnswer() {
+      document.getElementById('answer-panel').classList.remove('visible');
+      state.revealed = false;
+    }
+    
+    function revealAnswer() {
+      if (state.revealed) return;
+      const range = curRange();
+      document.getElementById('answer-value').textContent = fmt(state.answerValue, range);
+      document.getElementById('answer-unit-display').textContent = range.unit;
+      
+      const tickFraction = state.fraction * 100;
+      const rem = tickFraction % 1;
+      const onTick = rem < 0.04 || rem > 0.96;
+      
+      const roundedTick = Math.round(tickFraction);
+      document.getElementById('answer-note').textContent = onTick
+        ? `ขีดลำดับที่ ${roundedTick} (เข็มชี้ตรงขีดสเกลพอดี ไม่ต้องประมาณสายตาเพิ่มเติม)`
+        : `ขีดกึ่งกลางระหว่างขีดลำดับที่ ${Math.floor(tickFraction)} และ ${Math.ceil(tickFraction)} (ต้องใช้การประมาณค่าเพิ่มเติมด้วยสายตา)`;
+        
+      document.getElementById('answer-panel').classList.add('visible');
+      state.revealed = true; state.attempts++;
+      document.getElementById('score-attempts').textContent = state.attempts;
+    }
+
+    function newReading() {
+      hideAnswer();
+      const range = curRange();
+      const { f, answer } = generateReading(range);
+      state.answerValue = answer;
+      setNeedle(f);
+    }
+
+    function selectRange(rangeId) {
+      state.rangeId = rangeId;
+      const range = curRange();
+
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.rid === rangeId);
+      });
+
+      drawScale(range);
+      updateHints(range);
+      newReading();
+    }
+
+    function buildRangeButtons() {
+      const container = document.getElementById('range-buttons');
+      if (!container) return;
+      RANGES.forEach(range => {
+        const btn = document.createElement('button');
+        btn.className   = 'range-btn' + (range.id === state.rangeId ? ' active' : '');
+        btn.dataset.rid = range.id;
+        btn.textContent = range.display;
+        btn.addEventListener('click', () => selectRange(range.id));
+        container.appendChild(btn);
+      });
+    }
+
+    function init() {
+      buildRangeButtons();
+      const range = curRange();
+      drawScale(range);
+      updateHints(range);
+      newReading();
+
+      document.getElementById('btn-new').addEventListener('click', newReading);
+      document.getElementById('btn-reveal').addEventListener('click', revealAnswer);
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        state.attempts = 0;
+        document.getElementById('score-attempts').textContent = '0';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

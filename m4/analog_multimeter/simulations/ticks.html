@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multimeter Scale Ticks Explorer</title>
+  <style>
+    .panel-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 680px) {
+      .panel-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Meter SVG Styling */
+    .meter-wrapper {
+      width: 100%;
+      max-width: 550px;
+      margin: 0 auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      background: #f8fafc;
+      padding: 8px;
+    }
+    #multimeter-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Right column panels */
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-group {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .control-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* Range selector buttons */
+    .range-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .range-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 10px 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #334155;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .range-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .range-btn.active {
+      background: #8b5cf6;
+      border-color: #8b5cf6;
+      color: #ffffff;
+    }
+    /* Tick legend list */
+    .tick-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.95rem;
+    }
+    .legend-item {
+      display: flex;
+      gap: 8px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 8px;
+      align-items: center;
+    }
+    .legend-indicator {
+      width: 4px;
+      height: 24px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .ind-major { background: #06b6d4; }
+    .ind-half  { background: #8b5cf6; }
+    .ind-minor { background: #94a3b8; }
+    .legend-content {
+      display: flex;
+      flex-direction: column;
+    }
+    .legend-title-text {
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .legend-desc-text {
+      color: #64748b;
+    }
+    /* Quiz Panel Styling */
+    .quiz-card {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiz-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #b45309;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .quiz-question {
+      font-size: 0.95rem;
+      color: #451a03;
+      line-height: 1.4;
+    }
+    .quiz-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .quiz-input {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 1.15rem;
+      padding: 8px 12px;
+      width: 100px;
+      text-align: center;
+    }
+    .quiz-input:focus {
+      outline: none;
+      border-color: #d97706;
+      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+    }
+    .quiz-unit {
+      font-weight: 700;
+      color: #475569;
+    }
+    .quiz-btn {
+      background: #d97706;
+      border: 1px solid #b45309;
+      color: #ffffff;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      flex: 1;
+      transition: background 0.2s;
+    }
+    .quiz-btn:hover {
+      background: #b45309;
+    }
+    .quiz-feedback {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      padding: 8px 10px;
+      border-radius: 6px;
+      display: none;
+    }
+    .quiz-feedback.correct {
+      display: block;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+    .quiz-feedback.incorrect {
+      display: block;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+    .btn-new {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #334155;
+    }
+    .btn-new:hover {
+      background: #f1f5f9;
+    }
+    .interactive-hint {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #64748b;
+      font-style: italic;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="panel-container">
+    
+    <!-- LEFT COLUMN: Meter scale view -->
+    <div class="meter-wrapper">
+      <svg id="multimeter-svg" viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="wclip">
+            <rect x="14" y="9" width="432" height="310" rx="7"/>
+          </clipPath>
+          <linearGradient id="faceGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#f4f0da"/>
+            <stop offset="100%" stop-color="#ece7cc"/>
+          </linearGradient>
+          <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="white" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="white" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Meter Window Box -->
+        <rect x="0" y="0" width="460" height="340" rx="12" fill="#222222"/>
+        <rect x="10" y="10" width="440" height="310" rx="10" fill="#0f0f0f" stroke="#4a4a4a" stroke-width="1.5"/>
+        <rect x="14" y="14" width="432" height="300" rx="7" fill="url(#faceGrad)"/>
+
+        <!-- Scale contents (clipped) -->
+        <g clip-path="url(#wclip)">
+          <!-- Mirror reference arc -->
+          <path id="scale-mirror-arc" fill="none" stroke="#bab69e" stroke-width="5" opacity="0.45" />
+          <path id="scale-mirror-arc-shadow" fill="none" stroke="#666" stroke-width="0.5" opacity="0.4" />
+
+          <!-- Arcs separating rows -->
+          <g id="row-dividers-group"></g>
+          <!-- Tick marks -->
+          <g id="scale-ticks-group"></g>
+          <!-- Labels -->
+          <g id="scale-labels-group"></g>
+
+          <text x="24"  y="65" font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
+          <text x="432" y="65" text-anchor="end" font-family="Arial Narrow,Arial" font-size="12" font-weight="700" fill="#1c1c1c">V·A</text>
+          <text x="230" y="275" text-anchor="middle" font-family="Arial Narrow,Arial" font-size="9" font-weight="700" fill="#555" letter-spacing="1">DCV SCALE EXPLORER</text>
+
+          <!-- Interactive hover readout label -->
+          <rect x="90" y="286" width="280" height="20" rx="4" fill="#0d0d0d" opacity="0.85" stroke="#333" stroke-width="0.8" />
+          <text id="hover-readout" x="230" y="296" text-anchor="middle" dominant-baseline="central"
+                font-family="monospace" font-size="11" font-weight="700" fill="#fbbf24">HOVER OVER ANY TICK TO STUDY</text>
+
+          <!-- Quiz highlight pointer arrow -->
+          <g id="quiz-pointer-group" display="none">
+            <path id="quiz-arrow" d="M230,120 L230,85" stroke="#d97706" stroke-width="3" stroke-linecap="round" fill="none" />
+            <polygon id="quiz-arrow-head" points="230,76 225,89 235,89" fill="#d97706" />
+          </g>
+
+          <rect x="14" y="14" width="432" height="300" rx="7" fill="none" stroke="#7a7660" stroke-width="0.8"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- RIGHT COLUMN: Interactive panels & Quiz -->
+    <div class="controls-panel">
+      
+      <!-- Range selector -->
+      <div class="control-group">
+        <div class="control-title">ย่านวัด (DC Voltage Range)</div>
+        <div class="range-grid" id="range-buttons"></div>
+      </div>
+
+      <!-- Tick explanation legends -->
+      <div class="control-group">
+        <div class="control-title">ความหมายของขีดสเกล</div>
+        <div class="tick-legend">
+          <div class="legend-item">
+            <div class="legend-indicator ind-major"></div>
+            <div class="legend-content">
+              <span class="legend-title-text">ขีดหลัก (มีตัวเลขกำกับ)</span>
+              <span class="legend-desc-text" id="leg-maj-val">ค่า: 1.0 V (ย่าน 10V)</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-indicator ind-half"></div>
+            <div class="legend-content">
+              <span class="legend-title-text">ขีดกึ่งกลาง (เส้นหนาตรงกลาง)</span>
+              <span class="legend-desc-text" id="leg-half-val">ค่า: 0.5 V (ย่าน 10V)</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-indicator ind-minor"></div>
+            <div class="legend-content">
+              <span class="legend-title-text">ขีดกึ่งกลางย่อย (เส้นสั้นสเกลน้อยสุด)</span>
+              <span class="legend-desc-text" id="leg-min-val">ค่า: 0.1 V (ย่าน 10V)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Self Check Quiz -->
+      <div class="quiz-card">
+        <div class="quiz-title">📝 แบบฝึกทดสอบตนเอง</div>
+        <p class="quiz-question" id="quiz-question-text">
+          เลือกย่านวัดด้านบน จากนั้นคลิกปุ่ม <strong>สุ่มโจทย์คำถาม</strong> เพื่อเริ่มทดสอบ
+        </p>
+        
+        <div class="quiz-input-row" id="quiz-controls" style="display:none;">
+          <input type="number" step="0.01" class="quiz-input" id="quiz-user-input" placeholder="0.00" aria-label="Enter reading value" />
+          <span class="quiz-unit">V</span>
+          <button class="quiz-btn" id="quiz-submit-btn">ตรวจสอบ</button>
+        </div>
+
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="btn-new" id="quiz-next-btn">🔀 สุ่มโจทย์คำถาม</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="interactive-hint">
+    💡 ใช้เมาส์ชี้ (Hover) ขีดต่างๆ บนหน้าปัดด้านบนเพื่อดูค่าสเกลของขีดนั้นๆ
+  </div>
+
+  <script>
+    const RANGES = [
+      { id:'dcv-5',    label:'5',    display:'5 V',    fullScale:5,    unit:'V DC', decimalPlaces:2 },
+      { id:'dcv-10',   label:'10',   display:'10 V',   fullScale:10,   unit:'V DC', decimalPlaces:2 },
+      { id:'dcv-50',   label:'50',   display:'50 V',   fullScale:50,   unit:'V DC', decimalPlaces:1 },
+      { id:'dcv-1000', label:'1000', display:'1000 V', fullScale:1000, unit:'V DC', decimalPlaces:0 }
+    ];
+
+    const SC = {
+      cx: 230, cy: 280,
+      r: 230, rMirror: 234,
+      aMin: -65, aMax: 65
+    };
+
+    const SCALE_ROWS = [
+      { rangeId:'dcv-1000', labelR:205 },
+      { rangeId:'dcv-5',    labelR:192 },
+      { rangeId:'dcv-50',   labelR:179 },
+      { rangeId:'dcv-10',   labelR:166 },
+    ];
+    const SEP_RADII = [212, 198, 185, 172, 159];
+
+    let currentRangeId = 'dcv-10';
+    let quizActive = false;
+    let quizTargetIndex = 0;
+    let quizTargetValue = 0;
+
+    function curRange() {
+      return RANGES.find(r => r.id === currentRangeId);
+    }
+
+    function p2xy(angleDeg, r) {
+      const rad = angleDeg * Math.PI / 180;
+      return { x: SC.cx + r * Math.sin(rad), y: SC.cy - r * Math.cos(rad) };
+    }
+    
+    function fToAngle(f) {
+      return SC.aMin + f * (SC.aMax - SC.aMin);
+    }
+
+    function fmt(val, range) {
+      return val.toFixed(range.decimalPlaces);
+    }
+
+    function fmtLabel(rawVal, range) {
+      if (rawVal === 0) return '0';
+      if (range.decimalPlaces === 0) return Math.round(rawVal).toString();
+      if (range.decimalPlaces === 1) {
+        const s = rawVal.toFixed(1);
+        return s.endsWith('.0') ? Math.round(rawVal).toString() : s;
+      }
+      return rawVal.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    function svgEl(tag) {
+      return document.createElementNS('http://www.w3.org/2000/svg', tag);
+    }
+
+    function initScaleArcs() {
+      const mirArc = document.getElementById('scale-mirror-arc');
+      const mirArcSh = document.getElementById('scale-mirror-arc-shadow');
+      
+      mirArc.setAttribute('d', buildArcPathD(SC.rMirror, SC.aMin, SC.aMax, 80));
+      mirArcSh.setAttribute('d', buildArcPathD(SC.rMirror - 4, SC.aMin, SC.aMax, 80));
+
+      const divGrp = document.getElementById('row-dividers-group');
+      divGrp.innerHTML = '';
+      SEP_RADII.forEach(r => {
+        const path = svgEl('path');
+        path.setAttribute('d', buildArcPathD(r, SC.aMin, SC.aMax, 80));
+        path.setAttribute('stroke', '#888');
+        path.setAttribute('stroke-width', '0.5');
+        path.setAttribute('opacity', '0.35');
+        path.setAttribute('fill', 'none');
+        divGrp.appendChild(path);
+      });
+    }
+
+    function buildArcPathD(r, aMin, aMax, steps) {
+      let d = '';
+      for (let i = 0; i <= steps; i++) {
+        const a = aMin + (aMax - aMin) * (i / steps);
+        const p = p2xy(a, r);
+        d += (i === 0 ? 'M' : 'L') + `${p.x.toFixed(2)},${p.y.toFixed(2)} `;
+      }
+      return d;
+    }
+
+    function drawScale() {
+      const tickGrp = document.getElementById('scale-ticks-group');
+      const lblGrp  = document.getElementById('scale-labels-group');
+      tickGrp.innerHTML = lblGrp.innerHTML = '';
+
+      const activeRange = curRange();
+      const TOTAL = 100;
+
+      for (let i = 0; i <= TOTAL; i++) {
+        const f = i / TOTAL;
+        const angle = fToAngle(f);
+        const isMaj = (i % 10 === 0);
+        const isHalf= (i % 10 === 5);
+        const rIn = isMaj ? 212 : (isHalf ? 222 : 227);
+        
+        const outer = p2xy(angle, SC.r);
+        const inner = p2xy(angle, rIn);
+        
+        const ln = svgEl('line');
+        ln.setAttribute('x1', outer.x.toFixed(2));
+        ln.setAttribute('y1', outer.y.toFixed(2));
+        ln.setAttribute('x2', inner.x.toFixed(2));
+        ln.setAttribute('y2', inner.y.toFixed(2));
+        ln.setAttribute('stroke', isMaj ? '#1c1c1c' : (isHalf ? '#1c1c1c' : '#555555'));
+        ln.setAttribute('stroke-width', isMaj ? '1.8' : (isHalf ? '1.3' : '0.7'));
+        ln.setAttribute('stroke-linecap', 'round');
+        tickGrp.appendChild(ln);
+
+        const hoverLn = svgEl('line');
+        hoverLn.setAttribute('x1', outer.x.toFixed(2));
+        hoverLn.setAttribute('y1', outer.y.toFixed(2));
+        hoverLn.setAttribute('x2', inner.x.toFixed(2));
+        hoverLn.setAttribute('y2', inner.y.toFixed(2));
+        hoverLn.setAttribute('stroke', 'transparent');
+        hoverLn.setAttribute('stroke-width', '6');
+        hoverLn.setAttribute('cursor', 'pointer');
+        
+        hoverLn.addEventListener('mouseenter', () => {
+          ln.setAttribute('stroke', '#8b5cf6');
+          if (isMaj) ln.setAttribute('stroke-width', '2.8');
+          else if (isHalf) ln.setAttribute('stroke-width', '2.2');
+          else ln.setAttribute('stroke-width', '1.6');
+          
+          showTickInfo(i);
+        });
+
+        hoverLn.addEventListener('mouseleave', () => {
+          ln.setAttribute('stroke', isMaj ? '#1c1c1c' : (isHalf ? '#1c1c1c' : '#555555'));
+          ln.setAttribute('stroke-width', isMaj ? '1.8' : (isHalf ? '1.3' : '0.7'));
+          resetTickInfo();
+        });
+
+        tickGrp.appendChild(hoverLn);
+      }
+
+      SCALE_ROWS.forEach(row => {
+        const range = RANGES.find(r => r.id === row.rangeId);
+        const isActive = row.rangeId === activeRange.id;
+        const fillCol = isActive ? '#0f172a' : '#94a3b8';
+        const fSize = isActive ? '8.5' : '7';
+        const fWeight = isActive ? '700' : '400';
+
+        for (let i = 0; i <= 10; i++) {
+          const f = i / 10;
+          const angle = fToAngle(f);
+          const rawVal = f * range.fullScale;
+          const pos = p2xy(angle, row.labelR);
+          const txt = svgEl('text');
+          txt.setAttribute('x', pos.x.toFixed(2));
+          txt.setAttribute('y', pos.y.toFixed(2));
+          txt.setAttribute('text-anchor', 'middle');
+          txt.setAttribute('dominant-baseline', 'central');
+          txt.setAttribute('font-family', 'sans-serif');
+          txt.setAttribute('font-size', fSize);
+          txt.setAttribute('font-weight', fWeight);
+          txt.setAttribute('fill', fillCol);
+          txt.textContent = fmtLabel(rawVal, range);
+          lblGrp.appendChild(txt);
+        }
+
+        const rEdge = p2xy(SC.aMax + 3.5, row.labelR);
+        const edgeLbl = svgEl('text');
+        edgeLbl.setAttribute('x', rEdge.x.toFixed(2));
+        edgeLbl.setAttribute('y', rEdge.y.toFixed(2));
+        edgeLbl.setAttribute('text-anchor', 'start');
+        edgeLbl.setAttribute('dominant-baseline', 'central');
+        edgeLbl.setAttribute('font-family', 'sans-serif');
+        edgeLbl.setAttribute('font-size', isActive ? '6.5' : '5.5');
+        edgeLbl.setAttribute('font-weight', isActive ? '700' : '400');
+        edgeLbl.setAttribute('fill', isActive ? '#475569' : '#cbd5e1');
+        edgeLbl.textContent = `${range.fullScale}V`;
+        lblGrp.appendChild(edgeLbl);
+      });
+    }
+
+    function showTickInfo(index) {
+      if (quizActive) return;
+      
+      const range = curRange();
+      const val = (index / 100) * range.fullScale;
+      let tickName = "ขีดสเกลย่อย";
+      if (index % 10 === 0) tickName = "ขีดหลักมีตัวเลข";
+      else if (index % 10 === 5) tickName = "ขีดกึ่งกลาง";
+
+      const readout = document.getElementById('hover-readout');
+      readout.textContent = `${tickName} ลำดับที่ ${index} = ${fmt(val, range)} V`;
+      readout.setAttribute('fill', '#a7f3d0');
+    }
+
+    function resetTickInfo() {
+      if (quizActive) return;
+      const readout = document.getElementById('hover-readout');
+      readout.textContent = "HOVER OVER ANY TICK TO STUDY";
+      readout.setAttribute('fill', '#fbbf24');
+    }
+
+    function updateLegend() {
+      const range = curRange();
+      const majVal = range.fullScale / 10;
+      const minVal = majVal / 10;
+      const halfVal = majVal / 2;
+
+      document.getElementById('leg-maj-val').textContent = `ค่าขีดละ: ${fmt(majVal, range)} V (ขีดที่มีตัวเลข)`;
+      document.getElementById('leg-half-val').textContent = `ค่าขีดละ: ${fmt(halfVal, range)} V (ขีดหนากึ่งกลางหลัก)`;
+      document.getElementById('leg-min-val').textContent = `ค่าขีดละ: ${fmt(minVal, range)} V (ขีดช่องแบ่งย่อยที่สุด)`;
+    }
+
+    function newQuizQuestion() {
+      quizActive = true;
+      const range = curRange();
+      
+      quizTargetIndex = Math.floor(Math.random() * 91) + 5;
+      quizTargetValue = (quizTargetIndex / 100) * range.fullScale;
+
+      const angle = fToAngle(quizTargetIndex / 100);
+      const ptr = document.getElementById('quiz-pointer-group');
+      ptr.setAttribute('transform', `rotate(${angle.toFixed(2)}, ${SC.cx}, ${SC.cy})`);
+      ptr.setAttribute('display', 'block');
+
+      const readout = document.getElementById('hover-readout');
+      readout.textContent = `🎯 โปรดอ่านค่าตามตำแหน่งลูกศร`;
+      readout.setAttribute('fill', '#fde68a');
+
+      document.getElementById('quiz-question-text').innerHTML = `
+        จงอ่านค่าแรงดันไฟฟ้าที่ <strong>ลูกศรสีเหลืองชี้บนสเกล</strong> 
+        เมื่อตั้งย่านวัดเป็น <strong>${range.display}</strong>:
+      `;
+
+      document.getElementById('quiz-controls').style.display = 'flex';
+      const userInput = document.getElementById('quiz-user-input');
+      userInput.value = '';
+      userInput.focus();
+      
+      const feedback = document.getElementById('quiz-feedback');
+      feedback.style.display = 'none';
+    }
+
+    function checkQuizAnswer() {
+      if (!quizActive) return;
+
+      const range = curRange();
+      const userInput = parseFloat(document.getElementById('quiz-user-input').value);
+      const feedback = document.getElementById('quiz-feedback');
+
+      if (isNaN(userInput)) {
+        feedback.textContent = "⚠ กรุณากรอกตัวเลขคำตอบ";
+        feedback.className = "quiz-feedback incorrect";
+        feedback.style.display = "block";
+        return;
+      }
+
+      const diff = Math.abs(userInput - quizTargetValue);
+      const tolerance = range.fullScale / 400; // tiny tolerance
+      const correctValStr = fmt(quizTargetValue, range);
+
+      if (diff <= tolerance) {
+        feedback.innerHTML = `🎉 <strong>ถูกต้อง!</strong> ค่าที่อ่านได้คือ <strong>${correctValStr} V</strong><br/>` +
+                             `คิดจาก: ขีดลำดับที่ ${quizTargetIndex} = (${quizTargetIndex}/100) × ${range.fullScale}V = ${correctValStr}V`;
+        feedback.className = "quiz-feedback correct";
+        feedback.style.display = "block";
+        
+        quizActive = false;
+        document.getElementById('quiz-pointer-group').setAttribute('display', 'none');
+        document.getElementById('quiz-controls').style.display = 'none';
+        resetTickInfo();
+      } else {
+        feedback.innerHTML = `❌ <strong>คำตอบยังไม่ถูกต้อง</strong> คุณตอบ ${userInput} V. ลองนับขีดใหม่อีกครั้ง!<br/>` +
+                             `<em>คำแนะนำ: ดูค่าขีดสเกลย่อยสุดของย่านนี้ประกอบเพื่อความถูกต้อง</em>`;
+        feedback.className = "quiz-feedback incorrect";
+        feedback.style.display = "block";
+      }
+    }
+
+    function selectRange(rangeId) {
+      currentRangeId = rangeId;
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.rid === rangeId);
+      });
+      drawScale();
+      updateLegend();
+
+      if (quizActive) {
+        newQuizQuestion();
+      }
+    }
+
+    function buildRangeButtons() {
+      const container = document.getElementById('range-buttons');
+      RANGES.forEach(range => {
+        const btn = document.createElement('button');
+        btn.className = 'range-btn' + (range.id === currentRangeId ? ' active' : '');
+        btn.dataset.rid = range.id;
+        btn.textContent = range.display;
+        btn.addEventListener('click', () => selectRange(range.id));
+        container.appendChild(btn);
+      });
+    }
+
+    function init() {
+      buildRangeButtons();
+      initScaleArcs();
+      drawScale();
+      updateLegend();
+
+      document.getElementById('quiz-next-btn').addEventListener('click', newQuizQuestion);
+      document.getElementById('quiz-submit-btn').addEventListener('click', checkQuizAnswer);
+
+      document.getElementById('quiz-user-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkQuizAnswer();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

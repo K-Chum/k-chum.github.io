@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Significant Figures Checker</title>
+  <style>
+    .sigfig-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sigfig-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    #sigfig-input {
+      width: 100%;
+      padding: 16px 20px;
+      font-size: 1.3rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.2s ease;
+      color: #0f172a;
+      background: #f8fafc;
+      font-family: inherit;
+    }
+    #sigfig-input:focus {
+      border-color: #0d9488;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+    }
+    /* Visualizer block displaying highlighted digits */
+    .sigfig-visualizer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 24px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      min-height: 110px;
+      background: #fafafa;
+    }
+    /* Stylized individual digits */
+    .sf-digit {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 2.2rem;
+      font-weight: 800;
+      position: relative;
+      min-width: 46px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .sf-digit-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    /* Colors per sig-fig classification */
+    .sf-digit.significant {
+      background: #e6fffa;
+      color: #0d9488;
+      border: 1.5px solid #a3f7e6;
+    }
+    .sf-digit.significant .sf-digit-label {
+      color: #0f766e;
+    }
+    .sf-digit.not-significant {
+      background: #f1f5f9;
+      color: #94a3b8;
+      border: 1.5px solid #e2e8f0;
+    }
+    .sf-digit.not-significant .sf-digit-label {
+      color: #64748b;
+    }
+    .sf-digit.ambiguous {
+      background: #fffbeb;
+      color: #d97706;
+      border: 1.5px solid #fde68a;
+    }
+    .sf-digit.ambiguous .sf-digit-label {
+      color: #b45309;
+    }
+    /* Results layout */
+    .sigfig-results {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+    @media (max-width: 500px) {
+      .sigfig-results {
+        grid-template-columns: 1fr;
+      }
+    }
+    .sf-count-box {
+      background: #f0fdfa;
+      border: 1.5px solid #a3f7e6;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      text-align: center;
+    }
+    .sf-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0d9488;
+      line-height: 1;
+    }
+    .sf-lbl {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #0f766e;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+    .sf-explanation-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sf-explanation-box strong {
+      font-size: 0.82rem;
+      color: #334155;
+      margin-bottom: 2px;
+    }
+    #sf-rules {
+      padding-left: 16px;
+      font-size: 0.82rem;
+      color: #475569;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="sigfig-container">
+    <div class="sigfig-input-wrapper">
+      <input type="text" id="sigfig-input" value="0.04050" placeholder="พิมพ์ตัวเลข เช่น 0.04050, 4500, 1.2 x 10^3">
+    </div>
+
+    <div class="sigfig-visualizer" id="sigfig-visualizer">
+      <!-- Injected dynamically -->
+    </div>
+
+    <div class="sigfig-results">
+      <div class="sf-count-box">
+        <div class="sf-number" id="sf-count">4</div>
+        <div class="sf-lbl">เลขนัยสำคัญ (ตัว)</div>
+      </div>
+      
+      <div class="sf-explanation-box">
+        <strong>หลักเกณฑ์การนับที่ตรวจพบ:</strong>
+        <ul id="sf-rules">
+          <!-- Injected dynamically -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sfInput = document.getElementById('sigfig-input');
+    const sfVisualizer = document.getElementById('sigfig-visualizer');
+    const sfCountDisplay = document.getElementById('sf-count');
+    const sfRulesDisplay = document.getElementById('sf-rules');
+
+    if (sfInput) {
+      sfInput.addEventListener('input', (e) => {
+        updateSigFigAnalysis(e.target.value);
+      });
+      // Init on load
+      updateSigFigAnalysis(sfInput.value);
+    }
+
+    function updateSigFigAnalysis(rawVal) {
+      if (!sfVisualizer || !sfCountDisplay || !sfRulesDisplay) return;
+
+      const trimmed = rawVal.trim();
+      if (trimmed === '') {
+        sfVisualizer.innerHTML = '<span style="color:#64748b">พิมพ์ตัวเลขเพื่อตรวจสอบ...</span>';
+        sfCountDisplay.textContent = '-';
+        sfRulesDisplay.innerHTML = '<li>รอข้อมูลตัวเลข...</li>';
+        return;
+      }
+
+      // Basic numerical format validation
+      const numRegex = /^-?\d*\.?\d*(?:[eE][-+]?\d+|(?:\s*[xX\*]\s*10\^?-?\d+))?$/;
+      if (!numRegex.test(trimmed)) {
+        sfVisualizer.innerHTML = '<span style="color:#ef4444; font-weight: 600;">รูปแบบตัวเลขไม่ถูกต้อง</span>';
+        sfCountDisplay.textContent = 'Error';
+        sfRulesDisplay.innerHTML = '<li>กรุณาพิมพ์ตัวเลขในรูปแบบที่ถูกต้อง เช่น 123, 0.0450, 1.2 x 10^3</li>';
+        return;
+      }
+
+      let coefficientStr = trimmed;
+      let powerStr = '';
+      const sciMatch = trimmed.match(/^([^-eExX\*]+)(?:[eE]([-+]?\d+)|(?:\s*[xX\*]\s*10\^?(-?\d+)))$/);
+      if (sciMatch) {
+        coefficientStr = sciMatch[1].trim();
+        powerStr = sciMatch[2] || sciMatch[3];
+      }
+
+      let chars = coefficientStr.split('');
+      let numDigits = [];
+      let hasDecimal = coefficientStr.includes('.');
+
+      for (let i = 0; i < chars.length; i++) {
+        if (/\d/.test(chars[i])) {
+          numDigits.push({ char: chars[i], index: i, type: 'undetermined' });
+        }
+      }
+
+      if (numDigits.length === 0) {
+        sfVisualizer.innerHTML = '<span style="color:#64748b">พิมพ์ตัวเลขเพื่อตรวจสอบ...</span>';
+        sfCountDisplay.textContent = '-';
+        sfRulesDisplay.innerHTML = '<li>รอข้อมูลตัวเลข...</li>';
+        return;
+      }
+
+      let firstNonZeroIdx = -1;
+      let lastNonZeroIdx = -1;
+
+      for (let i = 0; i < numDigits.length; i++) {
+        if (numDigits[i].char !== '0') {
+          if (firstNonZeroIdx === -1) firstNonZeroIdx = i;
+          lastNonZeroIdx = i;
+        }
+      }
+
+      let sigCount = 0;
+      let isAmbiguous = false;
+      let explanations = [];
+
+      if (firstNonZeroIdx === -1) {
+        numDigits.forEach(d => d.type = 'significant');
+        sigCount = hasDecimal ? numDigits.length : 1;
+        if (!hasDecimal) {
+          numDigits.forEach((d, idx) => {
+            if (idx > 0) d.type = 'not-significant';
+          });
+        }
+        explanations.push("เป็นเลขศูนย์ทั้งหมด: นับจำนวนหลักศูนย์ทั้งหมดตามทศนิยม (หรือ 1 ตัวถ้าเป็นจำนวนเต็ม)");
+      } else {
+        explanations.push("ตัวเลขที่ไม่ใช่ 0 ทุกตัว (1-9) ถือเป็นเลขนัยสำคัญ");
+
+        for (let i = 0; i < numDigits.length; i++) {
+          const d = numDigits[i];
+          
+          if (d.char !== '0') {
+            d.type = 'significant';
+            sigCount++;
+          } else {
+            if (i < firstNonZeroIdx) {
+              d.type = 'not-significant';
+            } else if (i > firstNonZeroIdx && i < lastNonZeroIdx) {
+              d.type = 'significant';
+              sigCount++;
+            } else if (i > lastNonZeroIdx) {
+              if (hasDecimal) {
+                d.type = 'significant';
+                sigCount++;
+              } else {
+                d.type = 'ambiguous';
+                isAmbiguous = true;
+              }
+            }
+          }
+        }
+
+        const hasLeading = numDigits.some((d, i) => d.char === '0' && i < firstNonZeroIdx);
+        if (hasLeading) {
+          explanations.push("เลข 0 หน้าเลขนัยสำคัญตัวแรกสุด (ด้านซ้าย) <strong>ไม่นับ</strong> (ทำหน้าที่แค่บอกหลักตำแหน่ง)");
+        }
+
+        const hasCaptive = numDigits.some((d, i) => d.char === '0' && i > firstNonZeroIdx && i < lastNonZeroIdx);
+        if (hasCaptive) {
+          explanations.push("เลข 0 ที่อยู่ระหว่างเลขนัยสำคัญตัวอื่น (ตรงกลาง) <strong>ให้นับเป็นเลขนัยสำคัญ</strong>");
+        }
+
+        const hasTrailing = numDigits.some((d, i) => d.char === '0' && i > lastNonZeroIdx);
+        if (hasTrailing) {
+          if (hasDecimal) {
+            explanations.push("เลข 0 หลังเลขนัยสำคัญตัวสุดท้ายในทศนิยม (ด้านขวาสุด) <strong>ให้นับเสมอ</strong> (แสดงความละเอียดวัด)");
+          } else {
+            explanations.push("เลข 0 หลังเลขนัยสำคัญในจำนวนเต็ม <strong>ไม่แน่ชัด</strong> แนะนำให้เขียนแบบ <strong>สัญกรณ์วิทยาศาสตร์</strong>");
+          }
+        }
+      }
+
+      let outputHTML = '';
+      let digitCounter = 0;
+      
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        if (/\d/.test(char)) {
+          const digitObj = numDigits[digitCounter++];
+          let labelText = '';
+          if (digitObj.type === 'significant') labelText = 'นับ';
+          else if (digitObj.type === 'not-significant') labelText = 'ไม่นับ';
+          else if (digitObj.type === 'ambiguous') labelText = 'ไม่แน่';
+
+          outputHTML += `<span class="sf-digit ${digitObj.type}">${char}<span class="sf-digit-label">${labelText}</span></span>`;
+        } else {
+          outputHTML += `<span style="font-size:2rem; font-weight:800; color:#334155; margin: 0 2px;">${char}</span>`;
+        }
+      }
+
+      if (sciMatch) {
+        outputHTML += ` <span style="font-size:1.6rem; font-weight:600; color:#8b5cf6; margin-left: 8px;">× 10<sup>${powerStr}</sup></span>`;
+        explanations.push("สัญกรณ์วิทยาศาสตร์ $A \\times 10^n$ คิดเลขนัยสำคัญเฉพาะที่ $A$ เท่านั้น ส่วน $10^n$ ไม่นับ");
+      }
+
+      sfVisualizer.innerHTML = outputHTML;
+
+      if (isAmbiguous) {
+        const minCount = sigCount;
+        const maxCount = numDigits.length - firstNonZeroIdx;
+        sfCountDisplay.textContent = `${minCount} - ${maxCount}`;
+      } else {
+        sfCountDisplay.textContent = sigCount;
+      }
+
+      sfRulesDisplay.innerHTML = explanations.map(exp => `<li>${exp}</li>`).join('');
+    }
+  </script>
+</body>
+</html>

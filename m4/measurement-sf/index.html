@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ฟิสิกส์ ม.4 | การวัดและเลขนัยสำคัญ</title>
+  <!-- Link to shared template assets -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../../template/template.css">
+  <script src="../../template/template.js" defer></script>
+</head>
+<body>
+
+  <div class="presentation-container">
+    <div class="slides-container">
+
+      <!-- SLIDE 0: TITLE -->
+      <section class="slide active" id="slide-0">
+        <div class="title-slide-layout">
+          <div class="title-badge">ฟิสิกส์ ม. 4</div>
+          <h1>บทนำ <span>การวัดและเลขนัยสำคัญ</span></h1>
+          <p class="lead">วิธีการบันทึกข้อมูลและวิเคราะห์ความคลาดเคลื่อนผลวัดทางฟิสิกส์</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 1: MEASUREMENT ON RULER -->
+      <section class="slide" id="slide-1">
+        <div class="slide-header">
+          <div class="topic-label">1. การอ่านค่าเครื่องมือวัด</div>
+          <div class="slide-number">สไลด์ 1 / 8</div>
+        </div>
+        <h2 class="slide-title">การวัดและการประมาณบนสเกลไม้บรรทัด</h2>
+        
+        <div class="content-card accent-border">
+          <h3>การอ่านค่าจากเครื่องมือวัดที่มีสเกล</h3>
+          <p class="body-text">การอ่านค่าจากเครื่องมือวัดที่มีสเกล เช่น ไม้บรรทัด เราต้องบันทึกตัวเลข 2 ส่วนรวมกันเสมอ:</p>
+          <div class="info-box success-box">
+            <strong>1. ค่าที่อ่านได้โดยตรง (Direct Reading):</strong> อ่านจากขีดสเกลที่เห็นได้ชัดเจนที่สุด<br>
+            <strong>2. ค่าที่ต้องประมาณ (Estimated Digit):</strong> ประมาณด้วยสายตาเพิ่มอีก 1 ตำแหน่ง (คิดเป็น 1/10 ของช่องสเกลย่อยที่สุด)
+          </div>
+          <p class="body-text">สูตรบันทึกผลการวัดจริง: <strong>ค่าบันทึกจริง = ค่าที่อ่านตรงสเกล + ค่าประมาณสายตา</strong></p>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/ruler.html" class="sim-frame" title="Virtual Ruler Simulation" style="min-height: 440px;"></iframe>
+          <figcaption>รูปที่ 1.1: แถบไม้บรรทัดจำลองสำหรับทดลองเปลี่ยนความละเอียดสเกลและฝึกอ่านค่าจริงและค่าประมาณ</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 2: DEFINITION OF SIGNIFICANT FIGURES -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="topic-label">2. นิยามของเลขนัยสำคัญ</div>
+          <div class="slide-number">สไลด์ 2 / 8</div>
+        </div>
+        <h2 class="slide-title">เลขนัยสำคัญ (Significant Figures) คืออะไร?</h2>
+        
+        <div class="content-card accent-border">
+          <h3>ความหมายทางฟิสิกส์</h3>
+          <p class="lead"><strong>เลขนัยสำคัญ</strong> คือ ตัวเลขที่แสดงความละเอียดในการวัดทางวิทยาศาสตร์ ซึ่งประกอบด้วย <u>ตัวเลขที่อ่านได้ตรงจากสเกลของเครื่องมือ</u> และ <u>ตัวเลขที่ได้จากการประมาณสายตาอีก 1 ตัว</u> เท่านั้น</p>
+          <div class="info-box accent-box">
+            เลขนัยสำคัญบ่งบอกถึง <strong>"ความละเอียดของเครื่องมือวัด"</strong> ยิ่งเลขนัยสำคัญมีจำนวนตัวมาก แสดงว่าข้อมูลนั้นวัดด้วยเครื่องมือที่มีความละเอียดสูง
+          </div>
+        </div>
+
+        <div class="content-card">
+          <h3>ความต่างระว่าง คณิตศาสตร์ vs ฟิสิกส์</h3>
+          <p class="body-text">ในเชิงคณิตศาสตร์ ค่าของตัวเลขเหล่านี้เท่ากันทุกประการ แต่ในทางวิทยาศาสตร์มีความหมายต่างกันโดยสิ้นเชิง:</p>
+          
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>ค่ารายงาน</th>
+                <th>จำนวนเลขนัยสำคัญ</th>
+                <th>ความหมาย / ความละเอียดในการวัด</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>\( 2 \) cm</strong></td>
+                <td>1 ตัว</td>
+                <td>วัดด้วยไม้บรรทัดที่หยาบมาก ไม่มีขีดทศนิยมเลย (หลักหน่วยเป็นค่าประมาณสายตา)</td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--primary);">\( 2.0 \) cm</strong></td>
+                <td>2 ตัว</td>
+                <td>วัดด้วยไม้บรรทัดทั่วไปที่มีความละเอียดทุกๆ \( 1 \) ซม. (ทศนิยมตำแหน่งที่ 1 เป็นค่าประมาณ)</td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--secondary);">\( 2.00 \) cm</strong></td>
+                <td>3 ตัว</td>
+                <td>วัดด้วยไม้บรรทัดละเอียดพิเศษมีขีดแบ่งทุก \( 1 \) มม. หรือ \( 0.1 \) ซม. (ทศนิยมตำแหน่งที่ 2 เป็นค่าประมาณ)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: COUNTING RULES WITH LIVE TOOL -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="topic-label">3. หลักการนับเลขนัยสำคัญ</div>
+          <div class="slide-number">สไลด์ 3 / 8</div>
+        </div>
+        <h2 class="slide-title">หลักเกณฑ์การนับเลขนัยสำคัญ</h2>
+        
+        <div class="content-card accent-border">
+          <h3>สรุปกฎการนับเลขนัยสำคัญ</h3>
+          <ol style="padding-left: 1.25rem; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li><strong>เลข 1-9 (เลขที่ไม่ใช่ศูนย์):</strong> ให้นับทุกตัวเป็นเลขนัยสำคัญ</li>
+            <li><strong>เลข 0 มีกฎเฉพาะดังนี้:</strong>
+              <ul>
+                <li><strong>เลข 0 ด้านหน้า (ซ้ายสุด):</strong> <u>ไม่นับ</u> เช่น \( 0.0035 \) มีเลขนัยสำคัญ 2 ตัว (คือ 3 และ 5)</li>
+                <li><strong>เลข 0 ตรงกลาง (ระหว่างตัวเลขอื่น):</strong> <u>นับเสมอ</u> เช่น \( 405 \) มีเลขนัยสำคัญ 3 ตัว</li>
+                <li><strong>เลข 0 ด้านหลัง (ขวาสุด) ในรูปทศนิยม:</strong> <u>นับเสมอ</u> เช่น \( 2.30 \) มีเลขนัยสำคัญ 3 ตัว</li>
+                <li><strong>เลข 0 ด้านหลังในจำนวนเต็มปกติ:</strong> <u>อาจนับหรือไม่นับ</u> (คลุมเครือ) แนะนำให้เขียนในรูป <strong>สัญกรณ์วิทยาศาสตร์</strong> เพื่อระบุความละเอียดที่แน่นอน เช่น \( 4.5 \times 10^3 \) (2 ตัว) หรือ \( 4.50 \times 10^3 \) (3 ตัว)</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/sigfigs.html" class="sim-frame" title="Significant Figures Checker Tool" style="min-height: 250px;"></iframe>
+          <figcaption>รูปที่ 1.2: เครื่องมือวิเคราะห์จำนวนหลักและแสดงเหตุผลการนับเลขนัยสำคัญ</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 4: ADDITION & SUBTRACTION -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="topic-label">4. การบวกและลบเลขนัยสำคัญ</div>
+          <div class="slide-number">สไลด์ 4 / 8</div>
+        </div>
+        <h2 class="slide-title">หลักเกณฑ์การบวกและลบเลขนัยสำคัญ</h2>
+        
+        <div class="content-card accent-border">
+          <h3>กฎสำคัญ: ยึดตาม "ตำแหน่งทศนิยม" ที่ละเอียดน้อยที่สุด</h3>
+          <p class="lead">ผลลัพธ์จากการบวกและลบจำนวนเลขจากการวัด จะต้องมี <strong>จำนวนตำแหน่งทศนิยมเท่ากับตัวตั้งที่มีตำแหน่งทศนิยมน้อยที่สุด (หยาบที่สุด)</strong></p>
+          <div class="info-box success-box">
+            <strong>เหตุผล:</strong> คำตอบสุดท้ายของผลวัดจะมีความละเอียดแม่นยำเกินกว่าข้อมูลจากเครื่องมือวัดที่หยาบที่สุดในกลุ่มไม่ได้
+          </div>
+        </div>
+
+        <div class="content-card">
+          <h3>ตัวอย่างการคำนวณบวกลบ</h3>
+          <p class="body-text">จงคำนวณผลลัพธ์ของ \( 12.11 \text{ (ทศนิยม 2 ตำแหน่ง)} + 4.2 \text{ (ทศนิยม 1 ตำแหน่ง)} \):</p>
+          
+          <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 1rem;">
+            <div>&nbsp;&nbsp;12.11 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ทศนิยม 2 ตำแหน่ง)</div>
+            <div>+&nbsp;&nbsp;4.2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ทศนิยม 1 ตำแหน่ง, หยาบที่สุด)</div>
+            <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid var(--border-focus);">
+            <div style="color: var(--text-muted);">&nbsp;&nbsp;16.31 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ผลบวกตามหลักคณิตศาสตร์ปกติ)</div>
+            <div style="color: var(--success); font-weight: bold;">&nbsp;&nbsp;16.3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ปัดเศษเหลือทศนิยม 1 ตำแหน่ง ตามหลักฟิสิกส์)</div>
+          </div>
+          
+          <p class="body-text" style="font-size: 0.85rem; margin-top: 0.5rem;">
+            *เนื่องจาก \( 4.2 \) หยาบที่สุด (ทศนิยมตำแหน่งที่ 1) ผลลัพธ์สุดท้ายจึงต้องปัดเศษ \( 16.31 \) ให้เหลือทศนิยมเพียง 1 ตำแหน่ง ได้ผลลัพธ์เป็น <strong>\( 16.3 \)</strong>
+          </p>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: MULTIPLICATION & DIVISION -->
+      <section class="slide" id="slide-5">
+        <div class="slide-header">
+          <div class="topic-label">5. การคูณและหารเลขนัยสำคัญ</div>
+          <div class="slide-number">สไลด์ 5 / 8</div>
+        </div>
+        <h2 class="slide-title">หลักเกณฑ์การคูณและหารเลขนัยสำคัญ</h2>
+        
+        <div class="content-card accent-border">
+          <h3>กฎสำคัญ: ยึดตาม "จำนวนเลขนัยสำคัญรวม" ที่น้อยที่สุด</h3>
+          <p class="lead">ผลลัพธ์จากการคูณและหาร จะต้องมี <strong>จำนวนเลขนัยสำคัญรวม เท่ากับตัวตั้งที่มีจำนวนเลขนัยสำคัญรวมน้อยที่สุด</strong></p>
+          <div class="info-box success-box">
+            <strong>ความต่างกับบวก/ลบ:</strong> การคูณ/หาร <u>ไม่สนใจตำแหน่งทศนิยม</u> แต่สนใจ <u>จำนวนตัวคูณ</u> ที่มีหลักนัยสำคัญรวมน้อยที่สุดเท่านั้น
+          </div>
+        </div>
+
+        <div class="content-card">
+          <h3>ตัวอย่างการคำนวณคูณหาร</h3>
+          <p class="body-text">คำนวณพื้นที่รูปสี่เหลี่ยมผืนผ้าที่มีความกว้าง \( 1.523 \) cm (นัยสำคัญ 4 ตัว) และความยาว \( 3.0 \) cm (นัยสำคัญ 2 ตัว):</p>
+          
+          <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.95rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <div>ผลคูณตามคณิตศาสตร์ปกติ: \( 1.523 \times 3.0 = 4.569 \text{ cm}^2 \)</div>
+            <div style="color: var(--success); font-weight: bold;">
+              ผลคูณตามหลักฟิสิกส์: \( 4.6 \text{ cm}^2 \) (ปรับนัยสำคัญรวมเหลือ 2 ตัวตามตัวคูณ \( 3.0 \))
+            </div>
+          </div>
+          <p class="body-text" style="font-size: 0.85rem;">
+            *เนื่องจาก \( 3.0 \) มีจำนวนเลขนัยสำคัญน้อยที่สุดคือ 2 ตัว ผลลัพธ์สุดท้ายจึงต้องปัดเศษ \( 4.569 \) เป็นทศนิยมที่รักษาเลขนัยสำคัญรวมไว้เพียง 2 ตัว ได้ผลลัพธ์เป็น <strong>\( 4.6 \)</strong>
+          </p>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: WHAT IS UNCERTAINTY -->
+      <section class="slide" id="slide-6">
+        <div class="slide-header">
+          <div class="topic-label">6. ค่าความคลาดเคลื่อนในการวัด</div>
+          <div class="slide-number">สไลด์ 6 / 8</div>
+        </div>
+        <h2 class="slide-title">ความคลาดเคลื่อนของการวัด (Uncertainty)</h2>
+        
+        <div class="content-card accent-border">
+          <h3>การแสดงความคลาดเคลื่อนในการรายงานผล</h3>
+          <p class="body-text">การวัดในทางวิทยาศาสตร์จริงไม่มีความแม่นยำ 100% จึงต้องบันทึกข้อมูลในรูปค่าความคลาดเคลื่อนควบคู่เสมอ:</p>
+          <div style="text-align: center; margin: 0.5rem 0;">
+            $$ Y \pm \Delta Y $$
+          </div>
+          <p class="body-text">โดยที่ \( Y \) คือ <strong>ค่ากลางที่วัดได้</strong> และ \( \Delta Y \) คือ <strong>ค่าความคลาดเคลื่อนของการวัด</strong></p>
+          <p class="body-text">มีความหมายว่า ค่าจริงของอุณหภูมิจะตกอยู่ภายในช่วงตั้งแต่ \( Y - \Delta Y \) ถึง \( Y + \Delta Y \)</p>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/thermometer.html" class="sim-frame" title="Thermometer Uncertainty Simulator" style="min-height: 280px;"></iframe>
+          <figcaption>รูปที่ 1.3: เครื่องมือทดลองเลื่อนค่าเฉลี่ยและช่วงความคลาดเคลื่อนบนสเกลของเครื่องมือวัด</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 7: ADD & SUBTRACT WITH UNCERTAINTY -->
+      <section class="slide" id="slide-7">
+        <div class="slide-header">
+          <div class="topic-label">7. การคำนวณความคลาดเคลื่อน (บวก-ลบ)</div>
+          <div class="slide-number">สไลด์ 7 / 8</div>
+        </div>
+        <h2 class="slide-title">การดำเนินการบวกลบเลขที่มีค่าคลาดเคลื่อน</h2>
+        
+        <div class="content-card accent-border">
+          <h3>หลักการ: ค่าความคลาดเคลื่อนสะสมเพิ่มขึ้นเสมอ</h3>
+          <p class="lead">เมื่อนำผลการวัดที่มีความคลาดเคลื่อนมาบวกหรือลบกัน <strong>ค่าคลาดเคลื่อนของคำตอบจะได้จากการนำค่าคลาดเคลื่อนของแต่ละตัวตั้งมารวมกันเสมอ</strong> (ไม่มีการนำมาหักล้างกันเด็ดขาด)</p>
+          
+          <div class="info-box accent-box">
+            <strong>สูตรการคำนวณ:</strong>
+            <div style="font-family: monospace; font-size: 0.95rem; margin-top: 4px;">
+              ผลบวก: \( (A \pm \Delta A) + (B \pm \Delta B) = (A + B) \pm (\Delta A + \Delta B) \)<br>
+              ผลลบ: \( (A \pm \Delta A) - (B \pm \Delta B) = (A - B) \pm (\Delta A + \Delta B) \)
+            </div>
+          </div>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/calc_add_sub.html" class="sim-frame" title="Uncertainty Addition/Subtraction Calculator" style="min-height: 300px;"></iframe>
+          <figcaption>รูปที่ 1.4: เครื่องคิดเลขแสดงวิธีบวกและลบปริมาณคลาดเคลื่อนสะสม</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 8: MULTIPLY & DIVIDE WITH UNCERTAINTY -->
+      <section class="slide" id="slide-8">
+        <div class="slide-header">
+          <div class="topic-label">8. การคำนวณความคลาดเคลื่อน (คูณ-หาร)</div>
+          <div class="slide-number">สไลด์ 8 / 8</div>
+        </div>
+        <h2 class="slide-title">การดำเนินการคูณหารเลขที่มีค่าคลาดเคลื่อน</h2>
+        
+        <div class="content-card accent-border">
+          <h3>หลักการ: คิดรวมจากเปอร์เซ็นต์ความคลาดเคลื่อนสะสม</h3>
+          <p class="lead">เมื่อนำตัวเลขที่มีความคลาดเคลื่อนมาคูณหรือหารกัน <strong>เปอร์เซ็นต์คลาดเคลื่อนของผลลัพธ์จะเกิดจากผลรวมเปอร์เซ็นต์ความคลาดเคลื่อนของแต่ละพจน์คูณหารกัน</strong></p>
+          
+          <div class="info-box success-box" style="font-size: 0.85rem;">
+            <strong>ขั้นตอนการหาผลคูณและหาร:</strong>
+            <ol style="padding-left: 1rem;">
+              <li>หาเปอร์เซ็นต์คลาดเคลื่อนพจน์ A: \( \% \Delta A = \frac{\Delta A}{A} \times 100\% \)</li>
+              <li>หาเปอร์เซ็นต์คลาดเคลื่อนพจน์ B: \( \% \Delta B = \frac{\Delta B}{B} \times 100\% \)</li>
+              <li>นำเปอร์เซ็นต์ความคลาดเคลื่อนมารวมกันเสมอ: \( \% \Delta Y = \% \Delta A + \% \Delta B \)</li>
+              <li>แสดงผลรายงานในรูป: <strong>ผลลัพธ์ (คลาดเคลื่อน \( \pm \% \))</strong></li>
+            </ol>
+          </div>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/calc_mul_div.html" class="sim-frame" title="Uncertainty Multiplication/Division Calculator" style="min-height: 340px;"></iframe>
+          <figcaption>รูปที่ 1.5: เครื่องวิเคราะห์เปอร์เซ็นต์คลาดเคลื่อนสะสมคูณหารและจัดรูปนัยสำคัญ</figcaption>
+        </figure>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>

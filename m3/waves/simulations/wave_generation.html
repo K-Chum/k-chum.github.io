@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประเภทของคลื่น: แบ่งตามลักษณะการเกิด | Wave Generation</title>
+
+  <!-- Google Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+  </style>
+
+  <!-- ① Shared base styles -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+
+  <style>
+    body {
+      background: #ffffff;
+      padding: 10px;
+      gap: 10px;
+    }
+    .btn-control-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-generation {
+      flex: 1;
+      padding: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      color: #ffffff;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .btn-pulse {
+      background: #0d9488;
+    }
+    .btn-pulse:hover {
+      background: #0f766e;
+    }
+    .btn-continuous {
+      background: #8b5cf6;
+    }
+    .btn-continuous:hover {
+      background: #7c3aed;
+    }
+    .btn-continuous.active {
+      background: #ef4444;
+    }
+    .btn-reset {
+      background: #475569;
+      flex: 0.4;
+    }
+    .btn-reset:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Left Column: Wave Machine Canvas & Buttons -->
+  <div class="graph-panel">
+    <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-main);">เครื่องสร้างคลื่นเสมือนจริง (Wave Generator)</h4>
+    
+    <canvas class="graph-canvas" id="generation-canvas" style="height: 280px;"></canvas>
+
+    <div class="btn-control-group">
+      <button class="btn-generation btn-pulse" id="btn-pulse" onclick="triggerPulse()">💥 สร้างคลื่นดล (Generate Pulse)</button>
+      <button class="btn-generation btn-continuous" id="btn-continuous" onclick="toggleContinuous()">🌊 สร้างคลื่นต่อเนื่อง (Continuous)</button>
+      <button class="btn-generation btn-reset" onclick="resetWave()">รีเซ็ต</button>
+    </div>
+  </div>
+
+  <!-- Right Column: Descriptions & Learning -->
+  <div class="readouts-panel" style="display:flex; flex-direction:column; gap:10px;">
+    
+    <!-- Pulse Wave Info Box -->
+    <div class="info-box success-box" id="pulse-box">
+      <strong>คลื่นดล (Pulse Wave)</strong><br>
+      เกิดขึ้นเมื่อตัวกลางถูกรบกวนเพียง <strong>ครั้งเดียวหรือสองครั้ง</strong> 
+      <ul>
+        <li>ทดลองกดปุ่ม <strong>"สร้างคลื่นดล"</strong> เพื่อดูพลังงานคลื่นลูกเดียววิ่งผ่านเชือกแล้ววิ่งผ่านหายไป</li>
+        <li>ทิศคลื่นเคลื่อนไปข้างหน้า ขณะที่อณูเชือกขยับชั่วคราวแล้วกลับสู่นิ่ง</li>
+      </ul>
+    </div>
+
+    <!-- Continuous Wave Info Box -->
+    <div class="info-box accent-box" id="continuous-box">
+      <strong>คลื่นต่อเนื่อง (Continuous Wave)</strong><br>
+      เกิดขึ้นเมื่อตัวกลางถูกรบกวนเป็นจังหวะ <strong>อย่างต่อเนื่องเป็นเวลา</strong> 
+      <ul>
+        <li>ทดลองกดปุ่ม <strong>"สร้างคลื่นต่อเนื่อง"</strong> เพื่อให้แหล่งกำเนิดสั่นไม่หยุด</li>
+        <li>คลื่นจะเรียงตัวกันเป็นแนวโค้งต่อสลับกันไปตลอดเส้นเชือก</li>
+      </ul>
+    </div>
+
+    <!-- Hint box -->
+    <div class="info-box info-blue" style="font-size: 0.85rem;">
+      <strong>ความรู้รอบตัว:</strong> 
+      เมื่อเราหยุดการสั่นสะเบิดของสัญญาน คลื่นที่แผ่ออกไปแล้วจะเดินทางต่อไปทางขวาเรื่อย ๆ และไม่หวนกลับคืนมา
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  let canvas = document.getElementById('generation-canvas');
+  let ctx = canvas.getContext('2d');
+
+  // Simulation parameters
+  let numPoints = 160;
+  let ropeY = []; // stores displacement values along the rope
+  let damping = 0.998; // very slight energy loss to look organic
+  
+  let isContinuous = false;
+  let pulseTimer = 0;
+  let pulseDuration = 0.5; // seconds
+  let amp = 45;
+  let freq = 1.8; // Hz
+  let time = 0;
+  let lastTimestamp = 0;
+
+  function initRope() {
+    ropeY = new Array(numPoints).fill(0);
+  }
+
+  function resizeCanvas() {
+    let rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    draw();
+  }
+  window.addEventListener('resize', resizeCanvas);
+
+  function triggerPulse() {
+    pulseTimer = pulseDuration;
+    // Highlight pulse box visually
+    document.getElementById('pulse-box').style.borderLeftWidth = '8px';
+    setTimeout(() => {
+      document.getElementById('pulse-box').style.borderLeftWidth = '4px';
+    }, 500);
+  }
+
+  function toggleContinuous() {
+    isContinuous = !isContinuous;
+    let btn = document.getElementById('btn-continuous');
+    if (isContinuous) {
+      btn.textContent = "🛑 หยุดสั่นต่อเนื่อง";
+      btn.classList.add('active');
+      document.getElementById('continuous-box').style.borderLeftWidth = '8px';
+    } else {
+      btn.textContent = "🌊 สร้างคลื่นต่อเนื่อง (Continuous)";
+      btn.classList.remove('active');
+      document.getElementById('continuous-box').style.borderLeftWidth = '4px';
+    }
+  }
+
+  function resetWave() {
+    isContinuous = false;
+    pulseTimer = 0;
+    initRope();
+    let btn = document.getElementById('btn-continuous');
+    btn.textContent = "🌊 สร้างคลื่นต่อเนื่อง (Continuous)";
+    btn.classList.remove('active');
+    draw();
+  }
+
+  function draw() {
+    if (!canvas) return;
+    let w = canvas.width;
+    let h = canvas.height;
+    let centerY = h / 2;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Draw central equilibrium line (dashed)
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath(); ctx.moveTo(40, centerY); ctx.lineTo(w - 20, centerY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw generator piston / head on left
+    let genX = 40;
+    let genY = centerY + ropeY[0];
+    
+    // Draw generator mechanical bar
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(genX - 25, centerY);
+    ctx.lineTo(genX - 5, genY);
+    ctx.stroke();
+
+    // Draw piston head circle
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(genX - 5, genY, 8, 0, 2*Math.PI);
+    ctx.fill();
+
+    // Draw the rope line
+    ctx.strokeStyle = '#818cf8';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(genX, genY);
+    
+    let ropeStep = (w - 60) / (numPoints - 1);
+    for (let i = 0; i < numPoints; i++) {
+      let rx = genX + i * ropeStep;
+      let ry = centerY + ropeY[i];
+      ctx.lineTo(rx, ry);
+    }
+    ctx.stroke();
+
+    // Draw small green particles along the rope for clarity
+    ctx.fillStyle = '#4f46e5';
+    for (let i = 0; i < numPoints; i += 4) {
+      let rx = genX + i * ropeStep;
+      let ry = centerY + ropeY[i];
+      ctx.beginPath();
+      ctx.arc(rx, ry, 3, 0, 2*Math.PI);
+      ctx.fill();
+    }
+  }
+
+  function updateWave(dt) {
+    // Shift rope values rightward
+    // The number of shift steps is related to speed and dt
+    // To make it frame-rate independent, we determine how many points to shift:
+    let pointsToShift = Math.max(1, Math.round(dt * 180)); 
+    
+    for (let s = 0; s < pointsToShift; s++) {
+      for (let i = numPoints - 1; i > 0; i--) {
+        ropeY[i] = ropeY[i-1] * damping;
+      }
+
+      // Calculate input value at 0
+      let inputVal = 0;
+      if (pulseTimer > 0) {
+        pulseTimer -= dt / pointsToShift;
+        let phase = 2 * Math.PI * (pulseDuration - pulseTimer) / pulseDuration;
+        inputVal = amp * Math.sin(phase);
+      } else if (isContinuous) {
+        inputVal = amp * Math.sin(time * 2 * Math.PI * freq);
+      }
+      
+      ropeY[0] = inputVal;
+    }
+  }
+
+  function animationLoop(timestamp) {
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    let dt = (timestamp - lastTimestamp) / 1000;
+    lastTimestamp = timestamp;
+
+    time += dt;
+
+    // prevent dt from blowing up on tab switch
+    if (dt < 0.1) {
+      updateWave(dt);
+    }
+    
+    draw();
+    requestAnimationFrame(animationLoop);
+  }
+
+  window.addEventListener('load', () => {
+    initRope();
+    resizeCanvas();
+    lastTimestamp = performance.now();
+    requestAnimationFrame(animationLoop);
+  });
+</script>
+
+</body>
+</html>

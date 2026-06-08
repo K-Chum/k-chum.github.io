@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ฟิสิกส์ ม.4 | คลังบทเรียนเสมือนจริง (Physics Interactive Lab)</title>
-  <meta name="description" content="คลังปฏิบัติการและสื่อการสอนวิชาฟิสิกส์ ม.4 แบบปฏิสัมพันธ์ เรียนรู้ทฤษฎีควบคู่การวัดและการประมาณค่าเสมือนจริง">
+  <title>คลังเรียนรู้วิทยาศาสตร์และคณิตศาสตร์เสมือนจริง | Science & Math Interactive Lab</title>
+  <meta name="description" content="คลังปฏิบัติการและสื่อการสอนวิชาวิทยาศาสตร์และคณิตศาสตร์ แบบปฏิสัมพันธ์ เรียนรู้ทฤษฎีควบคู่การจำลองเสมือนจริง">
   <link rel="stylesheet" href="style.css">
+  <!-- Import dynamic configuration -->
+  <script src="lessons_config.js"></script>
 </head>
 <body>
 
@@ -18,75 +20,67 @@
 
   <div class="container">
     
-    <!-- Interactive Modules Selection Grid -->
-    <main class="modules-grid">
-
-      <!-- Card 1: Measurement & Significant Figures -->
-      <article class="module-card meas" onclick="window.location.href='m4_measurement_and_sf/index.html'" aria-label="บทเรียนการวัดและเลขนัยสำคัญ">
-        <div class="card-header">
-          <div class="badge-row">
-            <span class="badge">ทฤษฎี &amp; สไลด์</span>
-            <span class="badge">M.4</span>
-          </div>
-        </div>
-        
-        <div class="card-info">
-          <h2 class="card-title">การวัดและเลขนัยสำคัญ</h2>
-          <p class="card-desc">เรียนรู้หลักการวัดทางวิทยาศาสตร์ วิธีอ่านค่าสเกลไม้บรรทัดอย่างละเอียด หลักเกณฑ์การนับเลขนัยสำคัญ และการคิดคำนวณความคลาดเคลื่อนสะสมในการทดลอง</p>
-        </div>
-
-        <div class="card-footer">
-          <button class="action-btn" aria-label="เข้าสู่บทเรียนการวัดและเลขนัยสำคัญ">
-            เข้าสู่บทเรียน ➔
-          </button>
-        </div>
-      </article>
-
-      <!-- Card 2: Analog Multimeter Simulation -->
-      <article class="module-card multi" onclick="window.location.href='m4_analog_multimeter_simulation/index.html'" aria-label="ห้องปฏิบัติการมัลติมิเตอร์แอนะล็อก">
-        <div class="card-header">
-          <div class="badge-row">
-            <span class="badge">Simulation</span>
-            <span class="badge">M.4</span>
-          </div>
-        </div>
-        
-        <div class="card-info">
-          <h2 class="card-title">มัลติมิเตอร์แอนะล็อก</h2>
-          <p class="card-desc">ฝึกอ่านค่าเข็มชี้ของมัลติมิเตอร์แบบแอนะล็อก ทำความเข้าใจขีดวัดแบบไม่เชิงเส้น การเลือกย่านวัดที่ถูกต้อง และทดสอบประเมินผลความถูกต้อง</p>
-        </div>
-
-        <div class="card-footer">
-          <button class="action-btn" aria-label="เข้าสู่ห้องปฏิบัติการมัลติมิเตอร์แอนะล็อก">
-            เข้าสู่ห้องแล็บ ➔
-          </button>
-        </div>
-      </article>
-
-      <!-- Card 3: Limits & Derivatives -->
-      <article class="module-card math" onclick="window.location.href='m6_limit_fund_diff/index.html'" aria-label="บทเรียนลิมิตและพื้นฐานการหาอนุพันธ์">
-        <div class="card-header">
-          <div class="badge-row">
-            <span class="badge">ทฤษฎี &amp; สไลด์</span>
-            <span class="badge">M.6</span>
-          </div>
-        </div>
-        
-        <div class="card-info">
-          <h2 class="card-title">ลิมิตและพื้นฐานการหาอนุพันธ์</h2>
-          <p class="card-desc">เรียนรู้แนวคิดลิมิตของฟังก์ชัน ลิมิตซ้าย-ขวา คุณสมบัติของลิมิต รูปแบบไม่กำหนด ความต่อเนื่อง และบทนำสู่การหาอนุพันธ์ของพหุนามพร้อมกราฟปฏิสัมพันธ์</p>
-        </div>
-
-        <div class="card-footer">
-          <button class="action-btn" aria-label="เข้าสู่บทเรียนลิมิตและพื้นฐานการหาอนุพันธ์">
-            เข้าสู่บทเรียน ➔
-          </button>
-        </div>
-      </article>
-
+    <header style="text-align: center; margin-bottom: 24px; z-index: 10;">
+      <h1 style="font-family: var(--font-title); font-size: 2.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
+        คลังเรียนรู้และสื่อจำลองเสมือนจริง
+      </h1>
+      <p style="font-family: var(--font-body); font-size: 1.05rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+        สื่อการสอนและห้องปฏิบัติการปฏิสัมพันธ์ (Interactive Learning Lab) สำหรับการสอนในชั้นเรียน
+      </p>
+    </header>
+    
+    <!-- Interactive Modules Selection Grid (populated dynamically) -->
+    <main class="modules-grid" id="modules-grid">
+      <!-- Injected by JavaScript -->
     </main>
 
   </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('modules-grid');
+      grid.innerHTML = '';
+
+      if (typeof LESSONS_CONFIG !== 'undefined') {
+        LESSONS_CONFIG.forEach(lesson => {
+          if (lesson.status !== 'available') return;
+
+          const card = document.createElement('article');
+          card.className = `module-card ${lesson.accent}`;
+          card.setAttribute('aria-label', `บทเรียน${lesson.title}`);
+          card.style.cursor = 'pointer';
+          
+          card.innerHTML = `
+            <div class="card-header">
+              <div class="badge-row">
+                <span class="badge">${lesson.type}</span>
+                <span class="badge">${lesson.grade}</span>
+              </div>
+            </div>
+            
+            <div class="card-info">
+              <h2 class="card-title">${lesson.title}</h2>
+              <p class="card-desc">${lesson.description}</p>
+            </div>
+
+            <div class="card-footer">
+              <button class="action-btn" aria-label="เข้าสู่บทเรียน${lesson.title}">
+                เข้าสู่บทเรียน ➔
+              </button>
+            </div>
+          `;
+
+          // Handle click to go to lesson URL
+          card.addEventListener('click', () => {
+            window.location.href = lesson.url;
+          });
+
+          grid.appendChild(card);
+        });
+      } else {
+        grid.innerHTML = '<p style="grid-column: span 2; text-align: center; color: var(--text-muted);">ไม่พบข้อมูลบทเรียน</p>';
+      }
+    });
+  </script>
 </body>
 </html>

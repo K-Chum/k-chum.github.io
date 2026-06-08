@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ภาพรวมสเปกตรัมคลื่นแม่เหล็กไฟฟ้า | EM Spectrum Overview</title>
+
+  <!-- Google Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+  </style>
+
+  <!-- ① Shared base styles -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+
+  <style>
+    body {
+      background: #ffffff;
+      padding: 10px;
+      gap: 10px;
+    }
+    
+    /* Layout: spectrum block map */
+    .spectrum-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    @media (max-width: 680px) {
+      .spectrum-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Waveband card styling */
+    .band-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 190px;
+    }
+    .band-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Color coding for bands */
+    .band-radio { border-top: 6px solid #3b82f6; }
+    .band-microwave { border-top: 6px solid #06b6d4; }
+    .band-infrared { border-top: 6px solid #f97316; }
+    .band-visible { border-top: 6px solid #10b981; }
+    .band-uv { border-top: 6px solid #8b5cf6; }
+    .band-xray { border-top: 6px solid #a855f7; }
+    .band-gamma { border-top: 6px solid #ec4899; }
+
+    .band-title {
+      font-family: var(--font-title);
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-top: 4px;
+    }
+
+    .band-val {
+      font-size: 0.65rem;
+      color: #64748b;
+      line-height: 1.3;
+      margin: 4px 0;
+    }
+
+    .band-icon {
+      font-size: 2rem;
+      margin: 8px 0;
+      line-height: 1;
+    }
+
+    .band-usage {
+      font-size: 0.65rem;
+      font-weight: bold;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    /* Gradient energy indicator bar */
+    .energy-bar {
+      width: 100%;
+      height: 20px;
+      background: linear-gradient(to right, #64748b 0%, #64748b 40%, #ef4444 43%, #f97316 45%, #eab308 48%, #22c55e 50%, #06b6d4 52%, #3b82f6 55%, #8b5cf6 57%, #64748b 60%, #64748b 100%);
+      border-radius: 4px;
+      margin-top: 10px;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      color: #ffffff;
+      font-size: 0.6rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div style="max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:10px;">
+  
+  <div style="text-align:center;">
+    <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a;">แผนภาพสเปกตรัมคลื่นแม่เหล็กไฟฟ้า (EM Spectrum Chart)</h3>
+    <p class="body-text" style="font-size:0.85rem; margin:0 auto; max-width:600px;">
+      คลิกที่แต่ละย่านคลื่นเพื่อดูข้อมูลคำอธิบาย ประโยชน์ใช้สอยในชีวิตประจำวัน และความสำคัญเชิงวิทยาศาสตร์เพิ่มเติมด้านล่าง
+    </p>
+  </div>
+
+  <!-- Spectrum band cards -->
+  <div class="spectrum-grid">
+    <!-- Radio -->
+    <div class="band-card band-radio" onclick="showDetail('radio')">
+      <div>
+        <div class="band-title">คลื่นวิทยุ</div>
+        <div class="band-val">λ > 1 m<br>f < 300 MHz</div>
+      </div>
+      <div class="band-icon">📻</div>
+      <div class="band-usage">วิทยุสื่อสาร A.M. / F.M.</div>
+    </div>
+
+    <!-- Microwave -->
+    <div class="band-card band-microwave" onclick="showDetail('microwave')">
+      <div>
+        <div class="band-title">ไมโครเวฟ</div>
+        <div class="band-val">λ: 1 mm - 1 m<br>f: 0.3 - 300 GHz</div>
+      </div>
+      <div class="band-icon">📡</div>
+      <div class="band-usage">เรดาร์ & ดาวเทียม</div>
+    </div>
+
+    <!-- Infrared -->
+    <div class="band-card band-infrared" onclick="showDetail('infrared')">
+      <div>
+        <div class="band-title">อินฟราเรด</div>
+        <div class="band-val">λ: 0.7μm - 1mm<br>f: 0.3 - 430 THz</div>
+      </div>
+      <div class="band-icon">🌡️</div>
+      <div class="band-usage">รีโมทคอนโทรล</div>
+    </div>
+
+    <!-- Visible Light -->
+    <div class="band-card band-visible" onclick="showDetail('visible')">
+      <div>
+        <div class="band-title">แสงที่มองเห็น</div>
+        <div class="band-val">λ: 400 - 700 nm<br>f: 430 - 750 THz</div>
+      </div>
+      <div class="band-icon">🌈</div>
+      <div class="band-usage">เลเซอร์ & ใยนำแสง</div>
+    </div>
+
+    <!-- UV -->
+    <div class="band-card band-uv" onclick="showDetail('uv')">
+      <div>
+        <div class="band-title">อัลตราไวโอเลต</div>
+        <div class="band-val">λ: 10 - 400 nm<br>f: 7.5×10¹⁴ Hz</div>
+      </div>
+      <div class="band-icon">☀️</div>
+      <div class="band-usage">วิตามิน D & ฆ่าเชื้อ</div>
+    </div>
+
+    <!-- X-Ray -->
+    <div class="band-card band-xray" onclick="showDetail('xray')">
+      <div>
+        <div class="band-title">รังสีเอกซ์</div>
+        <div class="band-val">λ: 0.01 - 10 nm<br>f: 3×10¹⁶ Hz</div>
+      </div>
+      <div class="band-icon">🦴</div>
+      <div class="band-usage">ภาพฟิล์มเอกซเรย์</div>
+    </div>
+
+    <!-- Gamma -->
+    <div class="band-card band-gamma" onclick="showDetail('gamma')">
+      <div>
+        <div class="band-title">รังสีแกมมา</div>
+        <div class="band-val">λ < 0.01 nm<br>f > 3×10¹⁹ Hz</div>
+      </div>
+      <div class="band-icon">⚛️</div>
+      <div class="band-usage">ฆ่าเซลล์มะเร็ง</div>
+    </div>
+  </div>
+
+  <!-- Energy Trend Bar -->
+  <div class="energy-bar">
+    <span>⬅ พลังงานต่ำ (ความยาวคลื่นยาว / ความถี่ต่ำ)</span>
+    <span>พลังงานสูง (ความยาวคลื่นสั้น / ความถี่สูง) ➡</span>
+  </div>
+
+  <!-- Detail Display Box (updates on card click) -->
+  <div class="info-box info-blue" id="detail-box" style="margin-top:5px; font-size:0.85rem; min-height:80px;">
+    <strong>คลิกเลือกย่านความถี่ด้านบน:</strong> เพื่อทบทวนเปรียบเทียบขนาด ความยาวคลื่น ความถี่ และประโยชน์ในรูปแบบย่อที่นี่
+  </div>
+
+</div>
+
+<script>
+  function showDetail(band) {
+    let box = document.getElementById('detail-box');
+    
+    // Remove active styles from other cards, add to selected
+    let cards = document.querySelectorAll('.band-card');
+    cards.forEach(c => c.style.transform = 'none');
+    
+    if (band === 'radio') {
+      box.className = "info-box success-box";
+      box.innerHTML = `
+        <strong>📻 คลื่นวิทยุ (Radio Waves)</strong><br>
+        • <strong>ความยาวคลื่น:</strong> ยาวที่สุดในสเปกตรัม (มากกว่า 1 เมตรขึ้นไป)<br>
+        • <strong>ประโยชน์หลัก:</strong> การส่งกระจายเสียงวิทยุระบบ A.M. และ F.M. คลื่นวิทยุโทรคมนาคม และวิทยุการบิน<br>
+        • <strong>จุดเด่น:</strong> มีพลังงานต่ำ ปลอดภัยต่อร่างกายมนุษย์ เดินทางไปได้ไกลมาก
+      `;
+    } 
+    else if (band === 'microwave') {
+      box.className = "info-box success-box";
+      box.innerHTML = `
+        <strong>📡 คลื่นไมโครเวฟ (Microwaves)</strong><br>
+        • <strong>ความยาวคลื่น:</strong> 1 มิลลิเมตร - 1 เมตร<br>
+        • <strong>ประโยชน์หลัก:</strong> ระบบเรดาร์ตรวจหาวัตถุโลหะ การส่งสัญญาณดาวเทียม และการให้ความร้อนแก่น้ำในเตาไมโครเวฟ<br>
+        • <strong>จุดเด่น:</strong> เดินทางเป็นเส้นตรง ทะลุบรรยากาศขึ้นสู่อวกาศได้ดีมาก และสะท้อนโลหะได้ดี
+      `;
+    }
+    else if (band === 'infrared') {
+      box.className = "info-box success-box";
+      box.innerHTML = `
+        <strong>🌡️ รังสีอินฟราเรด (Infrared)</strong><br>
+        • <strong>ความยาวคลื่น:</strong> 700 นาโนเมตร - 1 มิลลิเมตร (แสงความร้อน)<br>
+        • <strong>ประโยชน์หลัก:</strong> รีโมทคอนโทรลสำหรับควบคุมระยะไกล กล้องสแกนตรวจจับความร้อนยามค่ำคืน การถ่ายภาพจากดาวเทียมทะลุฝุ่นหมอก<br>
+        • <strong>จุดเด่น:</strong> แผ่ออกจากวัตถุที่มีความร้อนทุกชนิด และทำปฏิกิริยากับฟิล์มบางชนิดได้
+      `;
+    }
+    else if (band === 'visible') {
+      box.className = "info-box success-box";
+      box.innerHTML = `
+        <strong>🌈 แสงที่มองเห็นได้ (Visible Light)</strong><br>
+        • <strong>ความยาวคลื่น:</strong> 400 - 700 นาโนเมตร (เป็นช่วงเล็ก ๆ ที่นัยน์ตามนุษย์มองเห็น)<br>
+        • <strong>ประโยชน์หลัก:</strong> แสงเลเซอร์สีเดียวทิศทางคมชัดใช้ผ่าตัดและอ่านบาร์โค้ด เส้นใยนำแสงนำสัญญาณแสงส่งอินเทอร์เน็ตได้ไกล 200 km<br>
+        • <strong>จุดเด่น:</strong> ประกอบด้วยสีรุ้งเจ็ดสีรวมกัน (แดง แสด เหลือง เขียว น้ำเงิน คราม ม่วง) สามารถแยกตัวด้วยปริซึมแก้ว
+      `;
+    }
+    else if (band === 'uv') {
+      box.className = "info-box success-box";
+      box.innerHTML = `
+        <strong>☀️ รังสีอัลตราไวโอเลต (Ultraviolet)</strong><br>
+        • <strong>ความยาวคลื่น:</strong> 10 - 400 นาโนเมตร<br>
+        • <strong>ประโยชน์:</strong> ช่วยให้ผิวหนังสร้างวิตามิน D และการฆ่าจุลินทรีย์เครื่องมือแพทย์<br>
+        • <strong>อันตราย:</strong> หากโดนเข้มข้นจะทำให้ผิวไหม้แดด (Sunburn) ทำลาย DNA ในเซลล์ผิวหนัง และกระตุ้นมะเร็งผิวหนัง
+      `;
+    }
+    else if (band === 'xray') {
+      box.className = "info-box success-box";
+      box.innerHTML = `
+        <strong>🦴 รังสีเอกซ์ (X-rays)</strong><br>
+        • <strong>ความยาวคลื่น:</strong> 0.01 - 10 นาโนเมตร (พลังงานสูง)<br>
+        • <strong>ประโยชน์หลัก:</strong> การถ่ายภาพเอกซเรย์สแกนกระดูกทางการแพทย์เพื่อวินิจฉัยโรค หรือสแกนกระเป๋าตามสนามบิน<br>
+        • <strong>อันตราย:</strong> ทะลุทะลวงสูงมาก ทำลายเนื้อเยื่อดีและสะสมทำให้ดีเอ็นเอเสียหายหากได้รับบ่อยครั้ง
+      `;
+    }
+    else if (band === 'gamma') {
+      box.className = "info-box success-box";
+      box.innerHTML = `
+        <strong>⚛️ รังสีแกมมา (Gamma Rays)</strong><br>
+        • <strong>ความยาวคลื่น:</strong> สั้นที่สุด (น้อยกว่า 0.01 นาโนเมตร) และมีพลังงานสูงสุด<br>
+        • <strong>ประโยชน์หลัก:</strong> การใช้พลังงานโฟกัสทำลายเซลล์เนื้อร้ายมะเร็ง (รังสีรักษา) การฉายรังสีถนอมอาหาร<br>
+        • <strong>อันตราย:</strong> ทำลายระบบเซลล์ในร่างกายรวดเร็ว ทำให้ระบบอวัยวะล้มเหลวเฉียบพลันหากได้รับในปริมาณมาก
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>

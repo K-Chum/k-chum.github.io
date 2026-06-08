@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Function Continuity Checklist</title>
+  <style>
+    .state-selector {
+      display: flex;
+      gap: 6px;
+    }
+    .state-btn {
+      flex: 1;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 8px 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #334155;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .state-btn:hover {
+      background: #e2e8f0;
+    }
+    .state-btn.active {
+      background: #8b5cf6;
+      border-color: #8b5cf6;
+      color: #ffffff;
+    }
+    /* Checklist */
+    .checklist-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .info-box {
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      border-left: 4px solid #cbd5e1;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #475569;
+    }
+    .info-box.success-box {
+      background: #ecfdf5;
+      border-left-color: #10b981;
+      color: #065f46;
+    }
+    .info-box.error-box {
+      background: #fef2f2;
+      border-left-color: #ef4444;
+      color: #991b1b;
+    }
+    .cond-icon {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .status-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-align: center;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- LEFT: Graph & Selector -->
+    <div class="graph-panel">
+      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 2px;" id="continuity-graph-title">ฟังก์ชันต่อเนื่องสมบูรณ์แบบที่ x = 2</h4>
+      <canvas class="graph-canvas" id="continuity-canvas"></canvas>
+      <div class="state-selector">
+        <button class="state-btn active" data-type="cont">1. ต่อเนื่อง</button>
+        <button class="state-btn" data-type="hole">2. มีจุดโหว่</button>
+        <button class="state-btn" data-type="jump">3. กราฟกระโดด</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Checklist -->
+    <div class="checklist-panel">
+      <div style="font-size: 0.95rem; font-weight: 700; color: #475569; text-transform: uppercase;">เงื่อนไขความต่อเนื่อง 3 ข้อ (ณ จุด x = 2)</div>
+      
+      <div class="info-box success-box" id="cond-1">
+        <span class="cond-icon">✓</span>
+        <span><strong>1. f(2) หาค่าได้</strong> (มีจุดทึบระบาย)</span>
+      </div>
+      
+      <div class="info-box success-box" id="cond-2">
+        <span class="cond-icon">✓</span>
+        <span><strong>2. $ \lim_{x \to 2} f(x) $ หาค่าได้</strong> (ลิมิตซ้าย = ลิมิตขวา)</span>
+      </div>
+      
+      <div class="info-box success-box" id="cond-3">
+        <span class="cond-icon">✓</span>
+        <span><strong>3. $ \lim_{x \to 2} f(x) = f(2) $</strong> (ลิมิตเท่ากับค่าจริงของจุด)</span>
+      </div>
+
+      <div class="status-box" id="continuity-result-box" style="color: #10b981;">
+        ฟังก์ชันต่อเนื่องที่ x = 2 (กราฟไม่ขาดตอน)
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const stateBtns = document.querySelectorAll('.state-btn');
+    const contResultBox = document.getElementById('continuity-result-box');
+    const contGraphTitle = document.getElementById('continuity-graph-title');
+    
+    let currentContType = 'cont';
+
+    stateBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        stateBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentContType = btn.getAttribute('data-type');
+        
+        updateContinuityDetails();
+        drawContinuityGraph();
+      });
+    });
+
+    function updateContinuityDetails() {
+      if (!contResultBox) return;
+      
+      const cond1 = document.getElementById('cond-1');
+      const cond2 = document.getElementById('cond-2');
+      const cond3 = document.getElementById('cond-3');
+      
+      cond1.className = 'info-box';
+      cond2.className = 'info-box';
+      cond3.className = 'info-box';
+      
+      cond1.querySelector('.cond-icon').textContent = '✓';
+      cond2.querySelector('.cond-icon').textContent = '✓';
+      cond3.querySelector('.cond-icon').textContent = '✓';
+      
+      if (currentContType === 'cont') {
+        contGraphTitle.textContent = 'ฟังก์ชันต่อเนื่องสมบูรณ์แบบที่ x = 2';
+        contResultBox.textContent = 'ต่อเนื่องที่ x = 2 (เงื่อนไขครบทั้ง 3 ข้อ)';
+        contResultBox.style.color = '#10b981';
+        
+        cond1.classList.add('success-box');
+        cond2.classList.add('success-box');
+        cond3.classList.add('success-box');
+      } else if (currentContType === 'hole') {
+        contGraphTitle.textContent = 'ฟังก์ชันมีจุดโหว่ (ฟังก์ชันไม่ต่อเนื่อง) ที่ x = 2';
+        contResultBox.textContent = 'ไม่ต่อเนื่องที่ x = 2 (ล้มเหลวข้อ 3)';
+        contResultBox.style.color = '#ef4444';
+        
+        cond1.classList.add('success-box');
+        cond2.classList.add('success-box');
+        
+        // Fails cond 3 (f(a) != lim f(x))
+        cond3.classList.add('error-box');
+        cond3.querySelector('.cond-icon').textContent = '✗';
+      } else if (currentContType === 'jump') {
+        contGraphTitle.textContent = 'ฟังก์ชันกระโดดแยก (ฟังก์ชันไม่ต่อเนื่อง) ที่ x = 2';
+        contResultBox.textContent = 'ไม่ต่อเนื่องที่ x = 2 (ล้มเหลวข้อ 2 และ 3)';
+        contResultBox.style.color = '#ef4444';
+        
+        cond1.classList.add('success-box');
+        
+        // Fails cond 2 (lim doesn't exist)
+        cond2.classList.add('error-box');
+        cond2.querySelector('.cond-icon').textContent = '✗';
+        
+        // Fails cond 3
+        cond3.classList.add('error-box');
+        cond3.querySelector('.cond-icon').textContent = '✗';
+      }
+    }
+
+    function drawContinuityGraph() {
+      const canvas = document.getElementById('continuity-canvas');
+      if (!canvas) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      const originX = width * 0.15;
+      const originY = height * 0.85;
+      const scaleX = (width * 0.75) / 4;
+      const scaleY = (height * 0.75) / 5;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      // Grid
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      
+      // Vertical grid lines
+      const minK = Math.ceil(-originX / scaleX);
+      const maxK = Math.floor((width - originX) / scaleX);
+      for (let k = minK; k <= maxK; k++) {
+        const xPos = originX + k * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(xPos, 0);
+        ctx.lineTo(xPos, height);
+        ctx.stroke();
+      }
+      
+      // Horizontal grid lines
+      const minM = Math.ceil((originY - height) / scaleY);
+      const maxM = Math.floor(originY / scaleY);
+      for (let m = minM; m <= maxM; m++) {
+        const yPos = originY - m * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(0, yPos);
+        ctx.lineTo(width, yPos);
+        ctx.stroke();
+      }
+      
+      // Axes
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(width, originY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, height); ctx.stroke();
+      
+      // Axis labels
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      for (let x = 1; x <= 4; x++) {
+        ctx.fillText(x.toString(), originX + x * scaleX, originY + 14);
+      }
+      ctx.textAlign = 'right';
+      for (let y = 1; y <= 5; y++) {
+        ctx.fillText(y.toString(), originX - 6, originY - y * scaleY + 4);
+      }
+      ctx.fillText('0', originX - 6, originY + 10);
+      
+      ctx.lineWidth = 3.5;
+      
+      if (currentContType === 'cont') {
+        // Curve: f(x) = 0.5*(x-2)^2 + 2
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.beginPath();
+        let isFirst = true;
+        for (let screenX = originX; screenX < width; screenX++) {
+          const x = (screenX - originX) / scaleX;
+          if (x > 3.8) break;
+          const y = 0.5 * (x - 2) * (x - 2) + 2;
+          const screenY = originY - y * scaleY;
+          if (isFirst) { ctx.moveTo(screenX, screenY); isFirst = false; }
+          else { ctx.lineTo(screenX, screenY); }
+        }
+        ctx.stroke();
+        
+        // Solid dot at (2, 2)
+        ctx.fillStyle = '#8b5cf6';
+        ctx.beginPath(); ctx.arc(originX + 2 * scaleX, originY - 2 * scaleY, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+        
+      } else if (currentContType === 'hole') {
+        // Curve with hole at (2, 2)
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.beginPath();
+        let isFirst = true;
+        for (let screenX = originX; screenX < width; screenX++) {
+          const x = (screenX - originX) / scaleX;
+          if (x > 3.8) break;
+          const y = 0.5 * (x - 2) * (x - 2) + 2;
+          const screenY = originY - y * scaleY;
+          if (isFirst) { ctx.moveTo(screenX, screenY); isFirst = false; }
+          else { ctx.lineTo(screenX, screenY); }
+        }
+        ctx.stroke();
+        
+        // Hollow circle at (2, 2)
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(originX + 2 * scaleX, originY - 2 * scaleY, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        
+        // Solid dot at (2, 3.5)
+        ctx.fillStyle = '#db2777';
+        ctx.beginPath(); ctx.arc(originX + 2 * scaleX, originY - 3.5 * scaleY, 5.5, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+        
+      } else if (currentContType === 'jump') {
+        // Jump graph: left curve y = 2, right curve y = 4
+        ctx.strokeStyle = '#10b981';
+        ctx.beginPath();
+        ctx.moveTo(originX, originY - 2 * scaleY);
+        ctx.lineTo(originX + 2 * scaleX, originY - 2 * scaleY);
+        ctx.stroke();
+        
+        ctx.strokeStyle = '#db2777';
+        ctx.beginPath();
+        ctx.moveTo(originX + 2 * scaleX, originY - 4 * scaleY);
+        ctx.lineTo(originX + 3.8 * scaleX, originY - 4 * scaleY);
+        ctx.stroke();
+        
+        // Hollow circle at (2, 2)
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(originX + 2 * scaleX, originY - 2 * scaleY, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        
+        // Solid dot at (2, 4)
+        ctx.fillStyle = '#db2777';
+        ctx.beginPath(); ctx.arc(originX + 2 * scaleX, originY - 4 * scaleY, 5.5, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+    }
+
+    window.addEventListener('resize', drawContinuityGraph);
+    
+    // Init on load
+    setTimeout(() => {
+      updateContinuityDetails();
+      drawContinuityGraph();
+    }, 100);
+  </script>
+</body>
+</html>

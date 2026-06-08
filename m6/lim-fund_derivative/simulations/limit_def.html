@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Limit Definition Visualization</title>
+  <style>
+    /* Tables */
+    .tables-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .limits-tables-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .approx-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.05rem;
+    }
+    .approx-table th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      padding: 8px 6px;
+      border-bottom: 1.5px solid #cbd5e1;
+      text-align: center;
+    }
+    .approx-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: center;
+      color: #334155;
+    }
+    .approx-table tr.active-row td {
+      background: #f5f3ff;
+      color: #7c3aed;
+      font-weight: 700;
+      border-bottom-color: #ddd6fe;
+    }
+    .info-box {
+      background: #f0fdf4;
+      border-left: 4px solid #10b981;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: #065f46;
+      line-height: 1.4;
+    }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- LEFT: Graph Visualizer -->
+    <div class="graph-panel">
+      <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 2px;">กราฟจำลองการลู่เข้าใกล้จุด \( x = 2 \)</h4>
+      <canvas class="graph-canvas" id="limit-def-canvas"></canvas>
+      <div class="interactive-controls">
+        <div class="control-row">
+          <label>ปรับตำแหน่ง x: <span id="limit-def-x-val" style="color:#8b5cf6;">1.50</span></label>
+          <input type="range" class="slider" id="limit-def-slider" min="1.0" max="3.0" step="0.01" value="1.5">
+        </div>
+        <div class="badge-row">
+          <span class="badge badge-primary">f(x) = <span id="limit-def-y-val">2.13</span></span>
+          <span class="badge badge-secondary">ลิมิตเป้าหมาย = 3.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Approximation Tables -->
+    <div class="tables-panel">
+      <div class="limits-tables-grid">
+        <!-- Left Approaching -->
+        <div>
+          <p style="font-size: 1.05rem; font-weight: 700; color: #8b5cf6; margin-bottom: 4px; text-align: center;">ฝั่งซ้าย $ (x \to 2^-: x < 2) $</p>
+          <table class="approx-table">
+            <thead>
+              <tr>
+                <th>x</th>
+                <th>$ f(x) = 0.5x^2 + 1 $</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="row-l1"><td>1.5</td><td>2.125</td></tr>
+              <tr id="row-l2"><td>1.9</td><td>2.805</td></tr>
+              <tr id="row-l3"><td>1.99</td><td>2.980</td></tr>
+              <tr id="row-l4"><td>1.999</td><td>2.998</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Right Approaching -->
+        <div>
+          <p style="font-size: 1.05rem; font-weight: 700; color: #db2777; margin-bottom: 4px; text-align: center;">ฝั่งขวา $ (x \to 2^+: x > 2) $</p>
+          <table class="approx-table">
+            <thead>
+              <tr>
+              <th>x</th>
+                <th>$ f(x) = 0.5x^2 + 1 $</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="row-r1"><td>2.5</td><td>4.125</td></tr>
+              <tr id="row-r2"><td>2.1</td><td>3.205</td></tr>
+              <tr id="row-r3"><td>2.01</td><td>3.020</td></tr>
+              <tr id="row-r4"><td>2.001</td><td>3.002</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="info-box">
+        เมื่อ \( x \) เข้าใกล้ 2 ทั้งสองทาง ค่าฟังก์ชันจะวิ่งเข้าหา <strong>3</strong> ดังนั้น \( \lim_{x \to 2} f(x) = 3 \)
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const limitDefSlider = document.getElementById('limit-def-slider');
+    const limitDefXLabel = document.getElementById('limit-def-x-val');
+    const limitDefYLabel = document.getElementById('limit-def-y-val');
+    
+    if (limitDefSlider) {
+      limitDefSlider.addEventListener('input', (e) => {
+        const xVal = parseFloat(e.target.value);
+        limitDefXLabel.textContent = xVal.toFixed(2);
+        
+        const yVal = 0.5 * xVal * xVal + 1;
+        limitDefYLabel.textContent = yVal.toFixed(2);
+        
+        highlightLimitTableRows(xVal);
+        drawLimitDefGraph();
+      });
+    }
+
+    function highlightLimitTableRows(xVal) {
+      const rows = document.querySelectorAll('.approx-table tr');
+      rows.forEach(r => r.classList.remove('active-row'));
+      
+      if (xVal < 2) {
+        if (xVal <= 1.7) {
+          document.getElementById('row-l1')?.classList.add('active-row');
+        } else if (xVal <= 1.95) {
+          document.getElementById('row-l2')?.classList.add('active-row');
+        } else if (xVal <= 1.995) {
+          document.getElementById('row-l3')?.classList.add('active-row');
+        } else {
+          document.getElementById('row-l4')?.classList.add('active-row');
+        }
+      } else if (xVal > 2) {
+        if (xVal >= 2.3) {
+          document.getElementById('row-r1')?.classList.add('active-row');
+        } else if (xVal >= 2.05) {
+          document.getElementById('row-r2')?.classList.add('active-row');
+        } else if (xVal >= 2.005) {
+          document.getElementById('row-r3')?.classList.add('active-row');
+        } else {
+          document.getElementById('row-r4')?.classList.add('active-row');
+        }
+      } else {
+        document.getElementById('row-l4')?.classList.add('active-row');
+        document.getElementById('row-r4')?.classList.add('active-row');
+      }
+    }
+
+    function drawLimitDefGraph() {
+      const canvas = document.getElementById('limit-def-canvas');
+      if (!canvas) return;
+      
+      // Setup canvas size cleanly
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Draw grid
+      const originX = width * 0.15;
+      const originY = height * 0.85;
+      const scaleX = (width * 0.75) / 4;
+      const scaleY = (height * 0.75) / 4;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      // Grid
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      
+      // Vertical grid lines
+      const minK = Math.ceil(-originX / scaleX);
+      const maxK = Math.floor((width - originX) / scaleX);
+      for (let k = minK; k <= maxK; k++) {
+        const xPos = originX + k * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(xPos, 0);
+        ctx.lineTo(xPos, height);
+        ctx.stroke();
+      }
+      
+      // Horizontal grid lines
+      const minM = Math.ceil((originY - height) / scaleY);
+      const maxM = Math.floor(originY / scaleY);
+      for (let m = minM; m <= maxM; m++) {
+        const yPos = originY - m * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(0, yPos);
+        ctx.lineTo(width, yPos);
+        ctx.stroke();
+      }
+      
+      // Axes
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(width, originY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, height); ctx.stroke();
+      
+      // Axis Ticks
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      for (let x = 1; x <= 4; x++) {
+        ctx.fillText(x.toString(), originX + x * scaleX, originY + 14);
+      }
+      ctx.textAlign = 'right';
+      for (let y = 1; y <= 4; y++) {
+        ctx.fillText(y.toString(), originX - 6, originY - y * scaleY + 4);
+      }
+      ctx.fillText('0', originX - 6, originY + 10);
+      
+      // Draw curve P(x) = 0.5x^2 + 1
+      ctx.strokeStyle = '#a78bfa';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      let isFirst = true;
+      for (let screenX = originX; screenX < width; screenX++) {
+        const x = (screenX - originX) / scaleX;
+        if (x > 3.8) break;
+        const y = 0.5 * x * x + 1;
+        const screenY = originY - y * scaleY;
+        
+        if (isFirst) {
+          ctx.moveTo(screenX, screenY);
+          isFirst = false;
+        } else {
+          ctx.lineTo(screenX, screenY);
+        }
+      }
+      ctx.stroke();
+      
+      // Target (2, 3)
+      const targetScreenX = originX + 2 * scaleX;
+      const targetScreenY = originY - 3 * scaleY;
+      ctx.strokeStyle = 'rgba(219, 39, 119, 0.4)';
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(targetScreenX, originY); ctx.lineTo(targetScreenX, targetScreenY); ctx.lineTo(originX, targetScreenY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Current slider point
+      const currentX = parseFloat(limitDefSlider.value);
+      const currentY = 0.5 * currentX * currentX + 1;
+      const currentScreenX = originX + currentX * scaleX;
+      const currentScreenY = originY - currentY * scaleY;
+      
+      ctx.strokeStyle = currentX < 2 ? '#8b5cf6' : '#db2777';
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(currentScreenX, originY); ctx.lineTo(currentScreenX, currentScreenY); ctx.lineTo(originX, currentScreenY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Target dot
+      ctx.fillStyle = '#db2777';
+      ctx.beginPath(); ctx.arc(targetScreenX, targetScreenY, 5, 0, Math.PI * 2); ctx.fill();
+      
+      // Current dot
+      ctx.fillStyle = currentX < 2 ? '#8b5cf6' : '#db2777';
+      ctx.beginPath(); ctx.arc(currentScreenX, currentScreenY, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+
+    window.addEventListener('resize', drawLimitDefGraph);
+    
+    // Init on load
+    setTimeout(() => {
+      highlightLimitTableRows(1.5);
+      drawLimitDefGraph();
+    }, 100);
+  </script>
+</body>
+</html>

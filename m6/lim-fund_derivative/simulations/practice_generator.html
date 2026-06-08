@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Derivative Practice Generator</title>
+  <style>
+    .problem-box {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .problem-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .problem-text {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #1e1b4b;
+      line-height: 1.4;
+    }
+    /* Actions */
+    .practice-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .btn-gen:hover { background: #7c3aed; }
+    .btn-steps:hover { background: #e2e8f0; }
+    .btn-ans:hover { background: #a7f3d0; }
+    /* Steps container */
+    .solution-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .solution-steps {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .solution-steps.visible {
+      display: flex;
+    }
+    .solution-step-item {
+      background: #ffffff;
+      border-left: 3px solid #8b5cf6;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      color: #475569;
+      line-height: 1.7;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .solution-step-item strong {
+      color: #1e293b;
+    }
+    /* KaTeX overrides for larger display */
+    .problem-text .katex { font-size: 1.5rem; }
+    .solution-step-item .katex { font-size: 1rem; }
+  </style>
+    <!-- Shared simulation resources -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous" onload="autoRenderMath()"></script>
+  <script src="../../../template/sim-graph.js"></script>
+  
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- LEFT: Practice generator board -->
+    <div class="card accent-border">
+      <h3>สุ่มแบบฝึกหัดทบทวน</h3>
+      <div class="problem-box">
+        <div class="problem-title">ฟังก์ชันโจทย์ P(x) =</div>
+        <div class="problem-text" id="practice-problem"></div>
+      </div>
+      
+      <div class="practice-actions">
+        <button class="btn btn-gen" id="btn-practice-gen">🎯 สุ่มโจทย์ใหม่</button>
+        <div class="btn-row">
+          <button class="btn btn-steps" id="btn-practice-steps">📖 แสดงวิธีทำ</button>
+          <button class="btn btn-ans" id="btn-practice-ans">👁️ แสดงคำตอบ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Solutions steps -->
+    <div class="card solution-panel">
+      <h3>เฉลยและวิธีทำทีละขั้นตอน</h3>
+      <div class="solution-steps" id="practice-solution-container">
+        <!-- Content injected dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ── KaTeX helper ─────────────────────────────────────────────────────────
+    function kt(latex, displayMode = false) {
+      try {
+        return katex.renderToString(latex, { throwOnError: false, displayMode });
+      } catch(e) { return latex; }
+    }
+
+    let katexReady = false;
+    function autoRenderMath() {
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+            { left: '\\(', right: '\\)', display: false },
+            { left: '\\[', right: '\\]', display: true }
+          ],
+          throwOnError: false
+        });
+      }
+      katexReady = true;
+      if (btnPracticeGen) generateNewProblem();
+    }
+
+    // ── DOM references ────────────────────────────────────────────────────────
+    const btnPracticeGen = document.getElementById('btn-practice-gen');
+    const btnPracticeSteps = document.getElementById('btn-practice-steps');
+    const btnPracticeAns = document.getElementById('btn-practice-ans');
+    const practiceProblemText = document.getElementById('practice-problem');
+    const practiceSolutionContainer = document.getElementById('practice-solution-container');
+    
+    let currentProblem = { terms: [], latexRepr: '', steps: [], answerLatex: '' };
+
+    if (btnPracticeGen) {
+      btnPracticeGen.addEventListener('click', generateNewProblem);
+      btnPracticeSteps.addEventListener('click', showPracticeSteps);
+      btnPracticeAns.addEventListener('click', showPracticeAnswer);
+    }
+
+    // ── Polynomial → LaTeX ────────────────────────────────────────────────────
+    function polyToLatex(terms) {
+      let latex = '';
+      terms.forEach((term, index) => {
+        let coeff = term.coeff;
+        let power = term.power;
+        if (coeff === 0) return;
+
+        let sign = '';
+        if (index === 0) {
+          if (coeff < 0) { sign = '-'; coeff = -coeff; }
+        } else {
+          sign = coeff > 0 ? ' + ' : ' - ';
+          coeff = Math.abs(coeff);
+        }
+
+        let termStr = '';
+        if (power === 0) {
+          termStr = `${coeff}`;
+        } else if (power === 1) {
+          termStr = coeff === 1 ? 'x' : `${coeff}x`;
+        } else {
+          termStr = coeff === 1 ? `x^{${power}}` : `${coeff}x^{${power}}`;
+        }
+        latex += sign + termStr;
+      });
+      return latex || '0';
+    }
+
+    // ── Generate problem ──────────────────────────────────────────────────────
+    function generateNewProblem() {
+      if (!katexReady) return;
+      practiceSolutionContainer.classList.remove('visible');
+      practiceSolutionContainer.innerHTML = '';
+
+      const type = Math.random() < 0.5 ? 'cubic' : 'quadratic';
+      let terms = [];
+      const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const rndNz = (min, max) => { let v; do { v = rnd(min, max); } while (v === 0); return v; };
+
+      if (type === 'cubic') {
+        const n = 3;
+        const a = rndNz(-4, 4), b = rnd(-5, 5), c = rnd(-6, 6);
+        terms.push({ coeff: a, power: n });
+        terms.push({ coeff: b, power: n - 1 });
+        if (c !== 0) terms.push({ coeff: c, power: 0 });
+      } else {
+        const n = 2;
+        const a = rndNz(-5, 5), b = rnd(-6, 6), c = rnd(-6, 6);
+        terms.push({ coeff: a, power: n });
+        terms.push({ coeff: b, power: n - 2 });
+        if (c !== 0) terms.push({ coeff: c, power: 0 });
+      }
+
+      currentProblem.terms = terms;
+      currentProblem.latexRepr = polyToLatex(terms);
+      buildSolution(terms);
+      practiceProblemText.innerHTML = kt(currentProblem.latexRepr);
+    }
+
+    // ── Build solution steps ──────────────────────────────────────────────────
+    function buildSolution(terms) {
+      let steps = [];
+
+      // ── Step 1 ──────────────────────────────────────────────────────────────
+      const splitParts = terms.map(t => {
+        const absC = Math.abs(t.coeff);
+        let termL = t.power === 0 ? `${absC}` : (t.power === 1 ? `${absC}x` : `${absC}x^{${t.power}}`);
+        return `\\frac{d}{dx}\\left(${t.coeff < 0 ? '-' : ''}${termL}\\right)`;
+      }).join(' + ').replace(/\+ -/g, '- ');
+
+      const step1Latex = `\\frac{d}{dx}\\left[${currentProblem.latexRepr}\\right] = ${splitParts}`;
+      steps.push(`<strong>ขั้นตอนที่ 1: กระจายอนุพันธ์รายพจน์</strong><br>
+        <div style="margin-top:8px; text-align:center;">${kt(step1Latex, true)}</div>`);
+
+      // ── Step 2 ──────────────────────────────────────────────────────────────
+      const step2Parts = terms.map(t => {
+        if (t.power === 0) return `\\frac{d}{dx}(${t.coeff})`;
+        return `${t.coeff} \\cdot \\frac{d}{dx}\\left(x^{${t.power}}\\right)`;
+      });
+      const step2Latex = '= ' + step2Parts.join(' + ').replace(/\+ -/g, '- ');
+      steps.push(`<strong>ขั้นตอนที่ 2: ดึงสัมประสิทธิ์คูณด้านหน้า</strong><br>
+        <div style="margin-top:8px; text-align:center;">${kt(step2Latex, true)}</div>`);
+
+      // ── Step 3 ──────────────────────────────────────────────────────────────
+      const step3Parts = terms.map(t => {
+        if (t.power === 0) return '0';
+        if (t.power === 1) return `${t.coeff} \\cdot (1)`;
+        return `${t.coeff} \\cdot (${t.power}x^{${t.power - 1}})`;
+      });
+      const step3Latex = '= ' + step3Parts.join(' + ').replace(/\+ -/g, '- ');
+      steps.push(`<strong>ขั้นตอนที่ 3: ใช้สูตรกำลัง ${kt('\\dfrac{d}{dx}(x^n) = n \\cdot x^{n-1}')}</strong><br>
+        <div style="margin-top:8px; text-align:center;">${kt(step3Latex, true)}</div>`);
+
+      // ── Step 4 ──────────────────────────────────────────────────────────────
+      let derivTerms = [];
+      terms.forEach(t => {
+        if (t.power === 0) return;
+        derivTerms.push({ coeff: t.coeff * t.power, power: t.power - 1 });
+      });
+      const ansLatex = polyToLatex(derivTerms);
+      currentProblem.answerLatex = ansLatex;
+      const resultLatex = `P'(x) = ${ansLatex}`;
+      steps.push(`<strong>ขั้นตอนสุดท้าย: คำนวณสัมประสิทธิ์และสรุป</strong><br>
+        <div style="font-size:1.2rem; color:#10b981; font-weight:800; border-top:1px dashed #e2e8f0; padding-top:8px; margin-top:8px; text-align:center;">
+          ${kt(resultLatex, true)}
+        </div>`);
+
+      currentProblem.steps = steps;
+    }
+
+    function showPracticeSteps() {
+      practiceSolutionContainer.innerHTML = '';
+      currentProblem.steps.forEach(step => {
+        const item = document.createElement('div');
+        item.className = 'solution-step-item';
+        item.innerHTML = step;
+        practiceSolutionContainer.appendChild(item);
+      });
+      practiceSolutionContainer.classList.add('visible');
+    }
+
+    function showPracticeAnswer() {
+      practiceSolutionContainer.innerHTML = '';
+      const item = document.createElement('div');
+      item.className = 'solution-step-item';
+      item.style.borderLeftColor = '#10b981';
+      item.innerHTML = `<strong>ผลลัพธ์คำตอบอนุพันธ์ (Derivative Result)</strong>
+        <div style="font-size:1.35rem; color:#10b981; font-weight:800; margin-top:8px; text-align:center;">
+          ${kt('P\'(x) = ' + currentProblem.answerLatex, true)}
+        </div>`;
+      practiceSolutionContainer.appendChild(item);
+      practiceSolutionContainer.classList.add('visible');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ชื่อสถานการณ์จำลอง | Simulation Title</title>
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════
+    SIMULATION TEMPLATE — usage instructions
+    ═══════════════════════════════════════════════════════════════════
+    1. Copy this file into your lesson's simulations/ folder.
+    2. Replace every <!-- TODO --> placeholder with real content.
+    3. Pick ONE of the three layout presets below (Graph | Cards | Plain).
+    4. Delete the layout presets you don't use.
+    5. Add your own script in the <script> block at the bottom.
+    ═══════════════════════════════════════════════════════════════════
+  -->
+
+  <!-- Google Fonts (Inter + Outfit + Noto Sans Thai) -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+  </style>
+
+  <!-- ① Shared simulation base styles (reset, body, grid, slider, info-box, card, btn …) -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+
+  <!-- ② KaTeX 0.17.0 — math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css"
+        integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB"
+        crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"
+          integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs"
+          crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"
+          integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz"
+          crossorigin="anonymous"
+          onload="autoRenderMath()"></script>
+
+  <!-- ③ Shared canvas graph utilities (SimGraph class + renderKaTeX + autoRenderMath) -->
+  <!--    DELETE this line if your simulation has no <canvas> graph -->
+  <script src="../../../template/sim-graph.js"></script>
+
+  <!-- ④ Simulation-specific styles (override or extend sim-base.css here) -->
+  <style>
+    /* TODO: add any extra styles unique to this simulation */
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     LAYOUT PRESET A — Graph + Info Panel  (canvas simulations)
+     Uses: .container > .graph-panel + .readouts-panel
+     ════════════════════════════════════════════════════════════════════ -->
+<!--
+<div class="container">
+
+  <div class="graph-panel">
+    <h4 style="font-size:1.05rem; font-weight:700;">TODO: กราฟชื่ออะไร</h4>
+    <canvas class="graph-canvas" id="my-canvas"></canvas>
+    <div class="interactive-controls">
+      <div class="control-row">
+        <label>ปรับค่า x: <span id="val-display" style="color:#8b5cf6;">1.00</span></label>
+        <input type="range" class="slider" id="my-slider" min="0" max="5" step="0.01" value="1">
+      </div>
+      <div class="badge-row">
+        <span class="badge badge-primary">f(x) = <span id="fx-display">?</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="readouts-panel" style="display:flex; flex-direction:column; gap:10px;">
+    <div class="info-box success-box">
+      <strong>TODO: หัวข้อ</strong><br>
+      เนื้อหาสรุปหรือสูตรที่นี่ \( f(x) = x^2 \)
+    </div>
+    <div class="info-box accent-box">
+      TODO: อีกกล่องหนึ่ง
+    </div>
+  </div>
+
+</div>
+-->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     LAYOUT PRESET B — Two Cards Side-by-Side  (calculator / practice)
+     Uses: .container-equal > .card.accent-border + .card.solution-panel
+     ════════════════════════════════════════════════════════════════════ -->
+<!--
+<div class="container-equal">
+
+  <div class="card accent-border">
+    <h3>TODO: หัวข้อการ์ดซ้าย</h3>
+    <div class="info-box">เนื้อหาการ์ด</div>
+    <div style="display:flex; flex-direction:column; gap:6px;">
+      <button class="btn btn-gen" id="btn-generate">🎯 สุ่มโจทย์ใหม่</button>
+      <div class="btn-row">
+        <button class="btn btn-steps" id="btn-steps">📖 แสดงวิธีทำ</button>
+        <button class="btn btn-ans"   id="btn-ans">👁️ แสดงคำตอบ</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>TODO: หัวข้อการ์ดขวา</h3>
+    <div id="solution-container">
+      <div class="info-box" style="color:#94a3b8; text-align:center;">
+        กดปุ่ม "แสดงวิธีทำ" เพื่อดูคำตอบ
+      </div>
+    </div>
+  </div>
+
+</div>
+-->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     LAYOUT PRESET C — Single Column (simple widget / text + control)
+     ════════════════════════════════════════════════════════════════════ -->
+<div style="max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
+
+  <div class="info-box success-box">
+    <strong>TODO: หัวข้อ</strong><br>
+    เนื้อหาคำอธิบายและสูตร \( E = mc^2 \)
+  </div>
+
+  <!-- TODO: เพิ่ม controls หรือ widgets ที่นี่ -->
+
+  <div class="calc-result-box">
+    <div class="result-formula">TODO: สูตรผลลัพธ์</div>
+    <div class="result-value" id="result-display">—</div>
+  </div>
+
+  <div class="calc-steps" id="steps-display" style="display:none;">
+    <!-- ขั้นตอนจะถูก inject ด้วย JS -->
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SCRIPT BLOCK
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+  /*
+   * sim-graph.js is already loaded above, so SimGraph, renderKaTeX, and
+   * autoRenderMath are all available globally.
+   *
+   * ─── Example: Canvas graph setup ──────────────────────────────────
+   *
+   *   const g = new SimGraph('my-canvas', {
+   *     originRatioX: 0.15,
+   *     originRatioY: 0.85,
+   *     xRange: 5,
+   *     yRange: 6,
+   *   });
+   *
+   *   function draw() {
+   *     if (!g.begin()) return;
+   *     g.drawGrid();
+   *     g.drawAxes({ xMax: 5, yMax: 6 });
+   *     g.drawCurve(x => x * x / 2, { color: '#a78bfa' });
+   *     g.drawDot(2, 2, { color: '#8b5cf6' });
+   *   }
+   *
+   *   g.onResize(draw);
+   *   window.addEventListener('load', draw);
+   *
+   * ─── Example: KaTeX dynamic render ────────────────────────────────
+   *
+   *   document.getElementById('result-display').innerHTML =
+   *     renderKaTeX('P\'(x) = 6x^2 - 2x', true);
+   *
+   * ─── KaTeX guard (wait for KaTeX before rendering dynamic content) ─
+   *
+   *   let katexReady = false;
+   *   // Override autoRenderMath — called by onload of auto-render script
+   *   const _orig = autoRenderMath;
+   *   window.autoRenderMath = function() { katexReady = true; _orig(); };
+   *
+   * ──────────────────────────────────────────────────────────────────
+   */
+
+  // TODO: your simulation logic here
+
+</script>
+
+</body>
+</html>

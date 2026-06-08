@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ม.6 | ลิมิตและพื้นฐานการหาอนุพันธ์ของพหุนามตัวแปรเดียว</title>
+  <!-- Link to shared template assets -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../../template/template.css">
+  <script src="../../template/template.js" defer></script>
+</head>
+<body>
+
+  <div class="presentation-container">
+    <div class="slides-container">
+
+      <!-- SLIDE 0: TITLE SLIDE -->
+      <section class="slide active" id="slide-0">
+        <div class="title-slide-layout">
+          <div class="title-badge">คณิตศาสตร์ ม.6</div>
+          <h1><span>ลิมิตและพื้นฐานการหาอนุพันธ์<br>ของพหุนามตัวแปรเดียว</span></h1>
+          <p class="lead">เรียนรู้แนวคิดแคลคูลัสเบื้องต้นและการวิเคราะห์พฤติกรรมของฟังก์ชันผ่านสื่อปฏิสัมพันธ์</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 1: DEFINITION OF LIMIT -->
+      <section class="slide" id="slide-1">
+        <div class="slide-header">
+          <div class="topic-label">1. นิยามของลิมิต</div>
+          <div class="slide-number">สไลด์ 1 / 9</div>
+        </div>
+        <h2 class="slide-title">ลิมิตของฟังก์ชันคืออะไร?</h2>
+        
+        <div class="content-card accent-border">
+          <h3>การพิจารณาค่าเมื่อ \( x \) เข้าใกล้ค่าหนึ่ง</h3>
+          <p class="body-text">
+            ลิมิตของฟังก์ชัน \( f(x) \) เมื่อ \( x \) เข้าใกล้ \( 2 \) (เขียนแทนด้วย \( \lim_{x \to 2} f(x) \)) 
+            คือการศึกษาว่าค่าของ \( f(x) \) จะเข้าใกล้ค่าคงตัวใด เมื่อตัวแปร \( x \) ค่อยๆ ขยับเข้าใกล้ 2 ทั้งจากฝั่งซ้าย (ค่าน้อยกว่า 2) และจากฝั่งขวา (ค่ามากกว่า 2)
+          </p>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/limit_def.html" class="sim-frame" title="Limit Definition Simulation"></iframe>
+          <figcaption>รูปที่ 3.1: กราฟจำลองการเคลื่อนที่และสังเกตตารางลู่เข้าสู่จุดลิมิตเมื่อปรับค่า \( x \)</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 2: EVALUATING LIMITS OF POLYNOMIALS -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="topic-label">2. การหาค่าลิมิตพหุนาม</div>
+          <div class="slide-number">สไลด์ 2 / 9</div>
+        </div>
+        <h2 class="slide-title">การหาลิมิตของฟังก์ชันพหุนาม (แทนค่าโดยตรง)</h2>
+        
+        <div class="content-card accent-border">
+          <h3>ทฤษฎีบทการแทนค่าตรง (Direct Substitution)</h3>
+          <p class="lead">
+            เนื่องจากฟังก์ชันพหุนามไม่มีขอบเขตขาดตอนหรือส่วนแบ่งเป็นศูนย์ ดังนั้น ในการหาลิมิตของฟังก์ชันพหุนามเมื่อ \( x \) เข้าใกล้ค่าคงตัว \( c \) 
+            เราสามารถหาผลลัพธ์ได้โดยการ <strong>"แทนค่า \( x \) ด้วย \( c \) เข้าไปในพหุนามตรงๆ ได้เลย"</strong>
+          </p>
+          <div style="font-size: 1.4rem; font-weight: 700; text-align: center; margin: 0.5rem 0;">
+            $$ \lim_{x \to c} P(x) = P(c) $$
+          </div>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/poly_limit_direct.html" class="sim-frame" title="Direct Substitution Simulator"></iframe>
+          <figcaption>รูปที่ 3.2: โปรแกรมจำลองการคำนวณลิมิตพหุนามโดยการแทนค่าตรงรายขั้นตอน</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 3: LEFT-HAND AND RIGHT-HAND LIMITS -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="topic-label">3. ลิมิตฝั่งซ้ายและฝั่งขวา</div>
+          <div class="slide-number">สไลด์ 3 / 9</div>
+        </div>
+        <h2 class="slide-title">ลิมิตซ้าย-ขวา และการมีอยู่ของลิมิต</h2>
+        
+        <div class="content-card accent-border">
+          <h3>เงื่อนไขการมีอยู่ของลิมิต</h3>
+          <p class="body-text">
+            ลิมิตของฟังก์ชัน ณ จุดใดๆ \( x \to a \) จะหาค่าได้ (มีอยู่จริง) ก็ต่อเมื่อ <strong>"ลิมิตซ้ายและลิมิตขวาวิ่งลู่เข้าสู่ค่าคงตัวเดียวกัน"</strong>
+          </p>
+          <div class="info-box success-box">
+            <strong>สัญลักษณ์การลู่เข้า:</strong><br>
+            • ลิมิตซ้าย: \( \lim_{x \to a^-} f(x) = L_1 \) (เข้าใกล้ฝั่งซ้าย \( x &lt; a \))<br>
+            • ลิมิตขวา: \( \lim_{x \to a^+} f(x) = L_2 \) (เข้าใกล้ฝั่งขวา \( x &gt; a \))<br>
+            <strong>*ลิมิตหาค่าได้ ก็ต่อเมื่อ \( L_1 = L_2 = L \)</strong>
+          </div>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/step_function.html" class="sim-frame" title="Step Function Simulation"></iframe>
+          <figcaption>รูปที่ 3.3: กราฟสาธิตจุดขาดต่อเนื่องสระพานกระโดด ซึ่งลิมิตทางซ้ายไม่เท่ากับลิมิตทางขวา</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 4: PROPERTIES OF LIMITS -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="topic-label">4. คุณสมบัติสำคัญของลิมิต</div>
+          <div class="slide-number">สไลด์ 4 / 9</div>
+        </div>
+        <h2 class="slide-title">ทฤษฎีบทคุณสมบัติสำคัญของลิมิต</h2>
+        
+        <div class="content-card accent-border">
+          <p class="body-text">
+            กำหนดให้ \( \lim_{x \to c} f(x) = L \), \( \lim_{x \to c} g(x) = M \) และให้ \( k \) เป็นค่าคงตัวใดๆ:
+          </p>
+          
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>คุณสมบัติลิมิต</th>
+                <th>สูตรสมการรูปแบบทั่วไป</th>
+                <th>คำอธิบาย</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. ค่าคงตัว</strong></td>
+                <td>\( \lim_{x \to c} k = k \)</td>
+                <td>ลิมิตของค่าคงตัว ได้ค่าคงตัวนั้นเสมอ</td>
+              </tr>
+              <tr>
+                <td><strong>2. เอกลักษณ์</strong></td>
+                <td>\( \lim_{x \to c} x = c \)</td>
+                <td>แทนค่าตรงเข้าไปได้โดยตรง</td>
+              </tr>
+              <tr>
+                <td><strong>3. ดึงตัวคูณ</strong></td>
+                <td>\( \lim_{x \to c} [k \cdot f(x)] = k \cdot L \)</td>
+                <td>ดึงตัวคูณร่วมคงตัวออกมาก่อนได้</td>
+              </tr>
+              <tr>
+                <td><strong>4. ผลบวก/ลบ</strong></td>
+                <td>\( \lim_{x \to c} [f(x) \pm g(x)] = L \pm M \)</td>
+                <td>กระจายลิมิตเข้าไปในพจน์บวก/ลบได้</td>
+              </tr>
+              <tr>
+                <td><strong>5. ผลคูณ</strong></td>
+                <td>\( \lim_{x \to c} [f(x) \cdot g(x)] = L \cdot M \)</td>
+                <td>กระจายลิมิตเข้าไปในพจน์คูณกันได้</td>
+              </tr>
+              <tr>
+                <td><strong>6. ผลหาร</strong></td>
+                <td>\( \lim_{x \to c} \frac{f(x)}{g(x)} = \frac{L}{M} \)</td>
+                <td>กระจายพจน์หารได้ (เมื่อส่วนเศษ \( M \neq 0 \))</td>
+              </tr>
+              <tr>
+                <td><strong>7. ยกกำลัง/ถอดราก</strong></td>
+                <td>\( \lim_{x \to c} [f(x)]^n = L^n \)</td>
+                <td>กระจายเข้ายกกำลังและถอดรากได้</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: INDETERMINATE FORM -->
+      <section class="slide" id="slide-5">
+        <div class="slide-header">
+          <div class="topic-label">5. รูปแบบไม่กำหนด (0/0)</div>
+          <div class="slide-number">สไลด์ 5 / 9</div>
+        </div>
+        <h2 class="slide-title">รูปแบบไม่กำหนด (Indeterminate Forms)</h2>
+        
+        <div class="content-card accent-border">
+          <h3>การจัดการเมื่อผลแทนค่าได้เศษส่วน \( \frac{0}{0} \)</h3>
+          <p class="body-text">เมื่อเราลองแทนค่าลิมิตตรงๆ แล้วคำนวณได้รูปผลหารเศษศูนย์ส่วนศูนย์ ค่านี้เรียกว่า **รูปแบบไม่กำหนด (0/0)** ซึ่งเราจะต้องจัดรูปพหุนามเพื่อแก้พจน์ที่เป็นศูนย์ออกก่อนด้วยวิธีหลักๆ:</p>
+          <div class="info-box success-box" style="margin-bottom: 6px;">
+            <strong>• การแยกตัวประกอบ (Factoring Method):</strong> แยกตัวเศษและตัวส่วนให้มีตัวประกอบร่วม (เช่น \( x - c \)) แล้วตัดทอนกันทิ้ง จากนั้นจึงทำการแทนค่าตัวเลขตรงใหม่อีกครั้ง
+          </div>
+          <div class="info-box accent-box">
+            <strong>• การคูณสังยุค (Conjugate Method):</strong> ใช้เมื่อพจน์มีเครื่องหมายกรณฑ์ (Root) คูณพจน์สังยุคทั้งเศษและส่วน จัดกำลังสองสมบูรณ์เพื่อตัดตัวส่วนศูนย์
+          </div>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/hole_function.html" class="sim-frame" title="Hole Discontinuity Simulation"></iframe>
+          <figcaption>รูปที่ 3.4: กราฟสาธิตจุดโหว่ที่ฟังก์ชันไม่มีนิยาม (Undefined) แต่หาค่าลิมิตลู่เข้าได้สำเร็จ</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 6: CONTINUOUS FUNCTIONS -->
+      <section class="slide" id="slide-6">
+        <div class="slide-header">
+          <div class="topic-label">6. ฟังก์ชันต่อเนื่อง</div>
+          <div class="slide-number">สไลด์ 6 / 9</div>
+        </div>
+        <h2 class="slide-title">ความต่อเนื่องของฟังก์ชัน (Continuous Functions)</h2>
+        
+        <div class="content-card accent-border">
+          <h3>เงื่อนไขความต่อเนื่อง 3 ข้อที่จุด \( x = a \)</h3>
+          <p class="body-text">ฟังก์ชัน \( f(x) \) จะเรียกว่ามีความต่อเนื่องที่พิกัด \( x = a \) ก็ต่อเมื่อสอดคล้องกับข้อกำหนดครบทั้ง 3 ข้อดังต่อไปนี้:</p>
+          <div class="info-box" style="background: var(--bg-main); border-left-color: var(--primary); font-size: 0.85rem; line-height: 1.6;">
+            <strong>1. \( f(a) \) หาค่าได้</strong> (มีจุดพิกัดจริงปรากฏ)<br>
+            <strong>2. \( \lim_{x \to a} f(x) \) หาค่าได้</strong> (ลิมิตซ้ายและลิมิตขวาเท่ากัน)<br>
+            <strong>3. \( \lim_{x \to a} f(x) = f(a) \)</strong> (ค่าลิมิตเมื่อลู่เข้าเท่ากับพิกัดจุดจริงพอดี)
+          </div>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/continuity.html" class="sim-frame" title="Continuity Simulator"></iframe>
+          <figcaption>รูปที่ 3.5: แผงเปรียบเทียบประเภทฟังก์ชันเพื่อตรวจสอบเงื่อนไขความต่อเนื่อง 3 ประการ</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 7: SLOPE & INTRO TO DERIVATIVE -->
+      <section class="slide" id="slide-7">
+        <div class="slide-header">
+          <div class="topic-label">7. บทนำสู่อนุพันธ์ของฟังก์ชัน</div>
+          <div class="slide-number">สไลด์ 7 / 9</div>
+        </div>
+        <h2 class="slide-title">จากอัตราเปลี่ยนแปลงเฉลี่ย สู่อนุพันธ์เส้นสัมผัสโค้ง</h2>
+        
+        <div class="content-card accent-border">
+          <h3>แนวคิดอนุพันธ์ ณ จุดใดๆ</h3>
+          <p class="body-text">
+            เมื่อคำนวณความชันเฉลี่ยของเส้นตัดโค้ง Secant Line ระหว่างพิกัดสองจุด \( P(x, f(x)) \) และ \( Q(x+h, f(x+h)) \) จะได้อัตราการเปลี่ยนแปลงเฉลี่ย
+            และเมื่อเราค่อยๆ บีบขยับระยะห่าง \( h \to 0 \) เส้นตัดจะหมุนตัวกลายเป็น **เส้นสัมผัสเส้นโค้ง ณ จุด P** พอดี
+          </p>
+          <p class="body-text">ลิมิตความชันสัมผัสขณะใดๆ นี้คือความหมายของ <strong>"อนุพันธ์ของฟังก์ชัน (Derivative)"</strong>:</p>
+          <div style="font-size: 1.35rem; font-weight: 700; text-align: center; margin: 0.5rem 0;">
+            $$ f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h} $$
+          </div>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/derivative_intro.html" class="sim-frame" title="Derivative Secant to Tangent"></iframe>
+          <figcaption>รูปที่ 3.6: กราฟจำลองการบีบขยับช่วงระยะ \( h \) เพื่อสร้างเส้นสัมผัสโค้งและหาค่าความชันลิมิต</figcaption>
+        </figure>
+      </section>
+
+      <!-- SLIDE 8: PROPERTIES OF DERIVATIVES -->
+      <section class="slide" id="slide-8">
+        <div class="slide-header">
+          <div class="topic-label">8. สูตรการหาอนุพันธ์</div>
+          <div class="slide-number">สไลด์ 8 / 9</div>
+        </div>
+        <h2 class="slide-title">สูตรและคุณสมบัติพื้นฐานของการหาอนุพันธ์ (ดิฟ)</h2>
+        
+        <div class="content-card accent-border">
+          <p class="body-text">ให้ \( c \), \( n \) เป็นค่าคงตัว และ \( u, v \) เป็นฟังก์ชันเทียบกับตัวแปร \( x \):</p>
+          
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>กฎการหาอนุพันธ์</th>
+                <th>สูตรตัวแบบ</th>
+                <th>ตัวอย่างการคำนวณ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. ดิฟค่าคงที่</strong></td>
+                <td>\( \frac{d}{dx}(c) = 0 \)</td>
+                <td>\( \frac{d}{dx}(5) = 0 \)</td>
+              </tr>
+              <tr>
+                <td><strong>2. ดิฟเทียบตัวแปรเอง</strong></td>
+                <td>\( \frac{d}{dx}(x) = 1 \)</td>
+                <td>\( \frac{d}{dx}(x) = 1 \)</td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--primary);">3. กฎกำลัง (Power Rule)</strong></td>
+                <td><strong style="color: var(--primary);">\( \frac{d}{dx}(x^n) = n \cdot x^{n-1} \)</strong></td>
+                <td>\( \frac{d}{dx}(x^3) = 3x^2 \)</td>
+              </tr>
+              <tr>
+                <td><strong>4. ดึงสัมประสิทธิ์</strong></td>
+                <td>\( \frac{d}{dx}(c \cdot u) = c \cdot \frac{du}{dx} \)</td>
+                <td>\( \frac{d}{dx}(5x^4) = 5 \cdot (4x^3) = 20x^3 \)</td>
+              </tr>
+              <tr>
+                <td><strong>5. ดิฟแยกพจน์บวก/ลบ</strong></td>
+                <td>\( \frac{d}{dx}(u \pm v) = \frac{du}{dx} \pm \frac{dv}{dx} \)</td>
+                <td>\( \frac{d}{dx}(x^2 + 3x) = 2x + 3 \)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: PRACTICE GENERATOR -->
+      <section class="slide" id="slide-9">
+        <div class="slide-header">
+          <div class="topic-label">9. แบบฝึกหัดทบทวน</div>
+          <div class="slide-number">สไลด์ 9 / 9</div>
+        </div>
+        <h2 class="slide-title">แบบฝึกหัดคำนวณการหาอนุพันธ์พหุนาม</h2>
+        
+        <div class="content-card accent-border">
+          <h3>กระดานฝึกดิฟพหุนามเสมือนจริง</h3>
+          <p class="body-text">
+            นักเรียนสามารถทดลองทำโจทย์สุ่มเพื่อทดสอบทักษะการคำนวณหาอนุพันธ์พหุนามตัวแปรเดียวโดยการประยุกต์ใช้สูตรกฎกำลัง
+          </p>
+        </div>
+
+        <figure class="interactive-figure">
+          <iframe src="simulations/practice_generator.html" class="sim-frame" title="Derivative Practice Generator"></iframe>
+          <figcaption>รูปที่ 3.7: กิจกรรมสุ่มและตรวจคำตอบพร้อมแสดงวิธีทำอย่างละเอียดแบบสัญกรณ์รายขั้นตอน</figcaption>
+        </figure>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>

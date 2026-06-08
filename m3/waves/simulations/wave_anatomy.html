@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ส่วนประกอบของคลื่น | Wave Anatomy</title>
+
+  <!-- Google Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+  </style>
+
+  <!-- ① Shared base styles -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+
+  <!-- ② KaTeX 0.17.0 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css"
+        integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB"
+        crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"
+          integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs"
+          crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"
+          integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz"
+          crossorigin="anonymous"
+          onload="autoRenderMath()"></script>
+
+  <style>
+    body {
+      background: #ffffff;
+      padding: 10px;
+      gap: 10px;
+    }
+    
+    /* Layout styling */
+    .anatomy-container {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 768px) {
+      .anatomy-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* SVG area styling */
+    .svg-panel {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    /* Hover highlight classes */
+    .anatomy-group {
+      opacity: 0.25;
+      transition: all 0.2s ease;
+    }
+    .anatomy-group.highlighted, .anatomy-group.active-by-default {
+      opacity: 1;
+    }
+    .anatomy-group.highlighted path, .anatomy-group.highlighted line {
+      stroke-width: 3.5px;
+    }
+    .anatomy-group.highlighted text {
+      font-weight: 800;
+    }
+
+    /* Table styling and active state */
+    .premium-table tbody tr {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .premium-table tbody tr:hover, .premium-table tbody tr.active-row {
+      background-color: #f5f3ff;
+      border-left: 4px solid #8b5cf6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="anatomy-container">
+
+  <!-- Left: Interactive Vector SVG Diagram -->
+  <div class="svg-panel">
+    <h4 style="font-size:0.95rem; font-weight:700; color:var(--text-main); margin-bottom:8px;">แผนภาพคลื่นและส่วนประกอบทางฟิสิกส์</h4>
+    
+    <svg id="wave-svg" viewBox="0 0 700 320" style="width:100%; height:auto; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
+      
+      <!-- Grid Lines (Light Grey) -->
+      <line x1="50" y1="50" x2="650" y2="50" stroke="#f1f5f9" stroke-width="1.5" />
+      <line x1="50" y1="250" x2="650" y2="250" stroke="#f1f5f9" stroke-width="1.5" />
+      
+      <!-- Baseline / Equilibrium Line (dashed) -->
+      <line x1="40" y1="150" x2="660" y2="150" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6,4" />
+      <text x="665" y="154" fill="#64748b" font-size="11" font-weight="bold">แนวสมดุล</text>
+      
+      <!-- Wave Line (Sine Curve) -->
+      <path d="M 50 150 C 100 50, 150 50, 200 150 C 250 250, 300 250, 350 150 C 400 50, 450 50, 500 150 C 550 250, 600 250, 650 150" 
+            fill="none" stroke="#818cf8" stroke-width="3" />
+      
+      <!-- 1. Crest (สันคลื่น) -->
+      <g class="anatomy-group active-by-default" id="grp-crest">
+        <!-- Peak 1 Dot & Label -->
+        <circle cx="125" cy="75" r="6" fill="#e11d48" />
+        <line x1="125" y1="75" x2="125" y2="25" stroke="#e11d48" stroke-width="1.5" />
+        <text x="125" y="18" fill="#e11d48" font-size="12" font-weight="bold" text-anchor="middle">สันคลื่น (Crest)</text>
+        
+        <!-- Peak 2 Dot -->
+        <circle cx="425" cy="75" r="6" fill="#e11d48" />
+      </g>
+
+      <!-- 2. Trough (ท้องคลื่น) -->
+      <g class="anatomy-group active-by-default" id="grp-trough">
+        <!-- Valley 1 Dot & Label -->
+        <circle cx="275" cy="225" r="6" fill="#2563eb" />
+        <line x1="275" y1="225" x2="275" y2="275" stroke="#2563eb" stroke-width="1.5" />
+        <text x="275" y="290" fill="#2563eb" font-size="12" font-weight="bold" text-anchor="middle">ท้องคลื่น (Trough)</text>
+        
+        <!-- Valley 2 Dot -->
+        <circle cx="575" cy="225" r="6" fill="#2563eb" />
+      </g>
+
+      <!-- 3. Displacement (การกระจัด) -->
+      <g class="anatomy-group active-by-default" id="grp-disp">
+        <!-- Vertical displacement line at x=87.5 -->
+        <line x1="87.5" y1="150" x2="87.5" y2="94" stroke="#d97706" stroke-width="2" />
+        <!-- Arrow heads -->
+        <path d="M 87.5 94 L 84 101 L 91 101 Z" fill="#d97706" />
+        <text x="94" y="120" fill="#d97706" font-size="11" font-weight="bold">การกระจัด (y)</text>
+      </g>
+
+      <!-- 4. Amplitude (แอมพลิจูด) -->
+      <g class="anatomy-group active-by-default" id="grp-amp">
+        <!-- Amplitude line at first peak -->
+        <line x1="125" y1="150" x2="125" y2="75" stroke="#9333ea" stroke-width="2.5" />
+        <path d="M 125 75 L 121 83 L 129 83 Z" fill="#9333ea" />
+        <path d="M 125 150 L 121 142 L 129 142 Z" fill="#9333ea" />
+        <text x="132" y="105" fill="#9333ea" font-size="12" font-weight="bold">แอมพลิจูด (A)</text>
+      </g>
+
+      <!-- 5. Wavelength Crest to Crest (ความยาวคลื่น สันถึงสัน) -->
+      <g class="anatomy-group active-by-default" id="grp-wav-crest">
+        <!-- Horizontal double arrow between x=125 and x=425 at y=35 -->
+        <line x1="131" y1="35" x2="419" y2="35" stroke="#0d9488" stroke-width="2" />
+        <path d="M 131 35 L 138 31 L 138 39 Z" fill="#0d9488" />
+        <path d="M 419 35 L 412 31 L 412 39 Z" fill="#0d9488" />
+        
+        <!-- Dashed vertical extension guides -->
+        <line x1="125" y1="75" x2="125" y2="30" stroke="#0d9488" stroke-width="1" stroke-dasharray="2,2" />
+        <line x1="425" y1="75" x2="425" y2="30" stroke="#0d9488" stroke-width="1" stroke-dasharray="2,2" />
+        
+        <text x="275" y="28" fill="#0d9488" font-size="12" font-weight="bold" text-anchor="middle">ความยาวคลื่น (Wavelength, λ)</text>
+      </g>
+
+      <!-- 6. Wavelength Trough to Trough (ความยาวคลื่น ท้องถึงท้อง) -->
+      <g class="anatomy-group active-by-default" id="grp-wav-trough">
+        <!-- Horizontal double arrow between x=275 and x=575 at y=265 -->
+        <line x1="281" y1="265" x2="569" y2="265" stroke="#0d9488" stroke-width="2" />
+        <path d="M 281 265 L 288 261 L 288 269 Z" fill="#0d9488" />
+        <path d="M 569 265 L 562 261 L 562 269 Z" fill="#0d9488" />
+        
+        <!-- Dashed vertical extension guides -->
+        <line x1="275" y1="225" x2="275" y2="270" stroke="#0d9488" stroke-width="1" stroke-dasharray="2,2" />
+        <line x1="575" y1="225" x2="575" y2="270" stroke="#0d9488" stroke-width="1" stroke-dasharray="2,2" />
+        
+        <text x="425" y="282" fill="#0d9488" font-size="12" font-weight="bold" text-anchor="middle">ความยาวคลื่น (λ) วัดจากท้องถึงท้อง</text>
+      </g>
+
+    </svg>
+    <div style="font-size:0.75rem; color:#64748b; margin-top:4px; text-align:center; font-style:italic;">
+      ชี้เมาส์หรือกดที่ตารางด้านขวา เพื่อไฮไลต์ดูแต่ละส่วนประกอบบนฟังก์ชันคลื่น
+    </div>
+  </div>
+
+  <!-- Right: Definitions Table -->
+  <div class="readouts-panel">
+    <div class="card accent-border" style="padding: 10px;">
+      <h3 style="font-size:0.95rem;">ตารางสรุปคำนิยามส่วนประกอบ</h3>
+      
+      <table class="premium-table" style="font-size:0.8rem; margin:0;">
+        <thead>
+          <tr>
+            <th>ส่วนประกอบ</th>
+            <th>คำอธิบายสั้นกระชับ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr onmouseover="highlight('crest')" onmouseout="clearHighlight()" onclick="toggleStick('crest')">
+            <td class="bold" style="color:#e11d48;">สันคลื่น (Crest)</td>
+            <td>จุด <strong>สูงสุด</strong> ของคลื่น วัดขึ้นจากแนวสมดุล</td>
+          </tr>
+          <tr onmouseover="highlight('trough')" onmouseout="clearHighlight()" onclick="toggleStick('trough')">
+            <td class="bold" style="color:#2563eb;">ท้องคลื่น (Trough)</td>
+            <td>จุด <strong>ต่ำสุด</strong> ของคลื่น วัดลงจากแนวสมดุล</td>
+          </tr>
+          <tr onmouseover="highlight('disp')" onmouseout="clearHighlight()" onclick="toggleStick('disp')">
+            <td class="bold" style="color:#d97706;">การกระจัด (y)</td>
+            <td>ระยะของจุดใด ๆ บนคลื่น ห่างจากแนวสมดุล</td>
+          </tr>
+          <tr onmouseover="highlight('amp')" onmouseout="clearHighlight()" onclick="toggleStick('amp')">
+            <td class="bold" style="color:#9333ea;">แอมพลิจูด (A)</td>
+            <td>การกระจัดสูงสุด (สันหรือท้อง) <strong>บ่งชี้พลังงานคลื่น</strong></td>
+          </tr>
+          <tr onmouseover="highlight('wav-crest')" onmouseout="clearHighlight()" onclick="toggleStick('wav-crest')">
+            <td class="bold" style="color:#0d9488;">ความยาวคลื่น (λ) สัน-สัน</td>
+            <td>ระยะทาง 1 รอบคลื่น วัดจาก <strong>สันคลื่นถึงสันคลื่นที่ติดกัน</strong></td>
+          </tr>
+          <tr onmouseover="highlight('wav-trough')" onmouseout="clearHighlight()" onclick="toggleStick('wav-trough')">
+            <td class="bold" style="color:#0d9488;">ความยาวคลื่น (λ) ท้อง-ท้อง</td>
+            <td>ระยะทาง 1 รอบคลื่น วัดจาก <strong>ท้องคลื่นถึงท้องคลื่นที่ติดกัน</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="info-box success-box" style="font-size:0.8rem; padding:6px 10px;" id="dynamic-explanation">
+      <strong>คำแนะนำเพิ่มเติม:</strong> ความยาวคลื่น \(\lambda\) มีหน่วยวัดเป็นเมตร (m) คือระยะทางที่ยาวพอที่จะสั่นครบ 1 รอบพอดี
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let stuckGroup = null;
+
+  function highlight(name) {
+    // Hide default active styling
+    let groups = document.querySelectorAll('.anatomy-group');
+    groups.forEach(g => {
+      g.classList.remove('active-by-default');
+      g.classList.remove('highlighted');
+    });
+
+    // Highlight targeted
+    let target = document.getElementById('grp-' + name);
+    if (target) {
+      target.classList.add('highlighted');
+    }
+
+    // Dynamic explanatory sentence updates
+    let dynBox = document.getElementById('dynamic-explanation');
+    if (name === 'crest') {
+      dynBox.innerHTML = `<strong>สันคลื่น:</strong> มีระดับการกระจัดเป็นบวกมากที่สุด (จุดยอดสูงสุด)`;
+    } else if (name === 'trough') {
+      dynBox.innerHTML = `<strong>ท้องคลื่น:</strong> มีระดับการกระจัดเป็นลบมากที่สุด (จุดก้นต่ำสุด)`;
+    } else if (name === 'disp') {
+      dynBox.innerHTML = `<strong>การกระจัด (Displacement):</strong> เป็นเวกเตอร์วัดจากแกนกลาง (แนวสมดุล) ไปถึงตำแหน่งคลื่น ณ จุดใด ๆ`;
+    } else if (name === 'amp') {
+      dynBox.innerHTML = `<strong>แอมพลิจูด:</strong> แอมพลิจูดสูง คลื่นมีพลังงานมาก (เช่น เสียงดังมาก หรือ แสงจ้าสว่างมาก)`;
+    } else if (name === 'wav-crest') {
+      dynBox.innerHTML = `<strong>ความยาวคลื่น (สัน-สัน):</strong> เป็นวิธีวัดที่นิยมที่สุด วัดจากจุดสูงสุดของลูปแรก ไปถึงจุดสูงสุดของลูปถัดไป`;
+    } else if (name === 'wav-trough') {
+      dynBox.innerHTML = `<strong>ความยาวคลื่น (ท้อง-ท้อง):</strong> มีความยาวเทียบเท่ากับการวัดแบบสัน-สัน คือยาวเท่ากับ 1 ลูกคลื่นเต็ม \\(\\lambda\\)`;
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(dynBox, { delimiters: [{ left: '\\(', right: '\\)', display: false }] });
+      }
+    }
+  }
+
+  function clearHighlight() {
+    let groups = document.querySelectorAll('.anatomy-group');
+    groups.forEach(g => {
+      g.classList.remove('highlighted');
+      if (!stuckGroup) {
+        g.classList.add('active-by-default');
+      }
+    });
+
+    if (stuckGroup) {
+      highlight(stuckGroup);
+    } else {
+      document.getElementById('dynamic-explanation').innerHTML = `<strong>คำแนะนำเพิ่มเติม:</strong> ความยาวคลื่น \\(\\lambda\\) มีหน่วยวัดเป็นเมตร (m) คือระยะทางที่ยาวพอที่จะสั่นครบ 1 รอบพอดี`;
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.getElementById('dynamic-explanation'), { delimiters: [{ left: '\\(', right: '\\)', display: false }] });
+      }
+    }
+  }
+
+  function toggleStick(name) {
+    if (stuckGroup === name) {
+      stuckGroup = null; // unstick
+    } else {
+      stuckGroup = name;
+    }
+    
+    // update table row visual active states
+    let rows = document.querySelectorAll('.premium-table tbody tr');
+    rows.forEach((row, idx) => {
+      row.classList.remove('active-row');
+    });
+
+    // Find table row index to highlight
+    let names = ['crest', 'trough', 'disp', 'amp', 'wav-crest', 'wav-trough'];
+    let idx = names.indexOf(name);
+    if (idx !== -1 && stuckGroup) {
+      rows[idx].classList.add('active-row');
+    }
+  }
+
+  function autoRenderMath() {
+    if (typeof renderMathInElement !== 'undefined') {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        throwOnError: false
+      });
+    }
+  }
+</script>
+
+</body>
+</html>

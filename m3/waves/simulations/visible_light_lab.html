@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ห้องปฏิบัติการแสงที่มองเห็น | Visible Light Lab</title>
+
+  <!-- Google Fonts -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+  </style>
+
+  <!-- ① Shared base styles -->
+  <link rel="stylesheet" href="../../../template/sim-base.css">
+
+  <style>
+    body {
+      background: #ffffff;
+      padding: 10px;
+      gap: 10px;
+    }
+    .tab-group {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .tab-btn.active {
+      background: #10b981; /* green visible theme */
+      border-color: #059669;
+      color: #ffffff;
+    }
+    .control-panel {
+      padding: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" style="grid-template-columns: 1.15fr 0.85fr;">
+
+  <!-- Left Column: Canvas + Tab Switchers -->
+  <div class="graph-panel">
+    <div class="tab-group">
+      <button class="tab-btn active" id="tab-prism" onclick="setMode('prism')">1. แสงขาวผ่านปริซึม</button>
+      <button class="tab-btn" id="tab-laser" onclick="setMode('laser')">2. ลำแสงเลเซอร์</button>
+      <button class="tab-btn" id="tab-fiber" onclick="setMode('fiber')">3. เส้นใยนำแสง</button>
+    </div>
+
+    <canvas class="sim-canvas" id="light-canvas" style="height:270px; background:#0f172a; border-radius:6px; border:1px solid #334155; display:block;"></canvas>
+
+    <!-- Contextual sub-controls injected dynamically -->
+    <div id="sub-controls-area" style="min-height:50px; margin-top:6px;"></div>
+  </div>
+
+  <!-- Right Column: Learning Card & Explanations -->
+  <div class="readouts-panel" style="display:flex; flex-direction:column; gap:10px;">
+    
+    <div class="card accent-border" style="padding: 10px 12px; border-left-color:#10b981;">
+      <h3 id="mode-title">การกระจายแสงขาวผ่านปริซึม</h3>
+      <p class="body-text" style="font-size: 0.85rem;" id="mode-intro">
+        แสงขาวประกอบด้วยแสงสีต่าง ๆ หลายสีปนกัน เมื่อผ่านปริซึมจะเกิดการหักเหได้ไม่เท่ากันเนื่องจากความยาวคลื่นต่างกัน
+      </p>
+    </div>
+
+    <div class="info-box success-box" id="mode-detail-box" style="font-size: 0.82rem;">
+      <strong>ปรากฏการณ์การกระจายแสง (Dispersion):</strong>
+      <ul>
+        <li>แสงแต่ละสีมีความถี่และความยาวคลื่นต่างกัน</li>
+        <li><strong>แสงสีม่วง:</strong> ความยาวคลื่นสั้นที่สุด หักเหเบนตัวมากที่สุด</li>
+        <li><strong>แสงสีแดง:</strong> ความยาวคลื่นยาวที่สุด หักเหเบนตัวน้อยที่สุด</li>
+      </ul>
+    </div>
+
+    <div class="info-box info-blue" id="mode-spec-box" style="font-size:0.82rem;">
+      <strong>ความเข้าใจเพิ่มเติม:</strong> แสงขาวจากดวงอาทิตย์หรือหลอดไฟธรรมดา เรียกว่าแสงโพลีโครมาติก (Polychromatic Light) คือมีหลายสเปกตรัมรวมอยู่ด้วยกัน
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  let canvas = document.getElementById('light-canvas');
+  let ctx = canvas.getContext('2d');
+  
+  let currentMode = 'prism'; // prism | laser | fiber
+  let laserOn = true;
+  let fiberAngle = 45;
+  let time = 0;
+  let animId = null;
+
+  function resizeCanvas() {
+    let rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    draw();
+  }
+  window.addEventListener('resize', resizeCanvas);
+
+  function setMode(mode) {
+    currentMode = mode;
+    
+    // Toggle active tab class
+    document.getElementById('tab-prism').classList.toggle('active', mode === 'prism');
+    document.getElementById('tab-laser').classList.toggle('active', mode === 'laser');
+    document.getElementById('tab-fiber').classList.toggle('active', mode === 'fiber');
+
+    // Update explanations
+    let title = document.getElementById('mode-title');
+    let intro = document.getElementById('mode-intro');
+    let detail = document.getElementById('mode-detail-box');
+    let extra = document.getElementById('mode-spec-box');
+    let controls = document.getElementById('sub-controls-area');
+
+    controls.innerHTML = ''; // Clear sub-controls
+
+    if (mode === 'prism') {
+      title.textContent = "1. การกระจายแสงขาวผ่านปริซึม";
+      intro.textContent = "แสงขาวที่เราเห็นในชีวิตประจำวัน แท้จริงประกอบด้วยแสงสีรุ้งเจ็ดสีปนกัน เมื่อผ่านแก้วปริซึมจะหักเหแยกตัวออกจากกัน";
+      detail.innerHTML = `
+        <strong>การกระจายแสง (Dispersion):</strong>
+        <ul>
+          <li>แก้วปริซึมทำให้แสงเดินทางช้าลง แสงความยาวคลื่นต่างกันจะหักเหด้วยมุมที่ต่างกัน</li>
+          <li><strong>แสงสีแดง:</strong> เบี่ยงเบนน้อยที่สุด (อยู่แถบด้านบน)</li>
+          <li><strong>แสงสีม่วง:</strong> เบี่ยงเบนหักเหมากที่สุด (อยู่แถบด้านล่าง)</li>
+        </ul>
+      `;
+      extra.innerHTML = `
+        <strong>ตัวอย่างในธรรมชาติ:</strong> การเกิดรุ้งกินน้ำหลังฝนตก เกิดจากหยดน้ำฝนทำหน้าที่เสมือนปริซึมจิ๋วหักเหแสงแดดแยกตัวเป็นแถบรุ้ง 7 สี
+      `;
+    } 
+    else if (mode === 'laser') {
+      title.textContent = "2. แสงเลเซอร์ (Laser)";
+      intro.textContent = "เลเซอร์ไม่ใช่แสงธรรมดา แต่มีกระบวนการปล่อยรังสีแบบเร่งเร้าพิเศษ ทำให้ได้ลำแสงที่มีคุณภาพสูงแตกต่างจากหลอดไฟปกติ";
+      detail.innerHTML = `
+        <strong>คุณสมบัติเด่นของเลเซอร์:</strong>
+        <ul>
+          <li><strong>1. เป็นแสงสีเดี่ยว (Monochromatic):</strong> มีความยาวคลื่นและความถี่เดียวอย่างคมชัด (ต่างจากแสงขาว)</li>
+          <li><strong>2. คลื่นเฟสตรงกัน (Coherent):</strong> ยอดคลื่นตรงสอดประสานกัน ทำให้พลังงานรวมกันได้สูงมาก</li>
+          <li><strong>3. ทิศทางแน่นอน (Directional):</strong> ลำแสงแคบขนานเป็นเส้นตรงยาว ไม่กระเจิงแผ่ออกกว้าง</li>
+          <li><strong>4. มีความเข้มสูง (High Intensity):</strong> มีพลังงานหนาแน่นสูงต่อหน่วยพื้นที่ สามารถใช้ตัดวัสดุหรือผ่าตัดทางการแพทย์ได้</li>
+        </ul>
+      `;
+      extra.innerHTML = `
+        <strong>ประโยชน์ใช้งาน:</strong> ใช้ผ่าตัดทางการแพทย์ที่เน้นความละเอียดสูง อ่านบาร์โค้ดสินค้า ตัดแผ่นเหล็กอุตสาหกรรม และส่งข้อมูลผ่านอินเทอร์เน็ต
+      `;
+      
+      // Inject laser subcontrols
+      controls.innerHTML = `
+        <div style="text-align:center;">
+          <button class="btn-action-sm" id="btn-laser-toggle" style="background:#ef4444;" onclick="toggleLaser()">สวิตช์เครื่องปล่อยเลเซอร์: ON</button>
+        </div>
+      `;
+    } 
+    else if (mode === 'fiber') {
+      title.textContent = "3. เส้นใยนำแสง (Fiber Optics)";
+      intro.textContent = "เส้นใยนำแสงหรือไฟเบอร์ออปติก คือใยแก้วขนาดบางมาก (~0.05 mm) ใช้ส่งผ่านข้อมูลอินเทอร์เน็ตความเร็วสูงด้วยความเร็วแสง";
+      detail.innerHTML = `
+        <strong>หลักการสะท้อนกลับหมด (Total Internal Reflection):</strong>
+        <ul>
+          <li>เมื่อแสงเดินทางในใยแก้วแล้วตกกระทบขอบสายด้วย <strong>มุมตกกระทบที่กว้างกว่ามุมวิกฤต</strong> แสงจะไม่ยอมหักเหหนีออกไปนอกท่อแก้ว</li>
+          <li>แสงจะสะท้อนเด้งกลับไปมาอยู่ภายในสายแก้ว และวิ่งต่อไปข้างหน้าได้ไกลมากถึง 200 km โดยไม่สูญหาย</li>
+        </ul>
+      `;
+      extra.innerHTML = `
+        <strong>คุณประโยชน์:</strong> ทำให้สามารถส่งสัญญาณอินเทอร์เน็ตข้ามทวีปผ่านสายเคเบิลใต้น้ำขนาดจิ๋วได้อย่างรวดเร็วและทนทานกว่าสายทองแดง
+      `;
+      
+      // Inject fiber subcontrols
+      controls.innerHTML = `
+        <div class="control-row">
+          <label>ปรับมุมเลเซอร์ตกกระทบ (Incident Angle): <span id="laser-angle-val" style="color:#10b981;">45</span>°</label>
+          <input type="range" class="slider" id="slider-laser-angle" min="15" max="85" step="1" value="45" oninput="updateLaserAngle()">
+        </div>
+      `;
+    }
+    
+    draw();
+  }
+
+  function toggleLaser() {
+    laserOn = !laserOn;
+    let btn = document.getElementById('btn-laser-toggle');
+    if (laserOn) {
+      btn.textContent = "สวิตช์เครื่องปล่อยเลเซอร์: ON";
+      btn.style.background = "#ef4444";
+    } else {
+      btn.textContent = "สวิตช์เครื่องปล่อยเลเซอร์: OFF";
+      btn.style.background = "#475569";
+    }
+    draw();
+  }
+
+  function updateLaserAngle() {
+    fiberAngle = parseInt(document.getElementById('slider-laser-angle').value);
+    document.getElementById('laser-angle-val').textContent = fiberAngle;
+    draw();
+  }
+
+  function draw() {
+    if (!canvas) return;
+    let w = canvas.width;
+    let h = canvas.height;
+    let centerY = h / 2;
+
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, w, h);
+
+    if (currentMode === 'prism') {
+      drawPrism(w, h);
+    } 
+    else if (currentMode === 'laser') {
+      drawLaser(w, h);
+    } 
+    else if (currentMode === 'fiber') {
+      drawFiber(w, h);
+    }
+  }
+
+  // 1. Draw White Light passing through Prism
+  function drawPrism(w, h) {
+    let centerY = h / 2;
+    
+    // Draw glass prism (triangle)
+    let p1 = { x: w * 0.4, y: centerY - 60 };
+    let p2 = { x: w * 0.6, y: centerY - 60 };
+    let p3 = { x: w * 0.5, y: centerY + 70 };
+    
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.15)';
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Text label for prism
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText("ปริซึมแก้ว (Glass Prism)", w * 0.5 - 55, centerY - 72);
+
+    // Incoming White light beam
+    let startX = 40;
+    let startY = centerY + 10;
+    let hitX = w * 0.45;
+    let hitY = centerY + 5; // hit left face of prism
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(hitX, hitY);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '10px sans-serif';
+    ctx.fillText("ลำแสงขาว (White Light)", startX, startY - 10);
+
+    // Dispersion colors inside and exiting the prism
+    // 7 colors of rainbow: Red, Orange, Yellow, Green, Blue, Indigo, Violet
+    let colors = [
+      '#ef4444', // Red
+      '#f97316', // Orange
+      '#eab308', // Yellow
+      '#22c55e', // Green
+      '#3b82f6', // Blue
+      '#6366f1', // Indigo
+      '#a855f7'  // Violet
+    ];
+    
+    let exitFaceStartX = w * 0.5;
+    let exitFaceStartY = centerY + 70;
+    
+    // Refraction equations for visuals
+    colors.forEach((color, idx) => {
+      // Different refraction offset for each color
+      // Violet (idx=6) refracts the most (goes down further), Red (idx=0) refracts the least
+      let refractOffset = idx * 2.5; 
+      
+      // Point where it hits the right face of the prism
+      let midHitX = w * 0.53 + (refractOffset * 0.05);
+      let midHitY = centerY + 5 + refractOffset;
+
+      // Draw inside refraction ray
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(hitX, hitY);
+      ctx.lineTo(midHitX, midHitY);
+      ctx.stroke();
+
+      // Exit ray going further down (Violet bending more)
+      let exitAngle = 0.2 + (idx * 0.05); // angles
+      let outX = w * 0.85;
+      let outY = midHitY + (outX - midHitX) * Math.sin(exitAngle);
+
+      ctx.beginPath();
+      ctx.moveTo(midHitX, midHitY);
+      ctx.lineTo(outX, outY);
+      ctx.stroke();
+
+      // Draw color band screen on the right
+      ctx.fillStyle = color;
+      ctx.fillRect(outX, outY - 4, 15, 8);
+    });
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.fillText("ฉากรับสเปกตรัมแสงรุ้ง", w * 0.85 - 20, centerY - 60);
+  }
+
+  // 2. Draw Laser Pointer & coherent wave demonstration
+  function drawLaser(w, h) {
+    let centerY = h / 2;
+    let pointerX = 80;
+    let pointerY = centerY;
+
+    // Draw laser pointer casing
+    ctx.fillStyle = '#475569';
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(pointerX - 45, pointerY - 12, 45, 24, 4);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Brass tip
+    ctx.fillStyle = '#eab308';
+    ctx.fillRect(pointerX, pointerY - 8, 8, 16);
+    
+    // Power LED indicator
+    ctx.fillStyle = laserOn ? '#22c55e' : '#ef4444';
+    ctx.beginPath(); ctx.arc(pointerX - 25, pointerY - 6, 2.5, 0, 2*Math.PI); ctx.fill();
+
+    if (laserOn) {
+      // Bright red laser beam (solid straight line)
+      ctx.strokeStyle = '#ef4444';
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = 10; // laser glow
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pointerX + 8, pointerY);
+      ctx.lineTo(w - 60, pointerY);
+      ctx.stroke();
+      ctx.shadowBlur = 0; // reset shadow
+
+      // Laser dot target splash
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(w - 60, pointerY, 6, 0, 2*Math.PI);
+      ctx.fill();
+      
+      // Draw coherent sine wave representation above laser beam
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let x = pointerX + 20; x < w - 80; x++) {
+        let wave = 18 * Math.sin(x * 0.15 - time * 12);
+        if (x === pointerX + 20) ctx.moveTo(x, pointerY - 45 + wave);
+        else ctx.lineTo(x, pointerY - 45 + wave);
+      }
+      ctx.stroke();
+      
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText("คลื่นเฟสตรงกันเป็นระเบียบ (Coherent Wave)", pointerX + 30, pointerY - 72);
+    }
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText("เครื่องกำเนิดแสงเลเซอร์ (Laser Pointer)", pointerX - 35, pointerY + 32);
+  }
+
+  // 3. Draw Fiber Optics refraction/internal reflection
+  function drawFiber(w, h) {
+    let centerY = h / 2;
+    let fiberH = 40;
+    
+    // Draw Fiber Optic Core Cladding
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(6, 182, 212, 0.08)';
+    ctx.beginPath();
+    ctx.roundRect(50, centerY - fiberH/2, w - 100, fiberH, 4);
+    ctx.fill();
+    ctx.stroke();
+    
+    // core boundaries
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(50, centerY - fiberH/2); ctx.lineTo(w - 50, centerY - fiberH/2);
+    ctx.moveTo(50, centerY + fiberH/2); ctx.lineTo(w - 50, centerY + fiberH/2);
+    ctx.stroke();
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("ขนาดสายใยแก้ว ~0.05 mm (Core)", w/2, centerY + fiberH/2 + 15);
+
+    let angleRad = (fiberAngle * Math.PI) / 180;
+    let x = 50;
+    let y = centerY;
+    let vx = Math.cos(angleRad);
+    let vy = Math.sin(angleRad);
+    let step = 3;
+
+    ctx.strokeStyle = '#ef4444'; // red laser inside fiber
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
+    let maxBounces = 25;
+    let bounceCount = 0;
+    let isReflectedTotal = (fiberAngle <= 62); // If angle is too steep, it leaks
+
+    while (x < w - 50 && bounceCount < maxBounces) {
+      x += vx * step;
+      y += vy * step;
+      
+      if (y <= centerY - fiberH/2) {
+        y = centerY - fiberH/2;
+        if (isReflectedTotal) {
+          vy = -vy;
+          bounceCount++;
+        } else {
+          // Refracts out
+          ctx.lineTo(x, y);
+          ctx.stroke();
+          ctx.strokeStyle = 'rgba(239, 68, 68, 0.35)';
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + vx * 25, y - Math.abs(vy) * 20);
+          ctx.stroke();
+          break;
+        }
+      }
+      
+      if (y >= centerY + fiberH/2) {
+        y = centerY + fiberH/2;
+        if (isReflectedTotal) {
+          vy = -vy;
+          bounceCount++;
+        } else {
+          // Refracts out
+          ctx.lineTo(x, y);
+          ctx.stroke();
+          ctx.strokeStyle = 'rgba(239, 68, 68, 0.35)';
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + vx * 25, y + Math.abs(vy) * 20);
+          ctx.stroke();
+          break;
+        }
+      }
+      ctx.lineTo(x, y);
+    }
+
+    if (x >= w - 50) {
+      ctx.stroke();
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath(); ctx.arc(w - 50, y, 5, 0, 2*Math.PI); ctx.fill();
+    }
+  }
+
+  function animationLoop(timestamp) {
+    time += 0.015;
+    draw();
+    animId = requestAnimationFrame(animationLoop);
+  }
+
+  window.addEventListener('load', () => {
+    resizeCanvas();
+    setMode('prism');
+    animationLoop();
+  });
+</script>
+
+</body>
+</html>
