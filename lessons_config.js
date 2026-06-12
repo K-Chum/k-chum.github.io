@@ -36,6 +36,16 @@ const LESSONS_CONFIG = [
     status: "available"
   },
   {
+    id: "3d_shape-viewer",
+    title: "ดูแบบจำลองรูปทรง 3 มิติ (3D Shape Viewer)",
+    description: "เครื่องมือโหลดและสำรวจโมเดล 3 มิติแบบ 360 องศา",
+    grade: "ม.3",
+    type: "ห้องปฏิบัติการเสมือนจริง",
+    url: "m3/3d_shape-viewer/index.html",
+    accent: "shapes",
+    status: "available"
+  },
+  {
     id: "waves-properties",
     title: "คลื่นและคลื่นแม่เหล็กไฟฟ้า",
     description: "ทำความเข้าใจความหมายและประเภทของคลื่น ส่วนประกอบที่สำคัญ สูตรคำนวณความเร็วคลื่น ตลอดจนทฤษฎีแมกซ์เวลล์และคุณประโยชน์รวมถึงภัยอันตรายของคลื่นแม่เหล็กไฟฟ้าแต่ละย่าน",

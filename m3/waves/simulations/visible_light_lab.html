@@ -238,10 +238,10 @@
   function drawPrism(w, h) {
     let centerY = h / 2;
     
-    // Draw glass prism (triangle)
-    let p1 = { x: w * 0.4, y: centerY - 60 };
-    let p2 = { x: w * 0.6, y: centerY - 60 };
-    let p3 = { x: w * 0.5, y: centerY + 70 };
+    // Draw glass prism pointing UP (triangle apex at top)
+    let p1 = { x: w * 0.4, y: centerY + 60 }; // bottom-left
+    let p2 = { x: w * 0.6, y: centerY + 60 }; // bottom-right
+    let p3 = { x: w * 0.5, y: centerY - 70 }; // top apex
     
     ctx.strokeStyle = '#94a3b8';
     ctx.lineWidth = 2;
@@ -254,16 +254,16 @@
     ctx.fill();
     ctx.stroke();
 
-    // Text label for prism
+    // Text label for prism (placed above the top apex)
     ctx.fillStyle = '#94a3b8';
     ctx.font = 'bold 11px sans-serif';
-    ctx.fillText("ปริซึมแก้ว (Glass Prism)", w * 0.5 - 55, centerY - 72);
+    ctx.fillText("ปริซึมแก้ว (Glass Prism)", w * 0.5 - 55, centerY - 82);
 
-    // Incoming White light beam
+    // Incoming White light beam (sloping up-right for larger incident angle)
     let startX = 40;
-    let startY = centerY + 10;
+    let startY = centerY + 40;
     let hitX = w * 0.45;
-    let hitY = centerY + 5; // hit left face of prism
+    let hitY = centerY - 5; // hit left face of prism exactly at midpoint
 
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 4;
@@ -288,20 +288,17 @@
       '#a855f7'  // Violet
     ];
     
-    let exitFaceStartX = w * 0.5;
-    let exitFaceStartY = centerY + 70;
-    
     // Refraction equations for visuals
     colors.forEach((color, idx) => {
-      // Different refraction offset for each color
-      // Violet (idx=6) refracts the most (goes down further), Red (idx=0) refracts the least
-      let refractOffset = idx * 2.5; 
+      // Calculate exact exit x on the right face, dispersing from 0.55w to 0.574w
+      let midHitXFrac = 0.55 + idx * 0.004;
+      let midHitX = w * midHitXFrac;
       
-      // Point where it hits the right face of the prism
-      let midHitX = w * 0.53 + (refractOffset * 0.05);
-      let midHitY = centerY + 5 + refractOffset;
+      // Calculate exact y on the right face of the upward-pointing prism:
+      // Equation: y = (centerY - 70) + 1300 * (midHitXFrac - 0.5)
+      let midHitY = centerY - 70 + 1300 * (midHitXFrac - 0.5);
 
-      // Draw inside refraction ray
+      // Draw inside refraction ray (bending downwards towards base)
       ctx.strokeStyle = color;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -310,7 +307,7 @@
       ctx.stroke();
 
       // Exit ray going further down (Violet bending more)
-      let exitAngle = 0.2 + (idx * 0.05); // angles
+      let exitAngle = 0.15 + (idx * 0.05); // angles
       let outX = w * 0.85;
       let outY = midHitY + (outX - midHitX) * Math.sin(exitAngle);
 
@@ -326,7 +323,7 @@
 
     ctx.fillStyle = '#94a3b8';
     ctx.font = 'bold 10px sans-serif';
-    ctx.fillText("ฉากรับสเปกตรัมแสงรุ้ง", w * 0.85 - 20, centerY - 60);
+    ctx.fillText("ฉากรับสเปกตรัมแสงรุ้ง", w * 0.85 - 30, centerY + 2);
   }
 
   // 2. Draw Laser Pointer & coherent wave demonstration
